@@ -42,7 +42,7 @@ MainWindow::~MainWindow() {
 
 void MainWindow::initWindow() {
     // 设置窗口标题
-    setWindowTitle("星汉条码比对系统");
+    setWindowTitle("条码比对系统");
 }
 
 void MainWindow::initUi() {

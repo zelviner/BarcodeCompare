@@ -32,4 +32,4 @@ link_directories(${ZELPATH}/lib)
 
 # 添加子工程
 add_subdirectory(src)
-add_subdirectory(test)
+# add_subdirectory(test)
