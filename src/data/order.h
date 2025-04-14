@@ -8,15 +8,18 @@ class Order {
 
   public:
     struct OrderInfo {
-        QString order_name;                // 订单名称
-        int     card_count;                // 每盒卡片数量
-        QString check_format;              // 校验格式
-        int     inner_box_start_check_num; // 内盒开始校验位数
-        int     inner_box_end_check_num;   // 内盒结束校验位数
-        int     card_start_check_num;      // 卡片开始校验位数
-        int     card_end_check_num;        // 卡片结束校验位数
-        int     scanned_num;               // 已扫描数量
-        QString create_time;               // 创建时间
+        QString order_name;             // 订单名称
+        int     box_count;              // 每盒卡片数量
+        int     carton_count;           // 每箱卡片数量
+        QString check_format;           // 校验格式
+        int     carton_start_check_num; // 外箱开始校验位数
+        int     carton_end_check_num;   // 外箱结束校验位数
+        int     box_start_check_num;    // 内盒开始校验位数
+        int     box_end_check_num;      // 内盒结束校验位数
+        int     card_start_check_num;   // 卡片开始校验位数
+        int     card_end_check_num;     // 卡片结束校验位数
+        int     scanned_num;            // 已扫描数量
+        QString create_time;            // 创建时间
     };
 
     typedef QVector<Order::OrderInfo> OrderVector;

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "compare/inner_box.h"
-#include "compare/outer_box.h"
+#include "compare/box.h"
+#include "compare/carton.h"
 #include "data/order.h"
 #include "data/user.h"
 #include "ui_main_window.h"
@@ -22,10 +22,10 @@ class MainWindow : public QMainWindow {
     void initUi();
 
     /// @brief 初始化内盒比对 Tab
-    void initInnerBoxTab();
+    void initBoxTab();
 
     /// @brief 初始化外箱比对 Tab
-    void initOuterBoxTab();
+    void initCartonTab();
 
     /// @brief 初始化订单管理 Tab
     void initOrderTab();
@@ -43,10 +43,10 @@ class MainWindow : public QMainWindow {
     void switchUserBtnClicked();
 
     /// @brief 内盒选择订单
-    void innerBoxSelectOrder();
+    void boxSelectOrder();
 
     /// @brief 获取内盒结束 ICCID
-    void toInnerBoxEndIccid();
+    void toBoxEndIccid();
 
     /// @brief 获取首卡 ICCID
     void toCardStartIccid();
@@ -55,25 +55,25 @@ class MainWindow : public QMainWindow {
     void toCardEndIccid();
 
     /// @brief 比对内盒
-    void compareInnerBox();
+    void compareBox();
 
     /// @brief 刷新内盒比对 Tab
-    void refreshInnerBoxTab();
+    void refreshBoxTab();
 
     /// @brief 外箱选择订单
-    void outerBoxSelectOrder();
+    void cartonSelectOrder();
 
     /// @brief 获取外箱结束 ICCID
-    void toOuterBoxEndIccid();
+    void toCartonEndIccid();
 
     /// @brief 获取目标 ICCID
     void toTargetIccid();
 
     /// @brief 比对外箱
-    void compareOuterBox();
+    void compareCarton();
 
     /// @brief 刷新外箱比对 Tab
-    void refreshOuterBoxTab();
+    void refreshCartonTab();
 
     /// @brief 添加订单按钮点击事件
     void addOrderBtnClicked();
@@ -118,7 +118,7 @@ class MainWindow : public QMainWindow {
     Ui_MainWindow *ui_;
     User          *user_;
     Order         *order_;
-    OuterBox      *outer_box_;
+    Carton        *carton_;
 
     QString outbox_start_iccid_;
     QString outbox_end_iccid_;

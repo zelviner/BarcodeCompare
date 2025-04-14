@@ -2,10 +2,10 @@
 
 #include <QString>
 
-class InnerBox {
+class Box {
 
   public:
-    struct InnerBoxInfo {
+    struct BoxInfo {
         QString start_iccid;               // 内盒起始 ICCID
         QString end_iccid;                 // 内盒结束 ICCID
         QString start_card_iccid;          // 首卡 ICCID
@@ -17,14 +17,14 @@ class InnerBox {
         int     scanned_num;               // 已扫描数量
     };
 
-    InnerBox(InnerBoxInfo *inner_box_info);
+    Box(BoxInfo *inner_box_info);
 
-    ~InnerBox();
+    ~Box();
 
     /// @brief 比对
     /// @param error 传出参数，错误信息
     bool compare(QString &error);
 
   private:
-    InnerBoxInfo *inner_box_info_;
+    BoxInfo *box_info_;
 };

@@ -15,8 +15,8 @@ Order::~Order() {}
 
 void Order::print() const {
     for (auto order : orders_) {
-        printf("order_name: %s, check_format: %s, create_time: %s\n", order.order_name.toStdString().c_str(),
-               order.check_format.toStdString().c_str(), order.create_time.toStdString().c_str());
+        printf("order_name: %s, check_format: %s, create_time: %s\n", order.order_name.toStdString().c_str(), order.check_format.toStdString().c_str(),
+               order.create_time.toStdString().c_str());
     }
 }
 
@@ -113,15 +113,18 @@ bool Order::load() {
     for (int i = 0; i < array.size(); ++i) {
         QJsonObject order_obj = array[i].toObject();
         OrderInfo   order_info;
-        order_info.order_name                = order_obj["order_name"].toString();
-        order_info.card_count                = order_obj["card_count"].toInt();
-        order_info.check_format              = order_obj["check_format"].toString();
-        order_info.create_time               = order_obj["create_time"].toString();
-        order_info.inner_box_start_check_num = order_obj["inner_box_start_check_num"].toInt();
-        order_info.inner_box_end_check_num   = order_obj["inner_box_end_check_num"].toInt();
-        order_info.card_start_check_num      = order_obj["card_start_check_num"].toInt();
-        order_info.card_end_check_num        = order_obj["card_end_check_num"].toInt();
-        order_info.scanned_num               = order_obj["scanned_num"].toInt();
+        order_info.order_name             = order_obj["order_name"].toString();
+        order_info.carton_count           = order_obj["carton_count"].toInt();
+        order_info.box_count              = order_obj["box_count"].toInt();
+        order_info.check_format           = order_obj["check_format"].toString();
+        order_info.create_time            = order_obj["create_time"].toString();
+        order_info.carton_start_check_num = order_obj["carton_start_check_num"].toInt();
+        order_info.carton_end_check_num   = order_obj["carton_end_check_num"].toInt();
+        order_info.box_start_check_num    = order_obj["box_start_check_num"].toInt();
+        order_info.box_end_check_num      = order_obj["box_end_check_num"].toInt();
+        order_info.card_start_check_num   = order_obj["card_start_check_num"].toInt();
+        order_info.card_end_check_num     = order_obj["card_end_check_num"].toInt();
+        order_info.scanned_num            = order_obj["scanned_num"].toInt();
         orders_.push_back(order_info);
     }
 
@@ -134,11 +137,14 @@ bool Order::save() {
     for (auto order : orders_) {
         QJsonObject order_obj;
         order_obj.insert("order_name", order.order_name);
-        order_obj.insert("card_count", order.card_count);
+        order_obj.insert("carton_count", order.carton_count);
+        order_obj.insert("box_count", order.box_count);
         order_obj.insert("check_format", order.check_format);
         order_obj.insert("create_time", order.create_time);
-        order_obj.insert("inner_box_start_check_num", order.inner_box_start_check_num);
-        order_obj.insert("inner_box_end_check_num", order.inner_box_end_check_num);
+        order_obj.insert("carton_start_check_num", order.carton_start_check_num);
+        order_obj.insert("carton_end_check_num", order.carton_end_check_num);
+        order_obj.insert("box_start_check_num", order.box_start_check_num);
+        order_obj.insert("box_end_check_num", order.box_end_check_num);
         order_obj.insert("card_start_check_num", order.card_start_check_num);
         order_obj.insert("card_end_check_num", order.card_end_check_num);
         order_obj.insert("scanned_num", order.scanned_num);
