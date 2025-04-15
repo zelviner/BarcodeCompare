@@ -2,8 +2,8 @@
 
 #include <QDebug>
 
-Box::Box(BoxInfo *inner_box_info)
-    : box_info_(inner_box_info) {}
+Box::Box(BoxInfo *box_info)
+    : box_info_(box_info) {}
 
 Box::~Box() {}
 

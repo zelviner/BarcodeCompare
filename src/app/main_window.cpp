@@ -72,8 +72,8 @@ void MainWindow::initBoxTab() {
     completer->setFilterMode(Qt::MatchContains);
     ui_->box_order_name_combo->setCompleter(completer);
 
-    QStringList inner_box_header = {"内盒起始ICCID", "内盒结束ICCID", "首卡ICCID", "尾卡ICCID"};
-    initTable(ui_->inner_box_table, inner_box_header, inner_box_header.size());
+    QStringList box_header = {"内盒起始ICCID", "内盒结束ICCID", "首卡ICCID", "尾卡ICCID"};
+    initTable(ui_->box_table, box_header, box_header.size());
 }
 
 void MainWindow::initCartonTab() {
@@ -88,8 +88,8 @@ void MainWindow::initCartonTab() {
     completer->setFilterMode(Qt::MatchContains);
     ui_->carton_order_name_combo->setCompleter(completer);
 
-    QStringList outer_box_header = {"外箱起始ICCID", "外箱结束ICCID", "内盒起始或结束ICCID"};
-    initTable(ui_->outer_box_table, outer_box_header, outer_box_header.size());
+    QStringList carton_header = {"外箱起始ICCID", "外箱结束ICCID", "内盒起始或结束ICCID"};
+    initTable(ui_->carton_table, carton_header, carton_header.size());
 }
 
 void MainWindow::initOrderTab() {
@@ -280,17 +280,17 @@ void MainWindow::compareBox() {
         ui_->box_scanned_num_label->setText(QString::number(order_->currentOrder().box_scanned_num) + " 盒");
 
         // 设置表格内容
-        ui_->inner_box_table->setRowCount(box_row_index_ + 2);
-        ui_->inner_box_table->setItem(box_row_index_, 0, new QTableWidgetItem(inner_box_info.start_iccid));
-        ui_->inner_box_table->setItem(box_row_index_, 1, new QTableWidgetItem(inner_box_info.end_iccid));
-        ui_->inner_box_table->setItem(box_row_index_, 2, new QTableWidgetItem(inner_box_info.start_card_iccid));
-        ui_->inner_box_table->setItem(box_row_index_, 3, new QTableWidgetItem(inner_box_info.end_card_iccid));
+        ui_->box_table->setRowCount(box_row_index_ + 2);
+        ui_->box_table->setItem(box_row_index_, 0, new QTableWidgetItem(inner_box_info.start_iccid));
+        ui_->box_table->setItem(box_row_index_, 1, new QTableWidgetItem(inner_box_info.end_iccid));
+        ui_->box_table->setItem(box_row_index_, 2, new QTableWidgetItem(inner_box_info.start_card_iccid));
+        ui_->box_table->setItem(box_row_index_, 3, new QTableWidgetItem(inner_box_info.end_card_iccid));
 
         // 设置内容居中
-        ui_->inner_box_table->item(box_row_index_, 0)->setTextAlignment(Qt::AlignCenter);
-        ui_->inner_box_table->item(box_row_index_, 1)->setTextAlignment(Qt::AlignCenter);
-        ui_->inner_box_table->item(box_row_index_, 2)->setTextAlignment(Qt::AlignCenter);
-        ui_->inner_box_table->item(box_row_index_, 3)->setTextAlignment(Qt::AlignCenter);
+        ui_->box_table->item(box_row_index_, 0)->setTextAlignment(Qt::AlignCenter);
+        ui_->box_table->item(box_row_index_, 1)->setTextAlignment(Qt::AlignCenter);
+        ui_->box_table->item(box_row_index_, 2)->setTextAlignment(Qt::AlignCenter);
+        ui_->box_table->item(box_row_index_, 3)->setTextAlignment(Qt::AlignCenter);
 
         box_row_index_++;
     } else {
@@ -319,7 +319,7 @@ void MainWindow::refreshBoxTab() {
     ui_->box_check_format_label->clear();
     ui_->box_scanned_num_label->clear();
     box_row_index_ = 0;
-    ui_->inner_box_table->setRowCount(0);
+    ui_->box_table->setRowCount(0);
 
     // 设置订单号下拉框内容
     for (int i = 0; i < order_->orders().size(); i++) {
@@ -408,15 +408,15 @@ void MainWindow::compareCarton() {
                         carton_info.target_iccid.toStdString().c_str());
 
         // 设置表格内容
-        ui_->outer_box_table->setRowCount(carton_row_index_ + 2);
-        ui_->outer_box_table->setItem(carton_row_index_, 0, new QTableWidgetItem(carton_info.start_iccid));
-        ui_->outer_box_table->setItem(carton_row_index_, 1, new QTableWidgetItem(carton_info.end_iccid));
-        ui_->outer_box_table->setItem(carton_row_index_, 2, new QTableWidgetItem(carton_info.target_iccid));
+        ui_->carton_table->setRowCount(carton_row_index_ + 2);
+        ui_->carton_table->setItem(carton_row_index_, 0, new QTableWidgetItem(carton_info.start_iccid));
+        ui_->carton_table->setItem(carton_row_index_, 1, new QTableWidgetItem(carton_info.end_iccid));
+        ui_->carton_table->setItem(carton_row_index_, 2, new QTableWidgetItem(carton_info.target_iccid));
 
         // 设置内容居中
-        ui_->outer_box_table->item(carton_row_index_, 0)->setTextAlignment(Qt::AlignCenter);
-        ui_->outer_box_table->item(carton_row_index_, 1)->setTextAlignment(Qt::AlignCenter);
-        ui_->outer_box_table->item(carton_row_index_, 2)->setTextAlignment(Qt::AlignCenter);
+        ui_->carton_table->item(carton_row_index_, 0)->setTextAlignment(Qt::AlignCenter);
+        ui_->carton_table->item(carton_row_index_, 1)->setTextAlignment(Qt::AlignCenter);
+        ui_->carton_table->item(carton_row_index_, 2)->setTextAlignment(Qt::AlignCenter);
 
         carton_row_index_++;
 
@@ -453,7 +453,7 @@ void MainWindow::refreshCartonTab() {
     ui_->carton_check_format_label->clear();
     ui_->carton_scanned_num_label->clear();
     carton_row_index_ = 0;
-    ui_->outer_box_table->setRowCount(0);
+    ui_->carton_table->setRowCount(0);
 
     // 设置订单号下拉框内容
     for (int i = 0; i < order_->orders().size(); i++) {

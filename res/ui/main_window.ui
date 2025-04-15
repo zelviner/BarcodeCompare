@@ -86,7 +86,7 @@
           </font>
          </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>1</number>
          </property>
          <widget class="QWidget" name="inner_box_tab">
           <attribute name="title">
@@ -462,7 +462,7 @@
              </property>
              <layout class="QHBoxLayout" name="horizontalLayout_25">
               <item>
-               <widget class="QTableWidget" name="inner_box_table"/>
+               <widget class="QTableWidget" name="box_table"/>
               </item>
              </layout>
             </widget>
@@ -800,7 +800,7 @@
              </property>
              <layout class="QHBoxLayout" name="horizontalLayout_20">
               <item>
-               <widget class="QTableWidget" name="outer_box_table"/>
+               <widget class="QTableWidget" name="carton_table"/>
               </item>
              </layout>
             </widget>
