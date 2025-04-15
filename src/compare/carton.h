@@ -19,7 +19,7 @@ class Carton {
     Carton();
     ~Carton();
 
-    inline void outerBoxInfo(CartonInfo *carton_info) { carton_info_ = carton_info; }
+    inline void cartonInfo(CartonInfo *carton_info) { carton_info_ = carton_info; }
 
     /// @brief 比对
     /// @param error 传出参数，错误信息

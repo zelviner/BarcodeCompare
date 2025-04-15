@@ -120,8 +120,8 @@ class MainWindow : public QMainWindow {
     Order         *order_;
     Carton        *carton_;
 
-    QString outbox_start_iccid_;
-    QString outbox_end_iccid_;
-    int     inbox_row_index_;
-    int     outbox_row_index_;
+    QString carton_start_iccid_;
+    QString carton_end_iccid_;
+    int     box_row_index_;
+    int     carton_row_index_;
 };

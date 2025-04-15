@@ -66,9 +66,21 @@ bool Order::clear() {
 bool Order::update(const QString &order_name, const OrderInfo &order_info) {
     for (auto it = orders_.begin(); it != orders_.end(); ++it) {
         if (it->order_name == order_name) {
-            int scanned_num = it->scanned_num;
-            *it             = order_info;
-            it->scanned_num = scanned_num;
+            int scanned_num     = it->box_scanned_num;
+            *it                 = order_info;
+            it->box_scanned_num = scanned_num;
+            break;
+        }
+    }
+
+    return save();
+}
+bool Order::updateCarton(const QString &order_name, const OrderInfo &order_info) {
+    for (auto it = orders_.begin(); it != orders_.end(); ++it) {
+        if (it->order_name == order_name) {
+            int scanned_num        = it->carton_scanned_num;
+            *it                    = order_info;
+            it->carton_scanned_num = scanned_num;
             break;
         }
     }
@@ -79,8 +91,19 @@ bool Order::update(const QString &order_name, const OrderInfo &order_info) {
 bool Order::scanned() {
     for (auto &order : orders_) {
         if (order.order_name == current_order_.order_name) {
-            order.scanned_num++;
-            current_order_.scanned_num++;
+            order.box_scanned_num++;
+            current_order_.box_scanned_num++;
+            break;
+        }
+    }
+    return save();
+}
+
+bool Order::scannedCarton() {
+    for (auto &order : orders_) {
+        if (order.order_name == current_order_.order_name) {
+            order.carton_scanned_num++;
+            current_order_.carton_scanned_num++;
             break;
         }
     }
@@ -124,7 +147,8 @@ bool Order::load() {
         order_info.box_end_check_num      = order_obj["box_end_check_num"].toInt();
         order_info.card_start_check_num   = order_obj["card_start_check_num"].toInt();
         order_info.card_end_check_num     = order_obj["card_end_check_num"].toInt();
-        order_info.scanned_num            = order_obj["scanned_num"].toInt();
+        order_info.box_scanned_num        = order_obj["box_scanned_num"].toInt();
+        order_info.carton_scanned_num     = order_obj["carton_scanned_num"].toInt();
         orders_.push_back(order_info);
     }
 
@@ -147,7 +171,8 @@ bool Order::save() {
         order_obj.insert("box_end_check_num", order.box_end_check_num);
         order_obj.insert("card_start_check_num", order.card_start_check_num);
         order_obj.insert("card_end_check_num", order.card_end_check_num);
-        order_obj.insert("scanned_num", order.scanned_num);
+        order_obj.insert("box_scanned_num", order.box_scanned_num);
+        order_obj.insert("carton_scanned_num", order.carton_scanned_num);
         array.append(order_obj);
     }
     obj.insert("orders", array);

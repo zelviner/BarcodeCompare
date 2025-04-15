@@ -18,7 +18,8 @@ class Order {
         int     box_end_check_num;      // 内盒结束校验位数
         int     card_start_check_num;   // 卡片开始校验位数
         int     card_end_check_num;     // 卡片结束校验位数
-        int     scanned_num;            // 已扫描数量
+        int     box_scanned_num;        // 已扫描内盒数量
+        int     carton_scanned_num;     // 已扫描外箱数量
         QString create_time;            // 创建时间
     };
 
@@ -58,8 +59,10 @@ class Order {
     /// @param order_name 订单名称
     /// @param order_info 新订单信息结构体
     bool update(const QString &order_name, const OrderInfo &order_info);
+    bool updateCarton(const QString &order_name, const OrderInfo &order_info);
 
     bool scanned();
+    bool scannedCarton();
 
   private:
     /// @brief 加载数据文件

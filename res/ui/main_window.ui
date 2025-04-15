@@ -86,7 +86,7 @@
           </font>
          </property>
          <property name="currentIndex">
-          <number>2</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="inner_box_tab">
           <attribute name="title">
@@ -139,7 +139,7 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QComboBox" name="inbox_order_name_combo">
+                   <widget class="QComboBox" name="box_order_name_combo">
                     <property name="font">
                      <font>
                       <family>微软雅黑</family>
@@ -188,7 +188,7 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QLabel" name="scanned_num_label">
+                   <widget class="QLabel" name="box_scanned_num_label">
                     <property name="font">
                      <font>
                       <family>微软雅黑</family>
@@ -234,7 +234,7 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QLabel" name="inbox_check_format_label">
+                   <widget class="QLabel" name="box_check_format_label">
                     <property name="font">
                      <font>
                       <family>微软雅黑</family>
@@ -295,7 +295,7 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QLineEdit" name="inbox_start_line">
+                   <widget class="QLineEdit" name="box_start_line">
                     <property name="font">
                      <font>
                       <family>微软雅黑</family>
@@ -340,7 +340,7 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QLineEdit" name="inbox_end_line">
+                   <widget class="QLineEdit" name="box_end_line">
                     <property name="font">
                      <font>
                       <family>微软雅黑</family>
@@ -517,7 +517,7 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QComboBox" name="outbox_order_name_combo">
+                   <widget class="QComboBox" name="carton_order_name_combo">
                     <property name="font">
                      <font>
                       <family>微软雅黑</family>
@@ -561,12 +561,12 @@
                      </font>
                     </property>
                     <property name="text">
-                     <string>卡数量：</string>
+                     <string>已扫描：</string>
                     </property>
                    </widget>
                   </item>
                   <item>
-                   <widget class="QLabel" name="card_count_label">
+                   <widget class="QLabel" name="carton_scanned_num_label">
                     <property name="font">
                      <font>
                       <family>微软雅黑</family>
@@ -612,7 +612,7 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QLabel" name="outbox_check_format_label">
+                   <widget class="QLabel" name="carton_check_format_label">
                     <property name="font">
                      <font>
                       <family>微软雅黑</family>
@@ -673,7 +673,7 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QLineEdit" name="outbox_start_line">
+                   <widget class="QLineEdit" name="carton_start_line">
                     <property name="font">
                      <font>
                       <family>微软雅黑</family>
@@ -718,7 +718,7 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QLineEdit" name="outbox_end_line">
+                   <widget class="QLineEdit" name="carton_end_line">
                     <property name="font">
                      <font>
                       <family>微软雅黑</family>
