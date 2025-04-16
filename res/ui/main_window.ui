@@ -86,7 +86,7 @@
           </font>
          </property>
          <property name="currentIndex">
-          <number>1</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="inner_box_tab">
           <attribute name="title">
@@ -487,7 +487,7 @@
                <property name="title">
                 <string>订单信息</string>
                </property>
-               <layout class="QVBoxLayout" name="verticalLayout_11" stretch="0,0,0">
+               <layout class="QVBoxLayout" name="verticalLayout_9">
                 <item>
                  <layout class="QHBoxLayout" name="horizontalLayout_16" stretch="0,0,9">
                   <item>
@@ -538,7 +538,7 @@
                  </layout>
                 </item>
                 <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_18" stretch="0,1,9">
+                 <layout class="QHBoxLayout" name="horizontalLayout_18" stretch="0,1,6,3">
                   <item>
                    <spacer name="horizontalSpacer_24">
                     <property name="orientation">
@@ -578,6 +578,19 @@
                     </property>
                     <property name="alignment">
                      <set>Qt::AlignCenter</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="reset_btn">
+                    <property name="font">
+                     <font>
+                      <family>微软雅黑</family>
+                      <pointsize>10</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>复位</string>
                     </property>
                    </widget>
                   </item>
@@ -1282,7 +1295,7 @@
      <x>0</x>
      <y>0</y>
      <width>1168</width>
-     <height>22</height>
+     <height>23</height>
     </rect>
    </property>
   </widget>

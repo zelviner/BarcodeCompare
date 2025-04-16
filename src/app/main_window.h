@@ -75,6 +75,9 @@ class MainWindow : public QMainWindow {
     /// @brief 刷新外箱比对 Tab
     void refreshCartonTab();
 
+    /// @brief 复位按钮点击事件
+    void resetBtnClicked();
+
     /// @brief 添加订单按钮点击事件
     void addOrderBtnClicked();
 
@@ -84,7 +87,7 @@ class MainWindow : public QMainWindow {
     /// @brief 删除订单按钮点击事件
     void removeOrderBtnClicked();
 
-    /// @brief 清空订单按照点击事件
+    /// @brief 清空订单按钮点击事件
     void clearOrderBtnClicked();
 
     /// @brief 显示选中订单
@@ -102,7 +105,7 @@ class MainWindow : public QMainWindow {
     /// @brief 删除用户按钮点击事件
     void removeUserBtnClicked();
 
-    /// @brief 清空订单按照点击事件
+    /// @brief 清空用户按钮点击事件
     void clearUserBtnClicked();
 
     /// @brief 显示选中用户

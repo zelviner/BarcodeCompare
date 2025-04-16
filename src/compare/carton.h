@@ -6,14 +6,14 @@ class Carton {
 
   public:
     struct CartonInfo {
-        QString start_iccid;          // 外箱起始 ICCID
-        QString end_iccid;            // 外箱结束 ICCID
-        QString target_iccid;         // 目标 ICCID
-        int     start_check_num;      // 外箱起始校验位
-        int     end_check_num;        // 外箱结束校验位
-        int     card_start_check_num; // 卡片起始校验位
-        int     card_end_check_num;   // 卡片结束校验位
-        int     card_count;           // 卡片数量
+        QString start_iccid;         // 外箱起始 ICCID
+        QString end_iccid;           // 外箱结束 ICCID
+        QString target_iccid;        // 目标 ICCID
+        int     start_check_num;     // 外箱起始校验位
+        int     end_check_num;       // 外箱结束校验位
+        int     box_start_check_num; // 内盒起始校验位
+        int     box_end_check_num;   // 内盒结束校验位
+        int     box_count;           // 每盒卡片数量
     };
 
     Carton();

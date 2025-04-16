@@ -196,6 +196,7 @@ void MainWindow::initSignalSlot() {
     // 外箱比对 Tab
     connect(ui_->carton_order_name_combo, &QComboBox::currentTextChanged, this, &MainWindow::cartonSelectOrder);
     connect(ui_->carton_start_line, &QLineEdit::returnPressed, this, &MainWindow::toCartonEndIccid);
+    connect(ui_->reset_btn, &QPushButton::clicked, this, &MainWindow::resetBtnClicked);
     connect(ui_->carton_end_line, &QLineEdit::returnPressed, this, &MainWindow::toTargetIccid);
     connect(ui_->target_line, &QLineEdit::returnPressed, this, &MainWindow::compareCarton);
 
@@ -379,14 +380,14 @@ void MainWindow::toTargetIccid() { ui_->target_line->setFocus(); }
 void MainWindow::compareCarton() {
 
     Carton::CartonInfo carton_info;
-    carton_info.start_iccid          = ui_->carton_start_line->text();
-    carton_info.end_iccid            = ui_->carton_end_line->text();
-    carton_info.target_iccid         = ui_->target_line->text();
-    carton_info.start_check_num      = order_->currentOrder().carton_start_check_num;
-    carton_info.end_check_num        = order_->currentOrder().carton_end_check_num;
-    carton_info.card_count           = order_->currentOrder().carton_count;
-    carton_info.card_start_check_num = order_->currentOrder().card_start_check_num;
-    carton_info.card_end_check_num   = order_->currentOrder().card_end_check_num;
+    carton_info.start_iccid         = ui_->carton_start_line->text();
+    carton_info.end_iccid           = ui_->carton_end_line->text();
+    carton_info.target_iccid        = ui_->target_line->text();
+    carton_info.start_check_num     = order_->currentOrder().carton_start_check_num;
+    carton_info.end_check_num       = order_->currentOrder().carton_end_check_num;
+    carton_info.box_count          = order_->currentOrder().box_count;
+    carton_info.box_start_check_num = order_->currentOrder().box_start_check_num;
+    carton_info.box_end_check_num   = order_->currentOrder().box_end_check_num;
 
     if (carton_info.start_iccid != carton_start_iccid_ || carton_info.end_iccid != carton_end_iccid_) {
         if (carton_ != nullptr) {
@@ -469,6 +470,16 @@ void MainWindow::refreshCartonTab() {
         ui_->carton_end_line->setEnabled(false);
         ui_->target_line->setEnabled(false);
     }
+}
+
+void MainWindow::resetBtnClicked() {
+    ui_->carton_start_line->clear();
+    ui_->carton_end_line->clear();
+
+    ui_->carton_start_line->setEnabled(true);
+    ui_->carton_end_line->setEnabled(true);
+
+    ui_->carton_start_line->setFocus();
 }
 
 void MainWindow::addOrderBtnClicked() {
@@ -633,6 +644,7 @@ void MainWindow::refreshOrderTab() {
 
     ui_->order_name_line->clear();
     ui_->box_count_line->clear();
+    ui_->carton_count_line->clear();
     ui_->box_start_spin_box->setValue(1);
     ui_->box_end_spin_box->setValue(19);
 
