@@ -354,7 +354,7 @@ void MainWindow::cartonSelectOrder() {
 
     // 显示订单信息
     ui_->carton_check_format_label->setText(order_info.check_format);
-    ui_->carton_scanned_num_label->setText(QString::number(order_info.carton_scanned_num) + " 盒");
+    ui_->carton_scanned_num_label->setText(QString::number(order_info.carton_scanned_num) + " 箱");
     // ui_->carton__label->setText(QString::number(order_info.carton_count) + " 张");
 
     // 聚焦到起始ICCID输入框
@@ -367,10 +367,6 @@ void MainWindow::toCartonEndIccid() {
         ui_->carton_start_line->clear();
         return;
     }
-
-    // 计算箱中的盒数
-    int box_count = (ui_->carton_end_line->text().toInt() - ui_->carton_start_line->text().toInt()) / order_->currentOrder().carton_count + 1;
-    ui_->carton_scanned_num_label->setText(QString::number(order_->currentOrder().carton_scanned_num) + " 盒");
 
     ui_->carton_end_line->setFocus();
 }
@@ -385,7 +381,7 @@ void MainWindow::compareCarton() {
     carton_info.target_iccid        = ui_->target_line->text();
     carton_info.start_check_num     = order_->currentOrder().carton_start_check_num;
     carton_info.end_check_num       = order_->currentOrder().carton_end_check_num;
-    carton_info.box_count          = order_->currentOrder().box_count;
+    carton_info.box_count           = order_->currentOrder().box_count;
     carton_info.box_start_check_num = order_->currentOrder().box_start_check_num;
     carton_info.box_end_check_num   = order_->currentOrder().box_end_check_num;
 
@@ -434,6 +430,8 @@ void MainWindow::compareCarton() {
     }
 
     if (is_end) {
+        order_->scannedCarton();
+        ui_->carton_scanned_num_label->setText(QString::number(order_->currentOrder().carton_scanned_num) + " 箱");
 
         carton_start_iccid_ = "";
         carton_end_iccid_   = "";
