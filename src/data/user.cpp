@@ -1,12 +1,13 @@
 #include "user.h"
 
-#include <QFile>
-#include <QJsonArray>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonValue>
+#include <qfile>
+#include <qjsonarray>
+#include <qjsondocument>
+#include <qjsonobject>
+#include <qjsonvalue>
+#include <qobject>
 
-const char *User::role_[3] = {"超级管理员", "管理员", "普通用户"};
+const QVector<QString> User::role_ = {QObject::tr("超级管理员"), QObject::tr("管理员"), QObject::tr("普通用户")};
 
 User::User(QString filename)
     : filename_(filename) {
@@ -17,8 +18,7 @@ User::~User() {}
 
 void User::print() const {
     for (auto user : users_) {
-        printf("name: %s, password: %s, role: %s\n", user.name.toUtf8().data(), user.password.toUtf8().data(),
-               User::role_[user.role]);
+        printf("name: %s, password: %s, role: %s\n", user.name.toUtf8().data(), user.password.toUtf8().data(), User::role_[user.role].toStdString().c_str());
     }
 }
 
@@ -80,6 +80,16 @@ bool User::update(const QString user_name, const UserInfo &user_info) {
     return save();
 }
 
+bool User::language(const QString &language) {
+    for (auto user : users_) {
+        if (user.name == current_user_.name) {
+            user.language = language;
+        }
+    }
+
+    return save();
+}
+
 void User::init() {
     // 判断文件是否存在
     QFile file(filename_);
@@ -91,7 +101,8 @@ void User::init() {
         // 创建超级管理员
         UserInfo user_info;
         user_info.name     = "admin";
-        user_info.password = "Xh123456";
+        user_info.password = "1234";
+        user_info.language = "zh_CN";
         user_info.role     = Role::SuperAdmin;
 
         users_.push_back(user_info);
@@ -132,11 +143,13 @@ bool User::load() {
         QString userName = userInfoObject["user_name"].toString();
         QString password = userInfoObject["password"].toString();
         int     role     = userInfoObject["role"].toInt();
+        QString language = userInfoObject["language"].toString();
 
         UserInfo user_info;
         user_info.name     = userName;
         user_info.password = password;
         user_info.role     = static_cast<Role>(role);
+        user_info.language = language;
 
         users_.push_back(user_info);
     }
@@ -157,6 +170,7 @@ bool User::save() {
         userInfoObject["user_name"] = user.name;
         userInfoObject["password"]  = user.password;
         userInfoObject["role"]      = static_cast<int>(user.role);
+        userInfoObject["language"]  = user.language;
         userArray.append(userInfoObject);
     }
 

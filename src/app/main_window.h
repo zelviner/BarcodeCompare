@@ -1,12 +1,12 @@
 #pragma once
 
-#include "compare/box.h"
 #include "compare/carton.h"
 #include "data/order.h"
 #include "data/user.h"
 #include "ui_main_window.h"
 
-#include <QMainWindow>
+#include <qmainwindow>
+#include <qtranslator>
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -20,6 +20,15 @@ class MainWindow : public QMainWindow {
 
     /// @brief 初始化 UI
     void initUi();
+
+    /// @brief 切换中文动作触发
+    void chineseActionTriggered();
+
+    /// @brief 切换英文动作触发
+    void englishActionTriggered();
+
+    /// @brief 切换语言
+    void switchLanguage(const QString &language_file);
 
     /// @brief 初始化内盒比对 Tab
     void initBoxTab();
@@ -45,14 +54,17 @@ class MainWindow : public QMainWindow {
     /// @brief 内盒选择订单
     void boxSelectOrder();
 
-    /// @brief 获取内盒结束 ICCID
-    void toBoxEndIccid();
+    /// @brief 清空内盒已扫码数量按钮点击事件
+    void clearBoxScannedNumBtnClicked();
 
-    /// @brief 获取首卡 ICCID
-    void toCardStartIccid();
+    /// @brief 获取内盒结束条码
+    void toBoxEndBarcode();
 
-    /// @brief 获取尾卡 ICCID
-    void toCardEndIccid();
+    /// @brief 获取首卡条码
+    void toCardStartBarcode();
+
+    /// @brief 获取尾卡条码
+    void toCardEndBarcode();
 
     /// @brief 比对内盒
     void compareBox();
@@ -63,11 +75,11 @@ class MainWindow : public QMainWindow {
     /// @brief 外箱选择订单
     void cartonSelectOrder();
 
-    /// @brief 获取外箱结束 ICCID
-    void toCartonEndIccid();
+    /// @brief 获取外箱结束条码
+    void toCartonEndBarcode();
 
-    /// @brief 获取目标 ICCID
-    void toTargetIccid();
+    /// @brief 获取目标条码
+    void toTargetBarcode();
 
     /// @brief 比对外箱
     void compareCarton();
@@ -76,7 +88,7 @@ class MainWindow : public QMainWindow {
     void refreshCartonTab();
 
     /// @brief 复位按钮点击事件
-    void resetBtnClicked();
+    void cartonResetBtnClicked();
 
     /// @brief 添加订单按钮点击事件
     void addOrderBtnClicked();
@@ -122,9 +134,10 @@ class MainWindow : public QMainWindow {
     User          *user_;
     Order         *order_;
     Carton        *carton_;
+    QTranslator    translator_;
 
-    QString carton_start_iccid_;
-    QString carton_end_iccid_;
+    QString carton_start_barcode_;
+    QString carton_end_barcode_;
     int     box_row_index_;
     int     carton_row_index_;
 };

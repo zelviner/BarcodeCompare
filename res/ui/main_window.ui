@@ -17,66 +17,7 @@
    <layout class="QHBoxLayout" name="horizontalLayout_2">
     <item>
      <widget class="QWidget" name="widget" native="true">
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout" stretch="6,1,0,1">
-         <item>
-          <spacer name="horizontalSpacer">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <widget class="QLabel" name="current_user_label">
-           <property name="font">
-            <font>
-             <family>微软雅黑</family>
-             <pointsize>22</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>用户</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer_9">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <widget class="QPushButton" name="switch_user_btn">
-           <property name="font">
-            <font>
-             <family>微软雅黑</family>
-             <pointsize>18</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>切换用户</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
+      <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
         <widget class="QTabWidget" name="tabWidget">
          <property name="font">
@@ -109,7 +50,7 @@
                <property name="alignment">
                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
                </property>
-               <layout class="QVBoxLayout" name="verticalLayout_10" stretch="0,0,0">
+               <layout class="QVBoxLayout" name="verticalLayout_10">
                 <item>
                  <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="0,1,9">
                   <item>
@@ -160,7 +101,7 @@
                  </layout>
                 </item>
                 <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_12" stretch="0,1,9">
+                 <layout class="QHBoxLayout" name="horizontalLayout_12" stretch="0,1,7,2">
                   <item>
                    <spacer name="horizontalSpacer_3">
                     <property name="orientation">
@@ -200,6 +141,19 @@
                     </property>
                     <property name="alignment">
                      <set>Qt::AlignCenter</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="clear_box_scanned_num_ptn">
+                    <property name="font">
+                     <font>
+                      <family>微软雅黑</family>
+                      <pointsize>12</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>重新计数</string>
                     </property>
                    </widget>
                   </item>
@@ -290,7 +244,7 @@
                      </font>
                     </property>
                     <property name="text">
-                     <string>内盒起始 ICCID：</string>
+                     <string>内盒起始条码：</string>
                     </property>
                    </widget>
                   </item>
@@ -335,7 +289,7 @@
                      </font>
                     </property>
                     <property name="text">
-                     <string>内盒结束 ICCID：</string>
+                     <string>内盒结束条码：</string>
                     </property>
                    </widget>
                   </item>
@@ -380,7 +334,7 @@
                      </font>
                     </property>
                     <property name="text">
-                     <string>首卡 ICCID：</string>
+                     <string>首卡条码：</string>
                     </property>
                    </widget>
                   </item>
@@ -425,7 +379,7 @@
                      </font>
                     </property>
                     <property name="text">
-                     <string>尾卡 ICCID：</string>
+                     <string>尾卡条码：</string>
                     </property>
                    </widget>
                   </item>
@@ -681,7 +635,7 @@
                      </font>
                     </property>
                     <property name="text">
-                     <string>外箱起始 ICCID：</string>
+                     <string>外箱起始条码：</string>
                     </property>
                    </widget>
                   </item>
@@ -726,7 +680,7 @@
                      </font>
                     </property>
                     <property name="text">
-                     <string>外箱结束 ICCID：</string>
+                     <string>外箱结束条码：</string>
                     </property>
                    </widget>
                   </item>
@@ -771,7 +725,7 @@
                      </font>
                     </property>
                     <property name="text">
-                     <string>内盒起始或结束 ICCID：</string>
+                     <string>内盒起始或结束条码：</string>
                     </property>
                    </widget>
                   </item>
@@ -1105,6 +1059,36 @@
                </layout>
               </item>
               <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_26" stretch="3,7">
+                <item>
+                 <widget class="QLabel" name="label_9">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>12</pointsize>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>条码模式：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QComboBox" name="barcode_mode_combo_box">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>12</pointsize>
+                   </font>
+                  </property>
+                  <property name="placeholderText">
+                   <string>请选择</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
                <spacer name="verticalSpacer">
                 <property name="orientation">
                  <enum>Qt::Vertical</enum>
@@ -1223,7 +1207,7 @@
                 <item>
                  <widget class="QComboBox" name="selected_combo_box">
                   <property name="currentText">
-                   <string/>
+                   <string>请选择</string>
                   </property>
                   <property name="placeholderText">
                    <string>请选择</string>
@@ -1295,9 +1279,24 @@
      <x>0</x>
      <y>0</y>
      <width>1168</width>
-     <height>23</height>
+     <height>22</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuLanguage">
+    <property name="title">
+     <string>User</string>
+    </property>
+    <addaction name="switch_user_action"/>
+   </widget>
+   <widget class="QMenu" name="menuLanguage_2">
+    <property name="title">
+     <string>Language</string>
+    </property>
+    <addaction name="chinese_action"/>
+    <addaction name="english_action"/>
+   </widget>
+   <addaction name="menuLanguage"/>
+   <addaction name="menuLanguage_2"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="admin_action">
@@ -1313,6 +1312,26 @@
   <action name="actionsdf">
    <property name="text">
     <string>订单管理</string>
+   </property>
+  </action>
+  <action name="switch_user_action">
+   <property name="text">
+    <string>Switch User</string>
+   </property>
+  </action>
+  <action name="actionEnglish">
+   <property name="text">
+    <string>English</string>
+   </property>
+  </action>
+  <action name="chinese_action">
+   <property name="text">
+    <string>Chinese</string>
+   </property>
+  </action>
+  <action name="english_action">
+   <property name="text">
+    <string>English</string>
    </property>
   </action>
  </widget>

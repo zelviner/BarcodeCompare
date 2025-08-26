@@ -1,20 +1,22 @@
 #pragma once
 
-#include <QString>
-#include <QStringList>
-#include <QVector>
+#include <qstring>
+#include <qstringlist>
+#include <qvector>
+#include <qvector>
 
 class User {
 
   public:
     // 枚举
     enum Role { SuperAdmin, Admin, OrdinaryUser };
-    static const char *role_[3];
+    static const QVector<QString> role_;
 
     /// @brief 用户信息结构体
     struct UserInfo {
         QString name;
         QString password;
+        QString language;
         Role    role;
     };
 
@@ -58,6 +60,9 @@ class User {
 
     /// @brief 更新用户
     bool update(const QString user_name, const UserInfo &user_info);
+
+    /// @brief 设置当前用户语言
+    bool language(const QString &language);
 
   private:
     /// @brief 初始化数据文件

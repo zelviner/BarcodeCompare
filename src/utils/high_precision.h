@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QString>
+#include <qstring>
 
 /// @brief 高精度运算
 class HighPrecision {

@@ -1,12 +1,16 @@
 #pragma once
 
-#include <QString>
-#include <QStringList>
-#include <QVector>
+#include <qstring>
+#include <qstringlist>
+#include <qvector>
 
 class Order {
 
   public:
+    // 枚举
+    enum Mode { FirstAndEnd, First };
+    static const QVector<QString> mode_;
+
     struct OrderInfo {
         QString order_name;             // 订单名称
         int     box_count;              // 每盒卡片数量
@@ -20,11 +24,13 @@ class Order {
         int     card_end_check_num;     // 卡片结束校验位数
         int     box_scanned_num;        // 已扫描内盒数量
         int     carton_scanned_num;     // 已扫描外箱数量
+        Mode    barcode_mode;           // 条码模式
         QString create_time;            // 创建时间
     };
 
     typedef QVector<Order::OrderInfo> OrderVector;
 
+  public:
     Order(QString filename = "data/order.json");
     ~Order();
 
@@ -51,6 +57,12 @@ class Order {
     /// @brief 删除订单
     /// @param order_name 订单名称
     bool remove(const QString &order_name);
+
+    /// @brief 清空已扫描内盒数量
+    bool clearBoxScannedNum();
+
+    /// @brief 清空已扫描外箱数量
+    bool clearCartonScannedNum();
 
     /// @brief 清空订单
     bool clear();

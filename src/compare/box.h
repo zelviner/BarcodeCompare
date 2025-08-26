@@ -1,15 +1,17 @@
 #pragma once
 
-#include <QString>
+#include "data/order.h"
+#include <memory>
+#include <qstring>
 
 class Box {
 
   public:
     struct BoxInfo {
-        QString start_iccid;               // 内盒起始 ICCID
-        QString end_iccid;                 // 内盒结束 ICCID
-        QString start_card_iccid;          // 首卡 ICCID
-        QString end_card_iccid;            // 尾卡 ICCID
+        QString start_barcode;             // 内盒起始条码
+        QString end_barcode;               // 内盒结束条码
+        QString start_card_barcode;        // 首卡条码
+        QString end_card_barcode;          // 尾卡条码
         int     inner_box_start_check_num; // 内盒起始校验位
         int     inner_box_end_check_num;   // 内盒结束校验位
         int     card_start_check_num;      // 首卡校验位
@@ -17,7 +19,7 @@ class Box {
         int     scanned_num;               // 已扫描数量
     };
 
-    Box(BoxInfo *inner_box_info);
+    Box(const std::shared_ptr<Order::OrderInfo> &order_info, const std::shared_ptr<BoxInfo> &box_info);
 
     ~Box();
 
@@ -26,5 +28,6 @@ class Box {
     bool compare(QString &error);
 
   private:
-    BoxInfo *box_info_;
+    std::shared_ptr<BoxInfo>          box_info_;
+    std::shared_ptr<Order::OrderInfo> order_info_;
 };

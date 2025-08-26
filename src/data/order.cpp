@@ -1,10 +1,14 @@
 #include "order.h"
 
-#include <QFile>
-#include <QJsonArray>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonValue>
+#include <qfile>
+#include <qjsonarray>
+#include <qjsondocument>
+#include <qjsonobject>
+#include <qjsonvalue>
+#include <qobject.h>
+#include <qvector>
+
+const QVector<QString> Order::mode_ = {QObject::tr("起始条码和结束条码"), QObject::tr("仅有起始条码")};
 
 Order::Order(QString filename)
     : filename_(filename) {
@@ -55,6 +59,25 @@ bool Order::remove(const QString &order_name) {
         }
     }
 
+    return save();
+}
+
+bool Order::clearBoxScannedNum() {
+    for (auto &order : orders_) {
+        if (order.order_name == current_order_.order_name) {
+            order.box_scanned_num = 0;
+        }
+    }
+
+    return save();
+}
+
+bool Order::clearCartonScannedNum() {
+    for (auto &order : orders_) {
+        if (order.order_name == current_order_.order_name) {
+            order.carton_scanned_num = 0;
+        }
+    }
     return save();
 }
 
@@ -149,6 +172,7 @@ bool Order::load() {
         order_info.card_end_check_num     = order_obj["card_end_check_num"].toInt();
         order_info.box_scanned_num        = order_obj["box_scanned_num"].toInt();
         order_info.carton_scanned_num     = order_obj["carton_scanned_num"].toInt();
+        order_info.barcode_mode           = static_cast<Mode>(order_obj["barcode_mode"].toInt());
         orders_.push_back(order_info);
     }
 
@@ -165,6 +189,7 @@ bool Order::save() {
         order_obj.insert("box_count", order.box_count);
         order_obj.insert("check_format", order.check_format);
         order_obj.insert("create_time", order.create_time);
+        order_obj.insert("barcode_mode", static_cast<int>(order.barcode_mode));
         order_obj.insert("carton_start_check_num", order.carton_start_check_num);
         order_obj.insert("carton_end_check_num", order.carton_end_check_num);
         order_obj.insert("box_start_check_num", order.box_start_check_num);

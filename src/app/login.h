@@ -2,7 +2,7 @@
 
 #include "data/user.h"
 
-#include <QMainWindow>
+#include <qmainwindow>
 #include <ui_login.h>
 
 class Login : public QMainWindow {

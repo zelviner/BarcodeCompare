@@ -2,10 +2,10 @@
 
 #include "main_window.h"
 
-#include <QCompleter>
-#include <QDir>
-#include <QFile>
-#include <QMessageBox>
+#include <qcompleter>
+#include <qdir>
+#include <qfile>
+#include <qmessagebox>
 
 Login::Login(QMainWindow *parent)
     : QMainWindow(parent)
@@ -30,7 +30,7 @@ Login::~Login() {
 
 void Login::initWindow() {
     // 设置窗口标题
-    setWindowTitle("条码比对系统");
+    setWindowTitle(tr("Barcode Compare System"));
 }
 
 void Login::initUI() {
@@ -49,7 +49,7 @@ void Login::initUI() {
     loadUserInfo();
 
     ui_->user_combo_box->setEditable(true);
-    ui_->user_combo_box->lineEdit()->setPlaceholderText("请输入用户名");
+    ui_->user_combo_box->lineEdit()->setPlaceholderText(tr("请输入用户名"));
     ui_->user_combo_box->lineEdit()->setAlignment(Qt::AlignCenter);
 
     // 下拉框模糊匹配
@@ -94,7 +94,7 @@ void Login::loginBtnClicked() {
         mainWindow->show();
     } else {
         // 登录失败
-        QMessageBox::warning(this, "登录失败", "用户名或密码错误");
+        QMessageBox::warning(this, tr("登录失败"), tr("用户名或密码错误"));
     }
 }
 
