@@ -1,17 +1,22 @@
 #pragma once
 
-#include "compare/carton.h"
-#include "data/order.h"
-#include "data/user.h"
+#include "box_widget.h"
+#include "data/mode_dao.h"
+#include "data/order_dao.h"
+#include "data/role_dao.h"
+#include "data/user_dao.h"
 #include "ui_main_window.h"
 
+#include <SQLiteCpp/Database.h>
+#include <memory>
 #include <qmainwindow>
 #include <qtranslator>
+#include <vector>
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
   public:
-    MainWindow(User *user, QMainWindow *parent = nullptr);
+    MainWindow(const std::shared_ptr<SQLite::Database> &db, const std::shared_ptr<UserDao> &user_dao, QMainWindow *parent = nullptr);
     ~MainWindow();
 
   private:
@@ -20,6 +25,9 @@ class MainWindow : public QMainWindow {
 
     /// @brief 初始化 UI
     void initUi();
+
+    /// @brief 初始化数据库
+    void initDao();
 
     /// @brief 切换中文动作触发
     void chineseActionTriggered();
@@ -54,8 +62,8 @@ class MainWindow : public QMainWindow {
     /// @brief 内盒选择订单
     void boxSelectOrder();
 
-    /// @brief 清空内盒已扫码数量按钮点击事件
-    void clearBoxScannedNumBtnClicked();
+    /// @brief 选择内盒数据状态
+    void selectBoxDatasStatus();
 
     /// @brief 获取内盒结束条码
     void toBoxEndBarcode();
@@ -72,8 +80,17 @@ class MainWindow : public QMainWindow {
     /// @brief 刷新内盒比对 Tab
     void refreshBoxTab();
 
+    /// @brief 刷新内盒表格
+    void refreshBoxTable(const std::string &order_name, const int &status);
+
     /// @brief 外箱选择订单
     void cartonSelectOrder();
+
+    /// @brief 显示选中外箱
+    void showSelectedCarton();
+
+    /// @brief 选择外箱数据状态
+    void selectCartonDatasStatus();
 
     /// @brief 获取外箱结束条码
     void toCartonEndBarcode();
@@ -87,8 +104,17 @@ class MainWindow : public QMainWindow {
     /// @brief 刷新外箱比对 Tab
     void refreshCartonTab();
 
-    /// @brief 复位按钮点击事件
-    void cartonResetBtnClicked();
+    /// @brief 刷新外箱表格
+    void refreshCartonTable(const std::string &order_name, const int &status);
+
+    /// @brief 刷新内盒比对组
+    void refreshBoxCompareGroup(const int &cols, const std::string &selected_carton_start_barcode);
+
+    /// @brief 选择内盒文件按钮点击事件
+    void selectBoxFileBtnClicked();
+
+    /// @brief 选择外箱文件按钮点击事件
+    void selectCartonFileBtnClicked();
 
     /// @brief 添加订单按钮点击事件
     void addOrderBtnClicked();
@@ -126,18 +152,21 @@ class MainWindow : public QMainWindow {
     ////  @brief 刷新用户管理 Tab
     void refreshUserTab();
 
+  private:
+    void scrollToValue(QTableWidget *table, const QString &value, bool selected = true);
+
     /// @brief 记录日志
     bool log(const QString &filename, const QString &msg);
 
-  private:
-    Ui_MainWindow *ui_;
-    User          *user_;
-    Order         *order_;
-    Carton        *carton_;
-    QTranslator    translator_;
+    void clearBoxCompareGroupLayout(QLayout *layout);
 
-    QString carton_start_barcode_;
-    QString carton_end_barcode_;
-    int     box_row_index_;
-    int     carton_row_index_;
+  private:
+    Ui_MainWindow                    *ui_;
+    std::shared_ptr<RoleDao>          role_dao_;
+    std::shared_ptr<UserDao>          user_dao_;
+    std::shared_ptr<ModeDao>          mode_dao_;
+    std::shared_ptr<OrderDao>         order_dao_;
+    QTranslator                       translator_;
+    std::shared_ptr<SQLite::Database> db_;
+    std::vector<BoxWidget *>          box_widgets_;
 };

@@ -2,9 +2,8 @@
 
 #include <string>
 
-struct User {
+struct Role {
     int         id;
     std::string name;
-    std::string password;
-    int         role_id;
+    std::string description;
 };

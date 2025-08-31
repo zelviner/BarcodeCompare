@@ -1,7 +1,8 @@
 #pragma once
 
-#include "data/user.h"
+#include "data/user_dao.h"
 
+#include <memory>
 #include <qmainwindow>
 #include <ui_login.h>
 
@@ -22,6 +23,8 @@ class Login : public QMainWindow {
     /// @brief 初始化信号槽
     void initSignalSlot();
 
+    void initDatabase();
+
     /// @brief 加载用户信息
     void loadUserInfo();
 
@@ -36,6 +39,7 @@ class Login : public QMainWindow {
     QString createFolder(const QString &folder_path);
 
   private:
-    Ui_Login *ui_;
-    User     *user_;
+    Ui_Login                         *ui_;
+    std::shared_ptr<SQLite::Database> db_;
+    std::shared_ptr<UserDao>          user_dao_;
 };

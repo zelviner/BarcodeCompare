@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1168</width>
-    <height>674</height>
+    <width>1193</width>
+    <height>721</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <layout class="QHBoxLayout" name="horizontalLayout_2">
     <item>
      <widget class="QWidget" name="widget" native="true">
-      <layout class="QHBoxLayout" name="horizontalLayout">
+      <layout class="QVBoxLayout" name="verticalLayout_8">
        <item>
         <widget class="QTabWidget" name="tabWidget">
          <property name="font">
@@ -50,7 +50,7 @@
                <property name="alignment">
                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
                </property>
-               <layout class="QVBoxLayout" name="verticalLayout_10">
+               <layout class="QVBoxLayout" name="verticalLayout_6">
                 <item>
                  <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="0,1,9">
                   <item>
@@ -101,7 +101,7 @@
                  </layout>
                 </item>
                 <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_12" stretch="0,1,7,2">
+                 <layout class="QHBoxLayout" name="horizontalLayout_12" stretch="0,1,9">
                   <item>
                    <spacer name="horizontalSpacer_3">
                     <property name="orientation">
@@ -124,36 +124,17 @@
                      </font>
                     </property>
                     <property name="text">
-                     <string>已扫描：</string>
+                     <string>内盒列表：</string>
                     </property>
                    </widget>
                   </item>
                   <item>
-                   <widget class="QLabel" name="box_scanned_num_label">
+                   <widget class="QComboBox" name="box_datas_status_comb_box">
                     <property name="font">
                      <font>
                       <family>微软雅黑</family>
                       <pointsize>12</pointsize>
                      </font>
-                    </property>
-                    <property name="text">
-                     <string>1</string>
-                    </property>
-                    <property name="alignment">
-                     <set>Qt::AlignCenter</set>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="clear_box_scanned_num_ptn">
-                    <property name="font">
-                     <font>
-                      <family>微软雅黑</family>
-                      <pointsize>12</pointsize>
-                     </font>
-                    </property>
-                    <property name="text">
-                     <string>重新计数</string>
                     </property>
                    </widget>
                   </item>
@@ -492,7 +473,7 @@
                  </layout>
                 </item>
                 <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_18" stretch="0,1,6,3">
+                 <layout class="QHBoxLayout" name="horizontalLayout_18" stretch="0,0,9">
                   <item>
                    <spacer name="horizontalSpacer_24">
                     <property name="orientation">
@@ -515,36 +496,17 @@
                      </font>
                     </property>
                     <property name="text">
-                     <string>已扫描：</string>
+                     <string>外箱列表：</string>
                     </property>
                    </widget>
                   </item>
                   <item>
-                   <widget class="QLabel" name="carton_scanned_num_label">
+                   <widget class="QComboBox" name="carton_datas_status_comb_box">
                     <property name="font">
                      <font>
                       <family>微软雅黑</family>
                       <pointsize>12</pointsize>
                      </font>
-                    </property>
-                    <property name="text">
-                     <string>500</string>
-                    </property>
-                    <property name="alignment">
-                     <set>Qt::AlignCenter</set>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="reset_btn">
-                    <property name="font">
-                     <font>
-                      <family>微软雅黑</family>
-                      <pointsize>10</pointsize>
-                     </font>
-                    </property>
-                    <property name="text">
-                     <string>复位</string>
                     </property>
                    </widget>
                   </item>
@@ -752,25 +714,42 @@
             </layout>
            </item>
            <item>
-            <widget class="QGroupBox" name="groupBox_10">
-             <property name="title">
-              <string>比对结果</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
-             </property>
-             <property name="flat">
-              <bool>true</bool>
-             </property>
-             <property name="checkable">
-              <bool>false</bool>
-             </property>
-             <layout class="QHBoxLayout" name="horizontalLayout_20">
-              <item>
-               <widget class="QTableWidget" name="carton_table"/>
-              </item>
-             </layout>
-            </widget>
+            <layout class="QHBoxLayout" name="horizontalLayout_28" stretch="8,2">
+             <item>
+              <widget class="QGroupBox" name="groupBox_10">
+               <property name="title">
+                <string>比对结果</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+               <property name="flat">
+                <bool>true</bool>
+               </property>
+               <property name="checkable">
+                <bool>false</bool>
+               </property>
+               <layout class="QHBoxLayout" name="horizontalLayout_20">
+                <item>
+                 <widget class="QTableWidget" name="carton_table"/>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QGroupBox" name="box_compare_group_box">
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                 <pointsize>22</pointsize>
+                </font>
+               </property>
+               <property name="title">
+                <string/>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
           </layout>
          </widget>
@@ -778,363 +757,415 @@
           <attribute name="title">
            <string>订单管理</string>
           </attribute>
-          <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="3,0">
+          <layout class="QHBoxLayout" name="horizontalLayout_30">
            <item>
-            <widget class="QGroupBox" name="groupBox_5">
-             <property name="font">
-              <font>
-               <family>微软雅黑</family>
-               <pointsize>20</pointsize>
-              </font>
-             </property>
-             <property name="title">
-              <string>订单信息</string>
-             </property>
-             <layout class="QHBoxLayout" name="horizontalLayout_14">
-              <item>
-               <widget class="QTableWidget" name="order_table"/>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QGroupBox" name="groupBox_4">
-             <property name="font">
-              <font>
-               <family>微软雅黑</family>
-               <pointsize>20</pointsize>
-              </font>
-             </property>
-             <property name="title">
-              <string>订单配置</string>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout_5">
-              <item>
-               <widget class="QLineEdit" name="order_name_line">
-                <property name="font">
-                 <font>
-                  <family>微软雅黑</family>
-                  <pointsize>18</pointsize>
-                 </font>
-                </property>
-                <property name="placeholderText">
-                 <string>订单号</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="box_count_line">
-                <property name="font">
-                 <font>
-                  <family>微软雅黑</family>
-                  <pointsize>18</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string/>
-                </property>
-                <property name="placeholderText">
-                 <string>每盒卡数量</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="carton_count_line">
-                <property name="font">
-                 <font>
-                  <family>微软雅黑</family>
-                  <pointsize>18</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string/>
-                </property>
-                <property name="placeholderText">
-                 <string>每箱卡数量</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_11">
+            <layout class="QHBoxLayout" name="horizontalLayout" stretch="7,3">
+             <item>
+              <widget class="QGroupBox" name="groupBox_5">
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                 <pointsize>20</pointsize>
+                </font>
+               </property>
+               <property name="title">
+                <string>订单信息</string>
+               </property>
+               <layout class="QHBoxLayout" name="horizontalLayout_14">
                 <item>
-                 <widget class="QLabel" name="label_20">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>12</pointsize>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>卡片：</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSpinBox" name="card_start_spin_box">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>12</pointsize>
-                   </font>
-                  </property>
-                  <property name="suffix">
-                   <string> 位</string>
-                  </property>
-                  <property name="value">
-                   <number>1</number>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="label_21">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>12</pointsize>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>—</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignCenter</set>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSpinBox" name="card_end_spin_box">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>12</pointsize>
-                   </font>
-                  </property>
-                  <property name="suffix">
-                   <string> 位</string>
-                  </property>
-                  <property name="prefix">
-                   <string/>
-                  </property>
-                  <property name="value">
-                   <number>19</number>
-                  </property>
-                 </widget>
+                 <widget class="QTableWidget" name="order_table"/>
                 </item>
                </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_5">
+              </widget>
+             </item>
+             <item>
+              <widget class="QGroupBox" name="groupBox_4">
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                 <pointsize>20</pointsize>
+                </font>
+               </property>
+               <property name="title">
+                <string>订单配置</string>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_5">
                 <item>
-                 <widget class="QLabel" name="label_15">
+                 <widget class="QLineEdit" name="order_name_line">
                   <property name="font">
                    <font>
                     <family>微软雅黑</family>
-                    <pointsize>12</pointsize>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>内盒：</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSpinBox" name="box_start_spin_box">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>12</pointsize>
-                   </font>
-                  </property>
-                  <property name="suffix">
-                   <string> 位</string>
-                  </property>
-                  <property name="value">
-                   <number>1</number>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="label_2">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>12</pointsize>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>—</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignCenter</set>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSpinBox" name="box_end_spin_box">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>12</pointsize>
-                   </font>
-                  </property>
-                  <property name="suffix">
-                   <string> 位</string>
-                  </property>
-                  <property name="prefix">
-                   <string/>
-                  </property>
-                  <property name="value">
-                   <number>19</number>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_24">
-                <item>
-                 <widget class="QLabel" name="label_19">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>12</pointsize>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>外箱：</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSpinBox" name="carton_start_spin_box">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>12</pointsize>
-                   </font>
-                  </property>
-                  <property name="suffix">
-                   <string> 位</string>
-                  </property>
-                  <property name="value">
-                   <number>1</number>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="label_3">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>12</pointsize>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>—</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignCenter</set>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSpinBox" name="carton_end_spin_box">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>12</pointsize>
-                   </font>
-                  </property>
-                  <property name="suffix">
-                   <string> 位</string>
-                  </property>
-                  <property name="prefix">
-                   <string/>
-                  </property>
-                  <property name="value">
-                   <number>19</number>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_26" stretch="3,7">
-                <item>
-                 <widget class="QLabel" name="label_9">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>12</pointsize>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>条码模式：</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QComboBox" name="barcode_mode_combo_box">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>12</pointsize>
+                    <pointsize>18</pointsize>
                    </font>
                   </property>
                   <property name="placeholderText">
-                   <string>请选择</string>
+                   <string>订单号</string>
                   </property>
                  </widget>
+                </item>
+                <item>
+                 <layout class="QHBoxLayout" name="horizontalLayout_11">
+                  <item>
+                   <widget class="QLabel" name="label_20">
+                    <property name="font">
+                     <font>
+                      <family>微软雅黑</family>
+                      <pointsize>12</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>卡片：</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QSpinBox" name="card_start_spin_box">
+                    <property name="font">
+                     <font>
+                      <family>微软雅黑</family>
+                      <pointsize>12</pointsize>
+                     </font>
+                    </property>
+                    <property name="suffix">
+                     <string> 位</string>
+                    </property>
+                    <property name="value">
+                     <number>1</number>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="label_21">
+                    <property name="font">
+                     <font>
+                      <family>微软雅黑</family>
+                      <pointsize>12</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>—</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignCenter</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QSpinBox" name="card_end_spin_box">
+                    <property name="font">
+                     <font>
+                      <family>微软雅黑</family>
+                      <pointsize>12</pointsize>
+                     </font>
+                    </property>
+                    <property name="suffix">
+                     <string> 位</string>
+                    </property>
+                    <property name="prefix">
+                     <string/>
+                    </property>
+                    <property name="value">
+                     <number>19</number>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <layout class="QHBoxLayout" name="horizontalLayout_5">
+                  <item>
+                   <widget class="QLabel" name="label_15">
+                    <property name="font">
+                     <font>
+                      <family>微软雅黑</family>
+                      <pointsize>12</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>内盒：</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QSpinBox" name="box_start_spin_box">
+                    <property name="font">
+                     <font>
+                      <family>微软雅黑</family>
+                      <pointsize>12</pointsize>
+                     </font>
+                    </property>
+                    <property name="suffix">
+                     <string> 位</string>
+                    </property>
+                    <property name="value">
+                     <number>1</number>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="label_2">
+                    <property name="font">
+                     <font>
+                      <family>微软雅黑</family>
+                      <pointsize>12</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>—</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignCenter</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QSpinBox" name="box_end_spin_box">
+                    <property name="font">
+                     <font>
+                      <family>微软雅黑</family>
+                      <pointsize>12</pointsize>
+                     </font>
+                    </property>
+                    <property name="suffix">
+                     <string> 位</string>
+                    </property>
+                    <property name="prefix">
+                     <string/>
+                    </property>
+                    <property name="value">
+                     <number>19</number>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <layout class="QHBoxLayout" name="horizontalLayout_24">
+                  <item>
+                   <widget class="QLabel" name="label_19">
+                    <property name="font">
+                     <font>
+                      <family>微软雅黑</family>
+                      <pointsize>12</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>外箱：</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QSpinBox" name="carton_start_spin_box">
+                    <property name="font">
+                     <font>
+                      <family>微软雅黑</family>
+                      <pointsize>12</pointsize>
+                     </font>
+                    </property>
+                    <property name="suffix">
+                     <string> 位</string>
+                    </property>
+                    <property name="value">
+                     <number>1</number>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="label_3">
+                    <property name="font">
+                     <font>
+                      <family>微软雅黑</family>
+                      <pointsize>12</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>—</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignCenter</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QSpinBox" name="carton_end_spin_box">
+                    <property name="font">
+                     <font>
+                      <family>微软雅黑</family>
+                      <pointsize>12</pointsize>
+                     </font>
+                    </property>
+                    <property name="suffix">
+                     <string> 位</string>
+                    </property>
+                    <property name="prefix">
+                     <string/>
+                    </property>
+                    <property name="value">
+                     <number>19</number>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <layout class="QHBoxLayout" name="horizontalLayout_26" stretch="3,7">
+                  <item>
+                   <widget class="QLabel" name="label_9">
+                    <property name="font">
+                     <font>
+                      <family>微软雅黑</family>
+                      <pointsize>12</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>条码模式：</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QComboBox" name="barcode_mode_combo_box">
+                    <property name="font">
+                     <font>
+                      <family>微软雅黑</family>
+                      <pointsize>12</pointsize>
+                     </font>
+                    </property>
+                    <property name="placeholderText">
+                     <string>请选择</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <layout class="QHBoxLayout" name="horizontalLayout_27" stretch="4,4,1">
+                  <item>
+                   <widget class="QLabel" name="label_14">
+                    <property name="font">
+                     <font>
+                      <family>微软雅黑</family>
+                      <pointsize>12</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>内盒标签文件：</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLineEdit" name="box_file_path_line">
+                    <property name="font">
+                     <font>
+                      <family>微软雅黑</family>
+                      <pointsize>12</pointsize>
+                     </font>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="select_box_file_ptn">
+                    <property name="font">
+                     <font>
+                      <family>微软雅黑</family>
+                      <pointsize>12</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>浏览</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <layout class="QHBoxLayout" name="horizontalLayout_3">
+                  <item>
+                   <widget class="QLabel" name="label_22">
+                    <property name="font">
+                     <font>
+                      <family>微软雅黑</family>
+                      <pointsize>12</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>外箱标签文件：</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLineEdit" name="carton_file_path_line">
+                    <property name="font">
+                     <font>
+                      <family>微软雅黑</family>
+                      <pointsize>12</pointsize>
+                     </font>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="select_carton_file_ptn">
+                    <property name="font">
+                     <font>
+                      <family>微软雅黑</family>
+                      <pointsize>12</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>浏览</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <spacer name="verticalSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>40</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <layout class="QGridLayout" name="gridLayout">
+                  <item row="0" column="0">
+                   <widget class="QPushButton" name="add_order_btn">
+                    <property name="text">
+                     <string>添加</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="1">
+                   <widget class="QPushButton" name="update_order_btn">
+                    <property name="text">
+                     <string>修改</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="0">
+                   <widget class="QPushButton" name="remove_order_btn">
+                    <property name="text">
+                     <string>删除</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="1">
+                   <widget class="QPushButton" name="clear_order_btn">
+                    <property name="text">
+                     <string>清空</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </item>
                </layout>
-              </item>
-              <item>
-               <spacer name="verticalSpacer">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>20</width>
-                  <height>40</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item>
-               <layout class="QGridLayout" name="gridLayout">
-                <item row="0" column="0">
-                 <widget class="QPushButton" name="add_order_btn">
-                  <property name="text">
-                   <string>添加</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="1">
-                 <widget class="QPushButton" name="update_order_btn">
-                  <property name="text">
-                   <string>修改</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="0">
-                 <widget class="QPushButton" name="remove_order_btn">
-                  <property name="text">
-                   <string>删除</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="1">
-                 <widget class="QPushButton" name="clear_order_btn">
-                  <property name="text">
-                   <string>清空</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-             </layout>
-            </widget>
+              </widget>
+             </item>
+            </layout>
            </item>
           </layout>
          </widget>
@@ -1142,39 +1173,39 @@
           <attribute name="title">
            <string>用户管理</string>
           </attribute>
-          <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="3,1">
+          <layout class="QHBoxLayout" name="horizontalLayout_29">
            <item>
-            <widget class="QGroupBox" name="groupBox_2">
-             <property name="font">
-              <font>
-               <family>微软雅黑</family>
-               <pointsize>20</pointsize>
-              </font>
-             </property>
-             <property name="title">
-              <string>用户信息</string>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout_7">
-              <item>
-               <widget class="QTableWidget" name="user_table"/>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QGroupBox" name="groupBox_3">
-             <property name="font">
-              <font>
-               <family>微软雅黑</family>
-               <pointsize>20</pointsize>
-              </font>
-             </property>
-             <property name="title">
-              <string>用户配置</string>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout_8">
-              <item>
-               <layout class="QVBoxLayout" name="verticalLayout_6">
+            <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="7,3">
+             <item>
+              <widget class="QGroupBox" name="groupBox_2">
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                 <pointsize>20</pointsize>
+                </font>
+               </property>
+               <property name="title">
+                <string>用户信息</string>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_7">
+                <item>
+                 <widget class="QTableWidget" name="user_table"/>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QGroupBox" name="groupBox_3">
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                 <pointsize>20</pointsize>
+                </font>
+               </property>
+               <property name="title">
+                <string>用户配置</string>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout">
                 <item>
                  <widget class="QLineEdit" name="selected_user_edit">
                   <property name="font">
@@ -1222,47 +1253,47 @@
                   <property name="sizeHint" stdset="0">
                    <size>
                     <width>20</width>
-                    <height>40</height>
+                    <height>279</height>
                    </size>
                   </property>
                  </spacer>
                 </item>
+                <item>
+                 <layout class="QGridLayout" name="gridLayout_2">
+                  <item row="0" column="0">
+                   <widget class="QPushButton" name="add_user_btn">
+                    <property name="text">
+                     <string>添加</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="1">
+                   <widget class="QPushButton" name="update_user_btn">
+                    <property name="text">
+                     <string>修改</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="0">
+                   <widget class="QPushButton" name="remove_user_btn">
+                    <property name="text">
+                     <string>删除</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="1">
+                   <widget class="QPushButton" name="clear_user_btn">
+                    <property name="text">
+                     <string>清空</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
                </layout>
-              </item>
-              <item>
-               <layout class="QGridLayout" name="gridLayout_2">
-                <item row="0" column="0">
-                 <widget class="QPushButton" name="add_user_btn">
-                  <property name="text">
-                   <string>添加</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="1">
-                 <widget class="QPushButton" name="update_user_btn">
-                  <property name="text">
-                   <string>修改</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="0">
-                 <widget class="QPushButton" name="remove_user_btn">
-                  <property name="text">
-                   <string>删除</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="1">
-                 <widget class="QPushButton" name="clear_user_btn">
-                  <property name="text">
-                   <string>清空</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-             </layout>
-            </widget>
+              </widget>
+             </item>
+            </layout>
            </item>
           </layout>
          </widget>
@@ -1278,7 +1309,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1168</width>
+     <width>1193</width>
      <height>22</height>
     </rect>
    </property>

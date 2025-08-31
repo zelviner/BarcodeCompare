@@ -1,0 +1,60 @@
+#include "box_widget.h"
+#include <qboxlayout.h>
+#include <qpixmap.h>
+
+// BoxWidget::BoxWidget(QWidget *parent)
+//     : QWidget(parent) {
+//     label_ = new QLabel(this);
+//     label_->setAlignment(Qt::AlignCenter);
+
+//     QVBoxLayout *layout = new QVBoxLayout(this);
+//     layout->addWidget(label_);
+//     layout->setContentsMargins(0, 0, 0, 0);
+//     layout->setSpacing(0);
+//     setFixedSize(34, 34); // 控制整个小格子大小
+//     label_->setFixedSize(32, 32);
+
+//     // 默认显示未扫描内盒
+//     unscanned();
+// }
+
+// BoxWidget::~BoxWidget() {}
+
+// void BoxWidget::unscanned() { label_->setPixmap(QPixmap(":/image/box-unscanned.png").scaled(32, 32, Qt::KeepAspectRatio, Qt::SmoothTransformation)); }
+
+// void BoxWidget::scanned() { label_->setPixmap(QPixmap(":/image/box-scanned.png").scaled(32, 32, Qt::KeepAspectRatio, Qt::SmoothTransformation)); }
+
+BoxWidget::BoxWidget(const int &id, QWidget *parent)
+    : QWidget(parent)
+    , id_(id) {
+    // 图片 label
+    label_ = new QLabel(this);
+    label_->setAlignment(Qt::AlignCenter);
+    label_->setFixedSize(32, 32);
+    label_->setScaledContents(true); // 自动缩放到固定大小
+
+    // 文字 label
+    text_label_ = new QLabel(this);
+    text_label_->setAlignment(Qt::AlignCenter);
+    text_label_->setText(tr("内盒:%1").arg(id));
+    text_label_->setStyleSheet("font-size:10px;"); // 字体大小可调整
+
+    // 布局
+    QVBoxLayout *layout = new QVBoxLayout(this);
+    layout->addWidget(label_);
+    layout->addWidget(text_label_);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(2); // 图片和文字的间距
+    setLayout(layout);
+
+    // 默认显示未扫描内盒
+    unscanned();
+}
+
+BoxWidget::~BoxWidget() {}
+
+void BoxWidget::unscanned() { label_->setPixmap(QPixmap(":/image/box-unscanned.png")); }
+
+void BoxWidget::scanned() { label_->setPixmap(QPixmap(":/image/box-scanned.png")); }
+
+int BoxWidget::id() { return id_; }

@@ -1,7 +1,9 @@
 #include "login.h"
 
+#include "data/user_dao.h"
 #include "main_window.h"
 
+#include <memory>
 #include <qcompleter>
 #include <qdir>
 #include <qfile>
@@ -9,24 +11,19 @@
 
 Login::Login(QMainWindow *parent)
     : QMainWindow(parent)
-    , ui_(new Ui_Login)
-    , user_(new User) {
+    , ui_(new Ui_Login) {
     ui_->setupUi(this);
 
     initWindow();
+
+    initDatabase();
 
     initUI();
 
     initSignalSlot();
 }
 
-Login::~Login() {
-    delete ui_;
-    if (user_ != nullptr) {
-        delete user_;
-        user_ = nullptr;
-    }
-}
+Login::~Login() { delete ui_; }
 
 void Login::initWindow() {
     // 设置窗口标题
@@ -53,12 +50,19 @@ void Login::initUI() {
     ui_->user_combo_box->lineEdit()->setAlignment(Qt::AlignCenter);
 
     // 下拉框模糊匹配
-    QCompleter *completer = new QCompleter(user_->nameList(), this);
+    QStringList user_list;
+    for (auto &user : user_dao_->all()) {
+        user_list.append(QString::fromStdString(user->name));
+    }
+
+    QCompleter *completer = new QCompleter(user_list, this);
     completer->setFilterMode(Qt::MatchContains);
     ui_->user_combo_box->setCompleter(completer);
 }
 
 void Login::initSignalSlot() {
+
+    connect(ui_->user_combo_box, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=]() { ui_->password_edit->setFocus(); });
 
     // 回车键
     connect(ui_->password_edit, &QLineEdit::returnPressed, this, &Login::loginBtnClicked);
@@ -70,9 +74,25 @@ void Login::initSignalSlot() {
     connect(ui_->exit_btn, &QPushButton::clicked, this, &Login::exitBtnClicked);
 }
 
+void Login::initDatabase() {
+    db_                 = std::make_shared<SQLite::Database>("data/barcode_compare.db", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+    auto box_data_db    = std::make_shared<SQLite::Database>("data/box_data.db", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+    auto carton_data_db = std::make_shared<SQLite::Database>("data/carton_data.db", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+    auto box_log_db     = std::make_shared<SQLite::Database>("data/box_log.db", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+    auto carton_log_db  = std::make_shared<SQLite::Database>("data/carton_log.db", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+
+    db_->exec("ATTACH DATABASE 'data/box_data.db' AS box_data;");
+    db_->exec("ATTACH DATABASE 'data/carton_data.db' AS carton_data;");
+    db_->exec("ATTACH DATABASE 'data/box_log.db' AS box_log;");
+    db_->exec("ATTACH DATABASE 'data/carton_log.db' AS carton_log;");
+
+    // role_dao_ = std::make_shared<RoleDao>(db_);
+    user_dao_ = std::make_shared<UserDao>(db_);
+}
+
 void Login::loadUserInfo() {
-    for (auto user : user_->users()) {
-        ui_->user_combo_box->addItem(user.name);
+    for (auto &user : user_dao_->all()) {
+        ui_->user_combo_box->addItem(QString::fromStdString(user->name));
     }
 
     ui_->user_combo_box->setCurrentIndex(-1);
@@ -81,16 +101,16 @@ void Login::loadUserInfo() {
 void Login::loginBtnClicked() {
 
     // 获取用户名和密码
-    QString input_name     = ui_->user_combo_box->currentText();
-    QString input_password = ui_->password_edit->text();
+    std::string entered_name     = ui_->user_combo_box->currentText().toStdString();
+    std::string entered_password = ui_->password_edit->text().toStdString();
 
     // 登录
-    if (user_->login(input_name, input_password)) {
+    if (user_dao_->login(entered_name, entered_password)) {
         // 登录成功, 隐藏登录界面
         this->hide();
 
         // 显示主界面
-        MainWindow *mainWindow = new MainWindow(user_);
+        MainWindow *mainWindow = new MainWindow(db_, user_dao_);
         mainWindow->show();
     } else {
         // 登录失败

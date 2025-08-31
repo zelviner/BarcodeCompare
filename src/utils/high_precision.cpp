@@ -1,5 +1,6 @@
 #include "high_precision.h"
 
+namespace utils {
 HighPrecision::HighPrecision() {}
 
 HighPrecision::~HighPrecision() {}
@@ -65,10 +66,9 @@ QString HighPrecision::mul(QString a, QString b) {
     for (int i = 0; i < len_a; i++) {
         int carry = 0;
         for (int j = 0; j < len_b; j++) {
-            int temp = (a[len_a - i - 1].toLatin1() - '0') * (b[len_b - j - 1].toLatin1() - '0') + carry +
-                (result[len - i - j - 1].toLatin1() - '0');
-            carry                   = temp / 10;
-            temp                    = temp % 10;
+            int temp = (a[len_a - i - 1].toLatin1() - '0') * (b[len_b - j - 1].toLatin1() - '0') + carry + (result[len - i - j - 1].toLatin1() - '0');
+            carry    = temp / 10;
+            temp     = temp % 10;
             result[len - i - j - 1] = temp + '0';
         }
         result[len - i - len_b - 1] = carry + '0';
@@ -131,3 +131,5 @@ bool HighPrecision::compare(QString a, QString b) {
     }
     return true;
 }
+
+} // namespace utils

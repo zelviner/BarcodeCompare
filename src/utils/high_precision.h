@@ -2,6 +2,8 @@
 
 #include <qstring>
 
+namespace utils {
+
 /// @brief 高精度运算
 class HighPrecision {
 
@@ -40,3 +42,5 @@ class HighPrecision {
     /// @return  bool    a > b 返回 true，否则返回 false
     bool compare(QString a, QString b);
 };
+
+} // namespace utils
