@@ -27,8 +27,12 @@ class OrderDao {
     /// @brief Get all orders from the database.
     std::vector<std::shared_ptr<Order>> all();
 
-    /// @brief Get an order by its id.
+    /// @brief Get an order by its id and name.
     std::shared_ptr<Order> get(const int &id);
+    std::shared_ptr<Order> get(const std::string &name);
+
+    /// @brief Check if an order with the given name exists in the database.
+    bool exists(const std::string &name);
 
     /// @brief Set the current order.
     bool currentOrder(const int &order_id);

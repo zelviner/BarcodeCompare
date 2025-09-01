@@ -33,6 +33,9 @@ class UserDao {
     /// @brief Get a user by id and return the user object
     std::shared_ptr<User> get(const int &id);
 
+    /// @brief Check if a user with the given name exists in the database.
+    bool exists(const std::string &name);
+
     /// @brief Get the current user object
     std::shared_ptr<User> currentUser();
 

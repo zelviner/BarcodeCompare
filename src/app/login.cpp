@@ -27,7 +27,7 @@ Login::~Login() { delete ui_; }
 
 void Login::initWindow() {
     // 设置窗口标题
-    setWindowTitle(tr("Barcode Compare System"));
+    setWindowTitle(tr("条码比对系统"));
 }
 
 void Login::initUI() {

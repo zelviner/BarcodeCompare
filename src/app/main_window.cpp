@@ -6,6 +6,7 @@
 #include "data/box_data.h"
 #include "data/box_data_dao.h"
 #include "data/carton_data_dao.h"
+#include "data/mode.h"
 #include "data/mode_dao.h"
 #include "data/role_dao.h"
 #include "login.h"
@@ -102,8 +103,12 @@ void MainWindow::initBoxTab() {
     completer->setFilterMode(Qt::MatchContains);
     ui_->box_order_name_combo->setCompleter(completer);
 
+    // 设置内盒数据状态下拉框内容
     QStringList box_data_status = {tr("全部"), tr("未扫描"), tr("已扫描")};
     ui_->box_datas_status_comb_box->addItems(box_data_status);
+    ui_->box_datas_status_comb_box->setEditable(true);
+    ui_->box_datas_status_comb_box->lineEdit()->setAlignment(Qt::AlignCenter);
+    ui_->box_datas_status_comb_box->lineEdit()->setReadOnly(true);
 
     QStringList box_header = {tr("内盒起始条码"), tr("内盒结束条码"), tr("首卡条码"), tr("尾卡条码")};
     initTable(ui_->box_table, box_header, box_header.size());
@@ -126,6 +131,9 @@ void MainWindow::initCartonTab() {
 
     QStringList carton_data_status = {tr("全部"), tr("未扫描"), tr("已扫描")};
     ui_->carton_datas_status_comb_box->addItems(carton_data_status);
+    ui_->carton_datas_status_comb_box->setEditable(true);
+    ui_->carton_datas_status_comb_box->lineEdit()->setAlignment(Qt::AlignCenter);
+    ui_->carton_datas_status_comb_box->lineEdit()->setReadOnly(true);
 
     QStringList carton_header = {tr("外箱起始条码"), tr("外箱结束条码"), tr("内盒起始或结束条码")};
     initTable(ui_->carton_table, carton_header, carton_header.size());
@@ -136,7 +144,7 @@ void MainWindow::initOrderTab() {
     initTable(ui_->order_table, order_header, order_header.size());
     // 设置条码模式下拉框内容
     for (auto &mode : mode_dao_->all()) {
-        ui_->barcode_mode_combo_box->addItem(QString::fromStdString(mode->name));
+        ui_->barcode_mode_combo_box->addItem(QString::fromStdString(mode->description));
     }
 }
 
@@ -145,7 +153,7 @@ void MainWindow::initUserTab() {
     initTable(ui_->user_table, user_header, user_header.size());
     // 设置权限下拉框内容
     for (auto &role : role_dao_->all()) {
-        ui_->selected_combo_box->addItem(QString::fromStdString(role->name));
+        ui_->selected_combo_box->addItem(QString::fromStdString(role->description));
     }
 }
 
@@ -283,18 +291,14 @@ void MainWindow::boxSelectOrder() {
     ui_->box_check_format_label->clear();
     ui_->box_datas_status_comb_box->setEnabled(true);
 
-    // 获取订单号
-    int order_id = ui_->box_order_name_combo->currentIndex() + 1;
-    if (!order_dao_->currentOrder(order_id)) {
+    // 获取订单信息
+    std::shared_ptr<Order> order = order_dao_->get(ui_->box_order_name_combo->currentText().toStdString());
+    if (!order_dao_->currentOrder(order->id)) {
         return;
     }
 
-    // 获取订单信息
-    std::shared_ptr<Order> order = order_dao_->currentOrder();
-
     // 显示订单信息
     ui_->box_check_format_label->setText(QString::fromStdString(order->check_format));
-
     refreshBoxTable(order->name, ui_->box_datas_status_comb_box->currentIndex() - 1);
 
     // 根据条码模式原则是否显示结条码束
@@ -429,6 +433,7 @@ void MainWindow::compareBox() {
 }
 
 void MainWindow::refreshBoxTab() {
+    ui_->box_table->clearContents();
     ui_->box_start_line->clear();
     ui_->box_end_line->clear();
     ui_->card_start_line->clear();
@@ -519,14 +524,11 @@ void MainWindow::cartonSelectOrder() {
 
     ui_->carton_check_format_label->clear();
 
-    // 获取订单号
-    int order_id = ui_->carton_order_name_combo->currentIndex() + 1;
-    if (!order_dao_->currentOrder(order_id)) {
+    // 获取订单信息
+    auto order = order_dao_->get(ui_->carton_order_name_combo->currentText().toStdString());
+    if (!order_dao_->currentOrder(order->id)) {
         return;
     }
-
-    // 获取订单信息
-    std::shared_ptr<Order> order = order_dao_->currentOrder();
 
     refreshCartonTable(order->name, ui_->carton_datas_status_comb_box->currentIndex() - 1);
 
@@ -717,6 +719,7 @@ void MainWindow::compareCarton() {
 }
 
 void MainWindow::refreshCartonTab() {
+    ui_->carton_table->clearContents();
     ui_->carton_order_name_combo->clear();
     ui_->carton_check_format_label->clear();
     ui_->carton_table->setRowCount(0);
@@ -894,6 +897,11 @@ void MainWindow::addOrderBtnClicked() {
                     carton_file_path,
                     create_time};
 
+    if (order_dao_->exists(new_order.name)) {
+        QMessageBox::warning(this, tr("添加失败"), tr("订单号已存在"));
+        return;
+    }
+
     // 添加订单
     if (order_dao_->add(std::make_shared<Order>(new_order))) {
         QMessageBox::information(this, tr("添加成功"), tr("订单添加成功"));
@@ -1001,17 +1009,13 @@ void MainWindow::showSelectedOrder() {
 }
 
 void MainWindow::refreshOrderTab() {
-    // 获取订单管理 tableWidget
-    ui_->order_table->setRowCount(order_dao_->all().size()); // 设置行数
-    QStringList header = {tr("订单号"), tr("校验格式"), tr("条码模式"), tr("创建时间")};
-    ui_->order_table->setColumnCount(header.size()); // 设置列数
-    ui_->order_table->setHorizontalHeaderLabels(header);
+    ui_->order_table->setRowCount(order_dao_->all().size());
 
     // 设置表格内容
     for (int i = 0; i < order_dao_->all().size(); i++) {
         ui_->order_table->setItem(i, 0, new QTableWidgetItem(QString::fromStdString(order_dao_->all()[i]->name)));
         ui_->order_table->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(order_dao_->all()[i]->check_format)));
-        ui_->order_table->setItem(i, 2, new QTableWidgetItem(QString::number(order_dao_->all()[i]->mode_id)));
+        ui_->order_table->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(mode_dao_->get(order_dao_->all()[i]->mode_id)->description)));
         ui_->order_table->setItem(i, 3, new QTableWidgetItem(QString::fromStdString(order_dao_->all()[i]->create_time)));
 
         // 设置内容居中
@@ -1055,10 +1059,20 @@ void MainWindow::addUserBtnClicked() {
     std::string password = ui_->selected_password_edit->text().toStdString();
     int         role     = ui_->selected_combo_box->currentIndex();
     std::string language = "zh_US";
-    User        new_user = {0, name, password, role + 1};
-
     if (name == "" || password == "") {
         QMessageBox::warning(this, tr("添加失败"), tr("用户名或密码不能为空"));
+        return;
+    }
+
+    if (role == -1) {
+        QMessageBox::warning(this, tr("添加失败"), tr("请选择角色"));
+        return;
+    }
+
+    User new_user = {0, name, password, role + 1};
+
+    if (user_dao_->exists(new_user.name)) {
+        QMessageBox::warning(this, tr("添加失败"), tr("用户已存在"));
         return;
     }
 
@@ -1151,11 +1165,7 @@ void MainWindow::showSelectedUser() {
 }
 
 void MainWindow::refreshUserTab() {
-    // 获取用户管理 tableWidget
-    ui_->user_table->setRowCount(user_dao_->all().size()); // 设置行数
-    ui_->user_table->setColumnCount(2);                    // 设置列数
-    QStringList header = {tr("用户名"), tr("权限")};
-    ui_->user_table->setHorizontalHeaderLabels(header);
+    ui_->user_table->setRowCount(user_dao_->all().size());
 
     // 设置表格内容
     for (int i = 0; i < user_dao_->all().size(); i++) {

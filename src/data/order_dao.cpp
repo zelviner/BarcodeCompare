@@ -68,6 +68,14 @@ bool OrderDao::remove(const int &id) {
 }
 
 bool OrderDao::clear() {
+    std::vector<std::shared_ptr<Order>> orders = all();
+    for (auto order : orders) {
+        std::shared_ptr<BoxDataDao>    box_data_dao    = std::make_shared<BoxDataDao>(db_, order->name);
+        std::shared_ptr<CartonDataDao> carton_data_dao = std::make_shared<CartonDataDao>(db_, order->name);
+        box_data_dao->clear();
+        carton_data_dao->clear();
+    }
+
     std::string       sql = "DELETE FROM orders";
     SQLite::Statement clear(*db_, sql);
 
@@ -107,7 +115,7 @@ std::vector<std::shared_ptr<Order>> OrderDao::all() {
         order->id                     = all.getColumn(0);
         order->name                   = all.getColumn(1).getString();
         order->check_format           = all.getColumn(2).getString();
-        order->carton_start_check_num = all.getColumn(2);
+        order->carton_start_check_num = all.getColumn(3);
         order->carton_end_check_num   = all.getColumn(4);
         order->box_start_check_num    = all.getColumn(5);
         order->box_end_check_num      = all.getColumn(6);
@@ -150,6 +158,45 @@ std::shared_ptr<Order> OrderDao::get(const int &id) {
     }
 
     return nullptr;
+}
+
+std::shared_ptr<Order> OrderDao::get(const std::string &name) {
+    std::string       sql = "SELECT * FROM orders WHERE name = ?";
+    SQLite::Statement get(*db_, sql);
+    get.bind(1, name);
+
+    if (get.executeStep()) {
+        std::shared_ptr<Order> order = std::make_shared<Order>();
+
+        order->id                     = get.getColumn(0);
+        order->name                   = get.getColumn(1).getString();
+        order->check_format           = get.getColumn(2).getString();
+        order->carton_start_check_num = get.getColumn(3);
+        order->carton_end_check_num   = get.getColumn(4);
+        order->box_start_check_num    = get.getColumn(5);
+        order->box_end_check_num      = get.getColumn(6);
+        order->card_start_check_num   = get.getColumn(7);
+        order->card_end_check_num     = get.getColumn(8);
+        order->box_scanned_num        = get.getColumn(9);
+        order->carton_scanned_num     = get.getColumn(10);
+        order->mode_id                = get.getColumn(11);
+        order->create_time            = get.getColumn(12).getString();
+
+        return order;
+    }
+
+    return nullptr;
+}
+
+bool OrderDao::exists(const std::string &name) {
+    std::string       sql = "SELECT name FROM orders WHERE name = ?";
+    SQLite::Statement exists(*db_, sql);
+    exists.bind(1, name);
+
+    if (exists.executeStep()) {
+        return true;
+    }
+    return false;
 }
 
 bool OrderDao::currentOrder(const int &order_id) {

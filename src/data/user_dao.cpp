@@ -96,6 +96,17 @@ std::shared_ptr<User> UserDao::get(const int &id) {
     return nullptr;
 }
 
+bool UserDao::exists(const std::string &name) {
+    std::string       sql = "SELECT name FROM users WHERE name = ?";
+    SQLite::Statement exists(*db_, sql);
+    exists.bind(1, name);
+
+    if (exists.executeStep()) {
+        return true;
+    }
+    return false;
+}
+
 void UserDao::init() {
     // check if table exists
     std::string       sql = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'users'";
