@@ -8,7 +8,7 @@
 class BoxWidget : public QWidget {
     Q_OBJECT
   public:
-    BoxWidget(const int &id, QWidget *parent = nullptr);
+    BoxWidget(const int &id, const QString &box_number, QWidget *parent = nullptr);
     ~BoxWidget();
 
     void unscanned();
@@ -17,8 +17,11 @@ class BoxWidget : public QWidget {
 
     int id();
 
+    QString boxNumber();
+
   private:
     int     id_;
+    QString box_number_;
     QLabel *label_;
     QLabel *text_label_;
 };

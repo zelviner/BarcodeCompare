@@ -35,6 +35,7 @@ std::vector<std::shared_ptr<BoxData>> ExcelImporter::boxDatas() {
         box_data->id  = id_counter++;
 
         box_data->filename      = getStr(row, "No.WO/OF \n(数据文件名)");
+        box_data->box_number    = getStr(row, "Inner Box No.\n（内盒号）");
         box_data->start_number  = getStr(row, "First SN\n（起始序列号）");
         box_data->end_number    = getStr(row, "Last SN\n（终止序列号）");
         box_data->quantity      = getInt(row, "Quantity\n（数量）");

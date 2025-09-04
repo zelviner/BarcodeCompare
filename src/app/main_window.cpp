@@ -722,6 +722,7 @@ void MainWindow::refreshCartonTab() {
     ui_->carton_table->clearContents();
     ui_->carton_order_name_combo->clear();
     ui_->carton_check_format_label->clear();
+    ui_->carton_start_line->clear();
     ui_->carton_table->setRowCount(0);
     ui_->carton_datas_status_comb_box->setCurrentIndex(0);
 
@@ -815,7 +816,7 @@ void MainWindow::refreshBoxCompareGroup(const int &cols, const std::string &sele
 
     auto box_datas = box_data_dao->all(carton_data->start_number, carton_data->end_number);
     for (int i = 0; i < box_datas.size(); ++i) {
-        BoxWidget *box = new BoxWidget(box_datas[i]->id);
+        BoxWidget *box = new BoxWidget(box_datas[i]->id, QString::fromStdString(box_datas[i]->box_number));
 
         int row = i / cols;
         int col = i % cols;
@@ -1036,20 +1037,29 @@ void MainWindow::refreshOrderTab() {
     ui_->carton_start_spin_box->setValue(1);
     ui_->carton_end_spin_box->setValue(19);
     ui_->barcode_mode_combo_box->setCurrentIndex(-1);
+    ui_->box_file_path_line->clear();
+    ui_->carton_file_path_line->clear();
 
     if (user_dao_->currentUser()->role_id == 2) {
         ui_->clear_order_btn->setEnabled(false);
     } else if (user_dao_->currentUser()->role_id == 3) {
-        ui_->add_order_btn->setEnabled(false);
-        ui_->remove_order_btn->setEnabled(false);
-        ui_->update_order_btn->setEnabled(false);
-        ui_->clear_order_btn->setEnabled(false);
-
         ui_->order_name_line->setEnabled(false);
         ui_->box_start_spin_box->setEnabled(false);
         ui_->box_end_spin_box->setEnabled(false);
         ui_->card_start_spin_box->setEnabled(false);
         ui_->card_end_spin_box->setEnabled(false);
+        ui_->carton_start_spin_box->setEnabled(false);
+        ui_->carton_end_spin_box->setEnabled(false);
+        ui_->barcode_mode_combo_box->setEnabled(false);
+        ui_->box_file_path_line->setEnabled(false);
+        ui_->carton_file_path_line->setEnabled(false);
+        ui_->select_box_file_ptn->setEnabled(false);
+        ui_->select_carton_file_ptn->setEnabled(false);
+
+        ui_->add_order_btn->setEnabled(false);
+        ui_->remove_order_btn->setEnabled(false);
+        ui_->update_order_btn->setEnabled(false);
+        ui_->clear_order_btn->setEnabled(false);
     }
 }
 

@@ -5,6 +5,7 @@
 struct BoxData {
     int         id;
     std::string filename;      // prd data filename
+    std::string box_number;    // box number of the box
     std::string start_number;  // start number of the box
     std::string end_number;    // end number of the box
     int         quantity;      // quantity of the box

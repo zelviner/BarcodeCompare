@@ -11,7 +11,6 @@
 BoxDataDao::BoxDataDao(const std::shared_ptr<SQLite::Database> &db, const std::string &order_name)
     : db_(db)
     , order_name_(order_name) {
-
     init();
 }
 
@@ -20,15 +19,17 @@ BoxDataDao::~BoxDataDao() {}
 bool BoxDataDao::batchAdd(const std::vector<std::shared_ptr<BoxData>> &box_datas) {
     try {
         SQLite::Transaction transaction(*db_);
-        SQLite::Statement   query(
-            *db_, "INSERT INTO box_data.[" + order_name_ + "] (filename, start_number, end_number, quantity, start_barcode, end_barcode) VALUES (?,?,?,?,?,?)");
+        SQLite::Statement   query(*db_,
+                                  "INSERT INTO box_data.[" + order_name_ +
+                                      "] (filename,box_number, start_number, end_number, quantity, start_barcode, end_barcode) VALUES (?,?,?,?,?,?,?)");
         for (const std::shared_ptr<BoxData> &box_data : box_datas) {
             query.bind(1, box_data->filename);
-            query.bind(2, box_data->start_number);
-            query.bind(3, box_data->end_number);
-            query.bind(4, box_data->quantity);
-            query.bind(5, box_data->start_barcode);
-            query.bind(6, box_data->end_barcode);
+            query.bind(2, box_data->box_number);
+            query.bind(3, box_data->start_number);
+            query.bind(4, box_data->end_number);
+            query.bind(5, box_data->quantity);
+            query.bind(6, box_data->start_barcode);
+            query.bind(7, box_data->end_barcode);
             query.exec();
 
             query.reset();
@@ -63,12 +64,13 @@ std::vector<std::shared_ptr<BoxData>> BoxDataDao::all(const int &status) {
 
         box_data->id            = all.getColumn(0);
         box_data->filename      = all.getColumn(1).getString();
-        box_data->start_number  = all.getColumn(2).getString();
-        box_data->end_number    = all.getColumn(3).getString();
-        box_data->quantity      = all.getColumn(4).getInt();
-        box_data->start_barcode = all.getColumn(5).getString();
-        box_data->end_barcode   = all.getColumn(6).getString();
-        box_data->status        = all.getColumn(7);
+        box_data->box_number    = all.getColumn(2).getString();
+        box_data->start_number  = all.getColumn(3).getString();
+        box_data->end_number    = all.getColumn(4).getString();
+        box_data->quantity      = all.getColumn(5).getInt();
+        box_data->start_barcode = all.getColumn(6).getString();
+        box_data->end_barcode   = all.getColumn(7).getString();
+        box_data->status        = all.getColumn(8);
 
         box_datas.push_back(box_data);
     }
@@ -88,12 +90,13 @@ std::vector<std::shared_ptr<BoxData>> BoxDataDao::all(const std::string &start_n
 
         box_data->id            = all.getColumn(0);
         box_data->filename      = all.getColumn(1).getString();
-        box_data->start_number  = all.getColumn(2).getString();
-        box_data->end_number    = all.getColumn(3).getString();
-        box_data->quantity      = all.getColumn(4).getInt();
-        box_data->start_barcode = all.getColumn(5).getString();
-        box_data->end_barcode   = all.getColumn(6).getString();
-        box_data->status        = all.getColumn(7);
+        box_data->box_number    = all.getColumn(2).getString();
+        box_data->start_number  = all.getColumn(3).getString();
+        box_data->end_number    = all.getColumn(4).getString();
+        box_data->quantity      = all.getColumn(5).getInt();
+        box_data->start_barcode = all.getColumn(6).getString();
+        box_data->end_barcode   = all.getColumn(7).getString();
+        box_data->status        = all.getColumn(8);
 
         box_datas.push_back(box_data);
     }
@@ -117,12 +120,13 @@ std::shared_ptr<BoxData> BoxDataDao::get(const std::string &start_barcode) {
 
         box_data->id            = get.getColumn(0);
         box_data->filename      = get.getColumn(1).getString();
-        box_data->start_number  = get.getColumn(2).getString();
-        box_data->end_number    = get.getColumn(3).getString();
-        box_data->quantity      = get.getColumn(4).getInt();
-        box_data->start_barcode = get.getColumn(5).getString();
-        box_data->end_barcode   = get.getColumn(6).getString();
-        box_data->status        = get.getColumn(7);
+        box_data->box_number    = get.getColumn(2).getString();
+        box_data->start_number  = get.getColumn(3).getString();
+        box_data->end_number    = get.getColumn(4).getString();
+        box_data->quantity      = get.getColumn(5).getInt();
+        box_data->start_barcode = get.getColumn(6).getString();
+        box_data->end_barcode   = get.getColumn(7).getString();
+        box_data->status        = get.getColumn(8);
 
         return box_data;
     }
@@ -133,16 +137,17 @@ std::shared_ptr<BoxData> BoxDataDao::get(const std::string &start_barcode) {
 bool BoxDataDao::update(const int &id, std::shared_ptr<BoxData> &box_data) {
     try {
         std::string sql = "UPDATE box_data.[" + order_name_ +
-            "] SET filename = ?, start_number = ?, end_number = ?, quantity = ?, start_barcode = ?, end_barcode = ?, status = ? WHERE id = ?";
+            "] SET filename = ?,box_number = ?, start_number = ?, end_number = ?, quantity = ?, start_barcode = ?, end_barcode = ?, status = ? WHERE id = ?";
         SQLite::Statement update(*db_, sql);
         update.bind(1, box_data->filename);
-        update.bind(2, box_data->start_number);
-        update.bind(3, box_data->end_number);
-        update.bind(4, box_data->quantity);
-        update.bind(5, box_data->start_barcode);
-        update.bind(6, box_data->end_barcode);
-        update.bind(7, box_data->status);
-        update.bind(8, id);
+        update.bind(2, box_data->box_number);
+        update.bind(3, box_data->start_number);
+        update.bind(4, box_data->end_number);
+        update.bind(5, box_data->quantity);
+        update.bind(6, box_data->start_barcode);
+        update.bind(7, box_data->end_barcode);
+        update.bind(8, box_data->status);
+        update.bind(9, id);
 
         return update.exec();
     } catch (std::exception &e) {
@@ -166,6 +171,7 @@ void BoxDataDao::init() {
         sql = "CREATE TABLE IF NOT EXISTS box_data.[" + order_name_ +
             "] (id INTEGER PRIMARY KEY AUTOINCREMENT, "
             "filename TEXT,"
+            "box_number TEXT,"
             "start_number TEXT,"
             "end_number TEXT,"
             "quantity INTEGER,"

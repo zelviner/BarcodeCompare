@@ -75,6 +75,12 @@ void Login::initSignalSlot() {
 }
 
 void Login::initDatabase() {
+    // 创建 data 文件夹
+    QDir data_dir("data");
+    if (!data_dir.exists()) {
+        data_dir.mkpath(".");
+    }
+
     db_                 = std::make_shared<SQLite::Database>("data/barcode_compare.db", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
     auto box_data_db    = std::make_shared<SQLite::Database>("data/box_data.db", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
     auto carton_data_db = std::make_shared<SQLite::Database>("data/carton_data.db", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);

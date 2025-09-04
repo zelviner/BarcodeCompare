@@ -2,31 +2,10 @@
 #include <qboxlayout.h>
 #include <qpixmap.h>
 
-// BoxWidget::BoxWidget(QWidget *parent)
-//     : QWidget(parent) {
-//     label_ = new QLabel(this);
-//     label_->setAlignment(Qt::AlignCenter);
-
-//     QVBoxLayout *layout = new QVBoxLayout(this);
-//     layout->addWidget(label_);
-//     layout->setContentsMargins(0, 0, 0, 0);
-//     layout->setSpacing(0);
-//     setFixedSize(34, 34); // 控制整个小格子大小
-//     label_->setFixedSize(32, 32);
-
-//     // 默认显示未扫描内盒
-//     unscanned();
-// }
-
-// BoxWidget::~BoxWidget() {}
-
-// void BoxWidget::unscanned() { label_->setPixmap(QPixmap(":/image/box-unscanned.png").scaled(32, 32, Qt::KeepAspectRatio, Qt::SmoothTransformation)); }
-
-// void BoxWidget::scanned() { label_->setPixmap(QPixmap(":/image/box-scanned.png").scaled(32, 32, Qt::KeepAspectRatio, Qt::SmoothTransformation)); }
-
-BoxWidget::BoxWidget(const int &id, QWidget *parent)
+BoxWidget::BoxWidget(const int &id, const QString &box_number, QWidget *parent)
     : QWidget(parent)
-    , id_(id) {
+    , id_(id)
+    , box_number_(box_number) {
     // 图片 label
     label_ = new QLabel(this);
     label_->setAlignment(Qt::AlignCenter);
@@ -36,7 +15,7 @@ BoxWidget::BoxWidget(const int &id, QWidget *parent)
     // 文字 label
     text_label_ = new QLabel(this);
     text_label_->setAlignment(Qt::AlignCenter);
-    text_label_->setText(tr("内盒:%1").arg(id));
+    text_label_->setText(tr("内盒:%1").arg(box_number));
     text_label_->setStyleSheet("font-size:10px;"); // 字体大小可调整
 
     // 布局
@@ -58,3 +37,5 @@ void BoxWidget::unscanned() { label_->setPixmap(QPixmap(":/image/box-unscanned.p
 void BoxWidget::scanned() { label_->setPixmap(QPixmap(":/image/box-scanned.png")); }
 
 int BoxWidget::id() { return id_; }
+
+QString BoxWidget::boxNumber() { return box_number_; }
