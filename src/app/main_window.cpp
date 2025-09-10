@@ -485,7 +485,7 @@ void MainWindow::refreshBoxTable(const std::string &order_name, const int &statu
     }
 
     ui_->box_table->setRowCount(box_datas.size());
-    for (int i = 0; i < box_datas.size(); i++) {
+    for (int i = 0; i < int(box_datas.size()); i++) {
         // 创建 item
         auto item0 = new QTableWidgetItem(QString::fromStdString(box_datas[i]->start_barcode));
         auto item1 = new QTableWidgetItem(QString::fromStdString(box_datas[i]->end_barcode));
@@ -776,7 +776,7 @@ void MainWindow::refreshCartonTable(const std::string &order_name, const int &st
 
     ui_->carton_table->setRowCount(carton_datas.size());
 
-    for (int i = 0; i < carton_datas.size(); i++) {
+    for (int i = 0; i < int(carton_datas.size()); i++) {
         // 创建 item
         auto item0 = new QTableWidgetItem(QString::fromStdString(carton_datas[i]->start_barcode));
         auto item1 = new QTableWidgetItem(QString::fromStdString(carton_datas[i]->end_barcode));
@@ -824,7 +824,7 @@ void MainWindow::refreshBoxCompareGroup(const int &cols, const std::string &sele
     std::shared_ptr<CartonData>    carton_data     = carton_data_dao->get(selected_carton_start_barcode);
 
     auto box_datas = box_data_dao->all(carton_data->start_number, carton_data->end_number);
-    for (int i = 0; i < box_datas.size(); ++i) {
+    for (int i = 0; i < int(box_datas.size()); ++i) {
         BoxWidget *box = new BoxWidget(box_datas[i]->id, QString::fromStdString(box_datas[i]->box_number));
 
         int row = i / cols;
@@ -1024,7 +1024,7 @@ void MainWindow::refreshOrderTab() {
     ui_->order_table->setRowCount(order_dao_->all().size());
 
     // 设置表格内容
-    for (int i = 0; i < order_dao_->all().size(); i++) {
+    for (int i = 0; i < int(order_dao_->all().size()); i++) {
         ui_->order_table->setItem(i, 0, new QTableWidgetItem(QString::fromStdString(order_dao_->all()[i]->name)));
         ui_->order_table->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(order_dao_->all()[i]->check_format)));
         ui_->order_table->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(mode_dao_->get(order_dao_->all()[i]->mode_id)->description)));
@@ -1189,7 +1189,7 @@ void MainWindow::refreshUserTab() {
     ui_->user_table->setRowCount(user_dao_->all().size());
 
     // 设置表格内容
-    for (int i = 0; i < user_dao_->all().size(); i++) {
+    for (int i = 0; i < int(user_dao_->all().size()); i++) {
         ui_->user_table->setItem(i, 0, new QTableWidgetItem(QString::fromStdString(user_dao_->all()[i]->name)));
         ui_->user_table->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(role_dao_->get(user_dao_->all()[i]->role_id)->description)));
 

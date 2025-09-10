@@ -1,7 +1,5 @@
 #include "loading.h"
-#include "task/handle_order.hpp"
 
-#include <memory>
 #include <qprogressbar>
 #include <qvboxlayout>
 

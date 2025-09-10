@@ -172,7 +172,7 @@ std::vector<std::shared_ptr<CartonData>> ExcelImporter::cartonDatas(const std::s
 }
 
 std::string ExcelImporter::getStr(const xlnt::cell_vector &row, const std::string &header) {
-    if (header_index_.count(header) && header_index_[header] < row.length()) {
+    if (header_index_.count(header) && header_index_[header] < int(row.length())) {
         return removeSpaces(row[header_index_[header]].to_string());
     }
 
@@ -180,7 +180,7 @@ std::string ExcelImporter::getStr(const xlnt::cell_vector &row, const std::strin
 }
 
 int ExcelImporter::getInt(const xlnt::cell_vector &row, const std::string &header) {
-    if (header_index_.count(header) && header_index_[header] < row.length()) {
+    if (header_index_.count(header) && header_index_[header] < int(row.length())) {
         try {
             return row[header_index_[header]].value<int>();
         } catch (...) {
