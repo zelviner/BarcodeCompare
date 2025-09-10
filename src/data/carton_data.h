@@ -1,14 +1,11 @@
 #pragma once
 
-#include "data/box_data.h"
-
-#include <memory>
 #include <string>
-#include <vector>
 
 struct CartonData {
     int         id;
     std::string filename;      // prd data filename
+    std::string carton_number; // carton number of carton
     std::string start_number;  // start number of the carton
     std::string end_number;    // end number of the carton
     int         quantity;      // quantity of the carton
@@ -16,5 +13,5 @@ struct CartonData {
     std::string end_barcode;   // end barcode of the carton
     int         status;        // scan status of thecarton, 0: not scanned, 1: scanned, 2: scanned with error
 
-    std::vector<std::shared_ptr<BoxData>> boxes; // boxes in the carton
+    // std::vector<std::shared_ptr<BoxData>> boxes; // boxes in the carton
 };

@@ -20,14 +20,15 @@ bool CartonDataDao::batchAdd(const std::vector<std::shared_ptr<CartonData>> &car
         SQLite::Transaction transaction(*db_);
         SQLite::Statement   query(*db_,
                                   "INSERT INTO carton_data.[" + order_name_ +
-                                      "] (filename, start_number, end_number, quantity, start_barcode, end_barcode) VALUES (?,?,?,?,?,?)");
+                                      "] (filename, carton_number, start_number, end_number, quantity, start_barcode, end_barcode) VALUES (?,?,?,?,?,?,?)");
         for (const std::shared_ptr<CartonData> &carton_data : carton_datas) {
             query.bind(1, carton_data->filename);
-            query.bind(2, carton_data->start_number);
-            query.bind(3, carton_data->end_number);
-            query.bind(4, carton_data->quantity);
-            query.bind(5, carton_data->start_barcode);
-            query.bind(6, carton_data->end_barcode);
+            query.bind(2, carton_data->carton_number);
+            query.bind(3, carton_data->start_number);
+            query.bind(4, carton_data->end_number);
+            query.bind(5, carton_data->quantity);
+            query.bind(6, carton_data->start_barcode);
+            query.bind(7, carton_data->end_barcode);
             query.exec();
 
             query.reset();
@@ -62,12 +63,13 @@ std::vector<std::shared_ptr<CartonData>> CartonDataDao::all(const int &status) {
 
         carton_data->id            = all.getColumn(0);
         carton_data->filename      = all.getColumn(1).getString();
-        carton_data->start_number  = all.getColumn(2).getString();
-        carton_data->end_number    = all.getColumn(3).getString();
-        carton_data->quantity      = all.getColumn(4).getInt();
-        carton_data->start_barcode = all.getColumn(5).getString();
-        carton_data->end_barcode   = all.getColumn(6).getString();
-        carton_data->status        = all.getColumn(7);
+        carton_data->carton_number = all.getColumn(2).getString();
+        carton_data->start_number  = all.getColumn(3).getString();
+        carton_data->end_number    = all.getColumn(4).getString();
+        carton_data->quantity      = all.getColumn(5).getInt();
+        carton_data->start_barcode = all.getColumn(6).getString();
+        carton_data->end_barcode   = all.getColumn(7).getString();
+        carton_data->status        = all.getColumn(8);
 
         carton_datas.push_back(carton_data);
     }
@@ -91,12 +93,13 @@ std::shared_ptr<CartonData> CartonDataDao::get(const std::string &start_barcode)
 
         carton_data->id            = get.getColumn(0);
         carton_data->filename      = get.getColumn(1).getString();
-        carton_data->start_number  = get.getColumn(2).getString();
-        carton_data->end_number    = get.getColumn(3).getString();
-        carton_data->quantity      = get.getColumn(4).getInt();
-        carton_data->start_barcode = get.getColumn(5).getString();
-        carton_data->end_barcode   = get.getColumn(6).getString();
-        carton_data->status        = get.getColumn(7);
+        carton_data->carton_number = get.getColumn(2).getString();
+        carton_data->start_number  = get.getColumn(3).getString();
+        carton_data->end_number    = get.getColumn(4).getString();
+        carton_data->quantity      = get.getColumn(5).getInt();
+        carton_data->start_barcode = get.getColumn(6).getString();
+        carton_data->end_barcode   = get.getColumn(7).getString();
+        carton_data->status        = get.getColumn(8);
 
         return carton_data;
     }
@@ -107,16 +110,18 @@ std::shared_ptr<CartonData> CartonDataDao::get(const std::string &start_barcode)
 bool CartonDataDao::update(const int &id, std::shared_ptr<CartonData> &carton_data) {
     try {
         std::string sql = "UPDATE carton_data.[" + order_name_ +
-            "] SET filename = ?, start_number = ?, end_number = ?, quantity = ?, start_barcode = ?, end_barcode = ?, status = ? WHERE id = ?";
+            "] SET filename = ?, carton_number = ?, start_number = ?, end_number = ?, quantity = ?, start_barcode = ?, end_barcode = ?, status = ? WHERE id = "
+            "?";
         SQLite::Statement update(*db_, sql);
         update.bind(1, carton_data->filename);
-        update.bind(2, carton_data->start_number);
-        update.bind(3, carton_data->end_number);
-        update.bind(4, carton_data->quantity);
-        update.bind(5, carton_data->start_barcode);
-        update.bind(6, carton_data->end_barcode);
-        update.bind(7, carton_data->status);
-        update.bind(8, id);
+        update.bind(2, carton_data->carton_number);
+        update.bind(3, carton_data->start_number);
+        update.bind(4, carton_data->end_number);
+        update.bind(5, carton_data->quantity);
+        update.bind(6, carton_data->start_barcode);
+        update.bind(7, carton_data->end_barcode);
+        update.bind(8, carton_data->status);
+        update.bind(9, id);
 
         return update.exec();
     } catch (std::exception &e) {
@@ -140,6 +145,7 @@ void CartonDataDao::init() {
         sql = "CREATE TABLE IF NOT EXISTS carton_data.[" + order_name_ +
             "] (id INTEGER PRIMARY KEY AUTOINCREMENT, "
             "filename TEXT,"
+            "carton_number TEXT,"
             "start_number TEXT,"
             "end_number TEXT,"
             "quantity INTEGER,"

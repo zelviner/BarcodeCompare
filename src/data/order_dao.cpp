@@ -2,11 +2,13 @@
 #include "box_data_dao.h"
 #include "carton_data_dao.h"
 #include "data/box_data.h"
+#include "data/format_dao.h"
 #include "utils/excel_importer.h"
 
 #include <SQLiteCpp/Database.h>
 #include <SQLiteCpp/Statement.h>
 #include <memory>
+#include <unordered_set>
 #include <vector>
 
 OrderDao::OrderDao(const std::shared_ptr<SQLite::Database> &db)
@@ -17,10 +19,25 @@ OrderDao::OrderDao(const std::shared_ptr<SQLite::Database> &db)
 OrderDao::~OrderDao() {}
 
 bool OrderDao::add(const std::shared_ptr<Order> &order) {
-
     std::shared_ptr<utils::ExcelImporter>    excel_importer = std::make_shared<utils::ExcelImporter>(order->box_file_path, order->carton_file_path);
-    std::vector<std::shared_ptr<BoxData>>    box_datas      = excel_importer->boxDatas();
-    std::vector<std::shared_ptr<CartonData>> carton_datas   = excel_importer->cartonDatas();
+    auto                                     box_headers    = excel_importer->boxHeaders();
+    auto                                     carton_headers = excel_importer->cartonHeaders();
+    std::vector<std::shared_ptr<BoxData>>    box_datas;
+    std::vector<std::shared_ptr<CartonData>> carton_datas;
+
+    std::shared_ptr<FormatDao> format_dao = std::make_shared<FormatDao>(db_);
+    auto                       formats    = format_dao->all();
+
+    // 查看标签数据文件格式是否存在于数据库中
+    for (auto format : formats) {
+        if (hasRequiredValues(box_headers, format)) box_datas = excel_importer->boxDatas(format);
+
+        if (hasRequiredValues(carton_headers, format)) carton_datas = excel_importer->cartonDatas(format);
+    }
+
+    if (box_datas.size() == 0 || carton_datas.size() == 0) {
+        return false;
+    }
 
     std::shared_ptr<BoxDataDao> box_data_dao = std::make_shared<BoxDataDao>(db_, order->name);
     if (!box_data_dao->batchAdd(box_datas)) {
@@ -234,4 +251,11 @@ void OrderDao::init() {
               "create_time TEXT NOT NULL);";
         db_->exec(sql);
     }
+}
+
+bool OrderDao::hasRequiredValues(const std::vector<std::string> &headers, const std::shared_ptr<Format> &format) {
+    std::unordered_set<std::string> headerSet(headers.begin(), headers.end());
+
+    return headerSet.count(format->box_number) && headerSet.count(format->start_number) && headerSet.count(format->end_number) &&
+        headerSet.count(format->quantity) && headerSet.count(format->barcode);
 }

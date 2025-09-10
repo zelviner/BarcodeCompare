@@ -10,9 +10,11 @@
 #include "data/mode_dao.h"
 #include "data/role_dao.h"
 #include "login.h"
+#include "setting.h"
 
 #include <SQLiteCpp/Database.h>
 #include <memory>
+#include <qaction.h>
 #include <qaction>
 #include <qboxlayout.h>
 #include <qchar.h>
@@ -22,6 +24,7 @@
 #include <qdebug>
 #include <qfiledialog>
 #include <qkeyevent>
+#include <qlayout.h>
 #include <qlineedit>
 #include <qmessagebox>
 #include <qpushbutton.h>
@@ -68,24 +71,10 @@ void MainWindow::initUi() {
 }
 
 void MainWindow::initDao() {
-    role_dao_  = std::make_shared<RoleDao>(db_);
-    mode_dao_  = std::make_shared<ModeDao>(db_);
-    order_dao_ = std::make_shared<OrderDao>(db_);
-}
-
-void MainWindow::chineseActionTriggered() { switchLanguage("zh_CN"); }
-
-void MainWindow::englishActionTriggered() { switchLanguage("en_US"); }
-
-void MainWindow::switchLanguage(const QString &language_file) {
-    qApp->removeTranslator(&translator_);
-
-    if (translator_.load(":/translation/" + language_file + ".qm")) {
-        qApp->installTranslator(&translator_);
-        ui_->retranslateUi(this);
-    } else {
-        qDebug() << "加载语言失败：" << language_file;
-    }
+    role_dao_   = std::make_shared<RoleDao>(db_);
+    mode_dao_   = std::make_shared<ModeDao>(db_);
+    order_dao_  = std::make_shared<OrderDao>(db_);
+    format_dao_ = std::make_shared<FormatDao>(db_);
 }
 
 void MainWindow::initBoxTab() {
@@ -205,12 +194,15 @@ void MainWindow::initTable(QTableWidget *table, QStringList header, int col_coun
 }
 
 void MainWindow::initSignalSlot() {
-    // 切换用户动作
-    connect(ui_->switch_user_action, &QAction::triggered, this, &MainWindow::switchUserBtnClicked);
+    // 工具栏 - 用户
+    connect(ui_->switch_user_action, &QAction::triggered, this, &MainWindow::switchUserActionTriggered);
 
-    // 切换语言
+    // 工具栏 - 语言
     connect(ui_->chinese_action, &QAction::triggered, this, &MainWindow::chineseActionTriggered);
     connect(ui_->english_action, &QAction::triggered, this, &MainWindow::englishActionTriggered);
+
+    // 工具栏 - 配置
+    connect(ui_->set_tag_data_action, &QAction::triggered, this, &MainWindow::setTagDataActionTriggered);
 
     // 切换 tab
     connect(ui_->tabWidget, &QTabWidget::currentChanged, [=](int index) {
@@ -274,13 +266,22 @@ void MainWindow::initSignalSlot() {
     connect(ui_->clear_user_btn, &QPushButton::clicked, this, &MainWindow::clearUserBtnClicked);
 }
 
-void MainWindow::switchUserBtnClicked() {
+void MainWindow::switchUserActionTriggered() {
     // 关闭键盘监听
     this->releaseKeyboard();
 
     Login *login = new Login();
     login->show();
     this->close();
+}
+
+void MainWindow::chineseActionTriggered() { switchLanguage("zh_CN"); }
+
+void MainWindow::englishActionTriggered() { switchLanguage("en_US"); }
+
+void MainWindow::setTagDataActionTriggered() {
+    Setting *setting = new Setting();
+    setting->show();
 }
 
 void MainWindow::boxSelectOrder() {
@@ -1202,6 +1203,17 @@ void MainWindow::refreshUserTab() {
         ui_->selected_user_edit->setEnabled(false);
         ui_->selected_password_edit->setEnabled(false);
         ui_->selected_combo_box->setEnabled(false);
+    }
+}
+
+void MainWindow::switchLanguage(const QString &language_file) {
+    qApp->removeTranslator(&translator_);
+
+    if (translator_.load(":/translation/" + language_file + ".qm")) {
+        qApp->installTranslator(&translator_);
+        ui_->retranslateUi(this);
+    } else {
+        qDebug() << "加载语言失败：" << language_file;
     }
 }
 

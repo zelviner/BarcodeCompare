@@ -3,6 +3,8 @@
 
 #include <memory>
 #include <vector>
+#include <xlnt/workbook/workbook.hpp>
+#include <xlnt/worksheet/cell_vector.hpp>
 
 namespace utils {
 
@@ -12,7 +14,49 @@ ExcelImporter::ExcelImporter(const std::string &box_file_path, const std::string
 
 ExcelImporter::~ExcelImporter() {}
 
-std::vector<std::shared_ptr<BoxData>> ExcelImporter::boxDatas() {
+std::vector<std::string> ExcelImporter::boxHeaders() {
+    std::vector<std::string> headers;
+
+    xlnt::workbook wb;
+    wb.load(box_file_path_);
+    auto ws = wb.active_sheet();
+
+    // get the first line content.
+    auto first_row = ws.rows(false)[0];
+
+    for (auto cell : first_row) {
+        if (cell.has_value()) {
+            headers.push_back(cell.to_string());
+        } else {
+            headers.push_back("");
+        }
+    }
+
+    return headers;
+}
+
+std::vector<std::string> ExcelImporter::cartonHeaders() {
+    std::vector<std::string> headers;
+
+    xlnt::workbook wb;
+    wb.load(carton_file_path_);
+    auto ws = wb.active_sheet();
+
+    // get the first line content.
+    auto first_row = ws.rows(false)[0];
+
+    for (auto cell : first_row) {
+        if (cell.has_value()) {
+            headers.push_back(cell.to_string());
+        } else {
+            headers.push_back("");
+        }
+    }
+
+    return headers;
+}
+
+std::vector<std::shared_ptr<BoxData>> ExcelImporter::boxDatas(const std::shared_ptr<Format> &format) {
     std::vector<std::shared_ptr<BoxData>> box_datas;
     header_index_.clear();
 
@@ -34,12 +78,12 @@ std::vector<std::shared_ptr<BoxData>> ExcelImporter::boxDatas() {
         auto box_data = std::make_shared<BoxData>();
         box_data->id  = id_counter++;
 
-        box_data->filename      = getStr(row, "No.WO/OF \n(数据文件名)");
-        box_data->box_number    = getStr(row, "Inner Box No.\n（内盒号）");
-        box_data->start_number  = getStr(row, "First SN\n（起始序列号）");
-        box_data->end_number    = getStr(row, "Last SN\n（终止序列号）");
-        box_data->quantity      = getInt(row, "Quantity\n（数量）");
-        box_data->start_barcode = getStr(row, "Barcode\n（条形码）");
+        box_data->filename      = getStr(row, format->filename);
+        box_data->box_number    = getStr(row, format->box_number);
+        box_data->start_number  = getStr(row, format->start_number);
+        box_data->end_number    = getStr(row, format->end_number);
+        box_data->quantity      = getInt(row, format->quantity);
+        box_data->start_barcode = getStr(row, format->barcode);
         box_data->end_barcode   = "";
 
         box_datas.push_back(box_data);
@@ -48,7 +92,7 @@ std::vector<std::shared_ptr<BoxData>> ExcelImporter::boxDatas() {
     return box_datas;
 }
 
-std::vector<std::shared_ptr<CartonData>> ExcelImporter::cartonDatas() {
+std::vector<std::shared_ptr<CartonData>> ExcelImporter::cartonDatas(const std::shared_ptr<Format> &format) {
     std::vector<std::shared_ptr<CartonData>> carton_datas;
     header_index_.clear();
 
@@ -70,11 +114,12 @@ std::vector<std::shared_ptr<CartonData>> ExcelImporter::cartonDatas() {
         auto carton_data = std::make_shared<CartonData>();
         carton_data->id  = id_counter++;
 
-        carton_data->filename      = getStr(row, "No.WO/OF \n(数据文件名)");
-        carton_data->start_number  = getStr(row, "First SN\n（起始序列号）");
-        carton_data->end_number    = getStr(row, "Last SN\n（终止序列号）");
-        carton_data->quantity      = getInt(row, "Quantity\n（数量）");
-        carton_data->start_barcode = getStr(row, "Barcode\n（条形码）");
+        carton_data->filename      = getStr(row, format->filename);
+        carton_data->carton_number = getStr(row, format->box_number);
+        carton_data->start_number  = getStr(row, format->start_number);
+        carton_data->end_number    = getStr(row, format->end_number);
+        carton_data->quantity      = getInt(row, format->quantity);
+        carton_data->start_barcode = getStr(row, format->barcode);
         carton_data->end_barcode   = "";
 
         carton_datas.push_back(carton_data);

@@ -1,0 +1,109 @@
+#include "format_dao.h"
+
+#include <SQLiteCpp/Statement.h>
+
+FormatDao::FormatDao(const std::shared_ptr<SQLite::Database> &db)
+    : db_(db) {
+    init();
+}
+
+FormatDao::~FormatDao() {}
+
+bool FormatDao::add(const std::shared_ptr<Format> &format) {
+    SQLite::Statement insert(*db_,
+                             "INSERT INTO formats (name, type, filename, box_number, start_number, end_number, quantity, barcode) VALUES (?,?,?,?,?,?,?,?)");
+    insert.bind(1, format->name);
+    insert.bind(2, format->type);
+    insert.bind(3, format->filename);
+    insert.bind(4, format->box_number);
+    insert.bind(5, format->start_number);
+    insert.bind(6, format->end_number);
+    insert.bind(7, format->quantity);
+    insert.bind(8, format->barcode);
+
+    return insert.exec();
+}
+
+std::vector<std::shared_ptr<Format>> FormatDao::all() {
+    std::string       sql = "SELECT * FROM formats";
+    SQLite::Statement query(*db_, sql);
+
+    std::vector<std::shared_ptr<Format>> roles;
+    while (query.executeStep()) {
+        std::shared_ptr<Format> format = std::make_shared<Format>();
+
+        format->id           = query.getColumn(0);
+        format->name         = query.getColumn(1).getString();
+        format->type         = query.getColumn(2);
+        format->filename     = query.getColumn(3).getString();
+        format->box_number   = query.getColumn(4).getString();
+        format->start_number = query.getColumn(5).getString();
+        format->end_number   = query.getColumn(6).getString();
+        format->quantity     = query.getColumn(7).getString();
+        format->barcode      = query.getColumn(8).getString();
+
+        roles.push_back(format);
+    }
+
+    return roles;
+}
+
+std::shared_ptr<Format> FormatDao::get(const int id) {
+    std::string       sql = "SELECT * FROM formats WHERE id = ?";
+    SQLite::Statement query(*db_, sql);
+    query.bind(1, id);
+
+    if (query.executeStep()) {
+        std::shared_ptr<Format> format = std::make_shared<Format>();
+
+        format->id           = query.getColumn(0);
+        format->name         = query.getColumn(1).getString();
+        format->type         = query.getColumn(2);
+        format->filename     = query.getColumn(3).getString();
+        format->box_number   = query.getColumn(4).getString();
+        format->start_number = query.getColumn(5).getString();
+        format->end_number   = query.getColumn(6).getString();
+        format->quantity     = query.getColumn(7).getString();
+        format->barcode      = query.getColumn(8).getString();
+
+        return format;
+    }
+
+    return nullptr;
+}
+
+void FormatDao::init() {
+
+    // check if table exists
+    std::string       sql = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'formats'";
+    SQLite::Statement query(*db_, sql);
+    if (!query.executeStep()) {
+        // create table if not exists
+        sql = "CREATE TABLE IF NOT EXISTS formats ("
+              "id INTEGER PRIMARY key AUTOINCREMENT,"
+              "name TEXT,"
+              "type INTEGER,"
+              "filename TEXT,"
+              "box_number TEXT,"
+              "start_number TEXT,"
+              "end_number TEXT,"
+              "quantity INTEGER,"
+              "barcode TEXT);";
+        db_->exec(sql);
+
+        // initialize format data
+        std::shared_ptr<Format> cq_box    = std::make_shared<Format>(Format{0, "CQ", 1, "", "盒号", "J", "K", "L", "二维码"});
+        std::shared_ptr<Format> cq_carton = std::make_shared<Format>(Format{0, "CQ", 2, "", "箱号", "J", "K", "L", "二维码"});
+        std::shared_ptr<Format> surabaya_box =
+            std::make_shared<Format>(Format{0, "Surabaya", 1, "No.WO/OF \n(数据文件名)", "Inner Box No.\n（内盒号）", "First SN\n（起始序列号）",
+                                            "Last SN\n（终止序列号）", "Quantity\n（数量）", "Barcode\n（条形码）"});
+        std::shared_ptr<Format> surabaya_carton =
+            std::make_shared<Format>(Format{0, "Surabaya", 2, "No.WO/OF \n(数据文件名)", "Outer Box No.\n（外箱号）", "First SN\n（起始序列号）",
+                                            "Last SN\n（终止序列号）", "Quantity\n（数量）", "Barcode\n（条形码）"});
+
+        add(cq_box);
+        add(cq_carton);
+        add(surabaya_box);
+        add(surabaya_carton);
+    }
+}

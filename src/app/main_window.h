@@ -1,6 +1,7 @@
 #pragma once
 
 #include "box_widget.h"
+#include "data/format_dao.h"
 #include "data/mode_dao.h"
 #include "data/order_dao.h"
 #include "data/role_dao.h"
@@ -29,15 +30,6 @@ class MainWindow : public QMainWindow {
     /// @brief 初始化数据库
     void initDao();
 
-    /// @brief 切换中文动作触发
-    void chineseActionTriggered();
-
-    /// @brief 切换英文动作触发
-    void englishActionTriggered();
-
-    /// @brief 切换语言
-    void switchLanguage(const QString &language_file);
-
     /// @brief 初始化内盒比对 Tab
     void initBoxTab();
 
@@ -56,8 +48,17 @@ class MainWindow : public QMainWindow {
     /// @brief 初始化信号槽
     void initSignalSlot();
 
-    /// @brief 切换用户按钮点击事件
-    void switchUserBtnClicked();
+    /// @brief 切换用户动作触发
+    void switchUserActionTriggered();
+
+    /// @brief 切换中文动作触发
+    void chineseActionTriggered();
+
+    /// @brief 切换英文动作触发
+    void englishActionTriggered();
+
+    /// @brief 设置标签数据动作触发
+    void setTagDataActionTriggered();
 
     /// @brief 内盒选择订单
     void boxSelectOrder();
@@ -153,10 +154,13 @@ class MainWindow : public QMainWindow {
     void refreshUserTab();
 
   private:
-    void scrollToValue(QTableWidget *table, const QString &value, bool selected = true);
+    /// @brief 切换语言
+    void switchLanguage(const QString &language_file);
 
     /// @brief 记录日志
     bool log(const QString &filename, const QString &msg);
+
+    void scrollToValue(QTableWidget *table, const QString &value, bool selected = true);
 
     void clearBoxCompareGroupLayout(QLayout *layout);
 
@@ -166,6 +170,7 @@ class MainWindow : public QMainWindow {
     std::shared_ptr<UserDao>          user_dao_;
     std::shared_ptr<ModeDao>          mode_dao_;
     std::shared_ptr<OrderDao>         order_dao_;
+    std::shared_ptr<FormatDao>        format_dao_;
     QTranslator                       translator_;
     std::shared_ptr<SQLite::Database> db_;
     std::vector<BoxWidget *>          box_widgets_;

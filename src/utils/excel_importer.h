@@ -2,6 +2,7 @@
 
 #include "data/box_data.h"
 #include "data/carton_data.h"
+#include "data/format.h"
 
 #include <memory>
 #include <string>
@@ -16,9 +17,15 @@ class ExcelImporter {
     ExcelImporter(const std::string &box_file_path, const std::string &carton_file_path);
     ~ExcelImporter();
 
-    std::vector<std::shared_ptr<BoxData>> boxDatas();
+    /// @brief Get the header data of box
+    std::vector<std::string> boxHeaders();
 
-    std::vector<std::shared_ptr<CartonData>> cartonDatas();
+    /// @brief Get the header data of carton
+    std::vector<std::string> cartonHeaders();
+
+    std::vector<std::shared_ptr<BoxData>> boxDatas(const std::shared_ptr<Format> &format);
+
+    std::vector<std::shared_ptr<CartonData>> cartonDatas(const std::shared_ptr<Format> &format);
 
   private:
     std::string getStr(const xlnt::cell_vector &row, const std::string &header);

@@ -1259,7 +1259,7 @@
                      </font>
                     </property>
                     <property name="currentText">
-                     <string>请选择</string>
+                     <string/>
                     </property>
                     <property name="placeholderText">
                      <string>请选择</string>
@@ -1349,8 +1349,15 @@
     <addaction name="chinese_action"/>
     <addaction name="english_action"/>
    </widget>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>配置</string>
+    </property>
+    <addaction name="set_tag_data_action"/>
+   </widget>
    <addaction name="menuLanguage"/>
    <addaction name="menuLanguage_2"/>
+   <addaction name="menu"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="admin_action">
@@ -1386,6 +1393,11 @@
   <action name="english_action">
    <property name="text">
     <string>English</string>
+   </property>
+  </action>
+  <action name="set_tag_data_action">
+   <property name="text">
+    <string>标签数据</string>
    </property>
   </action>
  </widget>
