@@ -6,6 +6,7 @@
 #include "data/order_dao.h"
 #include "data/role_dao.h"
 #include "data/user_dao.h"
+#include "loading.h"
 #include "ui_main_window.h"
 
 #include <SQLiteCpp/Database.h>
@@ -153,6 +154,10 @@ class MainWindow : public QMainWindow {
     ////  @brief 刷新用户管理 Tab
     void refreshUserTab();
 
+  public slots:
+    void addOrderSuccess();
+    void addOrderFailure();
+
   private:
     /// @brief 切换语言
     void switchLanguage(const QString &language_file);
@@ -165,13 +170,15 @@ class MainWindow : public QMainWindow {
     void clearBoxCompareGroupLayout(QLayout *layout);
 
   private:
-    Ui_MainWindow                    *ui_;
+    Ui_MainWindow           *ui_;
+    QTranslator              translator_;
+    std::shared_ptr<Loading> loading_;
+    std::vector<BoxWidget *> box_widgets_;
+
+    std::shared_ptr<SQLite::Database> db_;
     std::shared_ptr<RoleDao>          role_dao_;
     std::shared_ptr<UserDao>          user_dao_;
     std::shared_ptr<ModeDao>          mode_dao_;
     std::shared_ptr<OrderDao>         order_dao_;
     std::shared_ptr<FormatDao>        format_dao_;
-    QTranslator                       translator_;
-    std::shared_ptr<SQLite::Database> db_;
-    std::vector<BoxWidget *>          box_widgets_;
 };

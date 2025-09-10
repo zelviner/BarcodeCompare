@@ -30,9 +30,15 @@ bool OrderDao::add(const std::shared_ptr<Order> &order) {
 
     // 查看标签数据文件格式是否存在于数据库中
     for (auto format : formats) {
-        if (hasRequiredValues(box_headers, format)) box_datas = excel_importer->boxDatas(format);
+        switch (format->type) {
+        case 1:
+            if (hasRequiredValues(box_headers, format)) box_datas = excel_importer->boxDatas(format);
+            break;
 
-        if (hasRequiredValues(carton_headers, format)) carton_datas = excel_importer->cartonDatas(format);
+        case 2:
+            if (hasRequiredValues(carton_headers, format)) carton_datas = excel_importer->cartonDatas(format);
+            break;
+        }
     }
 
     if (box_datas.size() == 0 || carton_datas.size() == 0) {

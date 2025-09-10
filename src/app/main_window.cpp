@@ -9,8 +9,10 @@
 #include "data/mode.h"
 #include "data/mode_dao.h"
 #include "data/role_dao.h"
+#include "loading.h"
 #include "login.h"
 #include "setting.h"
+#include "task/handle_order.hpp"
 
 #include <SQLiteCpp/Database.h>
 #include <memory>
@@ -35,6 +37,7 @@
 MainWindow::MainWindow(const std::shared_ptr<SQLite::Database> &db, const std::shared_ptr<UserDao> &user_dao, QMainWindow *parent)
     : QMainWindow(parent)
     , ui_(new Ui_MainWindow)
+    , loading_(std::make_shared<Loading>())
     , db_(db)
     , user_dao_(user_dao) {
     ui_->setupUi(this);
@@ -445,6 +448,7 @@ void MainWindow::refreshBoxTab() {
     ui_->box_table->setRowCount(0);
 
     ui_->box_start_line->clearFocus();
+    ui_->box_order_name_combo->clearFocus();
 
     ui_->box_datas_status_comb_box->setEnabled(false);
     ui_->box_start_line->setEnabled(false);
@@ -614,6 +618,8 @@ void MainWindow::selectCartonDatasStatus() {
 }
 
 void MainWindow::toCartonEndBarcode() {
+    ui_->carton_start_line->setEnabled(false);
+
     switch (order_dao_->currentOrder()->mode_id) {
     // Start and End Barcode
     case 1:
@@ -634,12 +640,13 @@ void MainWindow::toCartonEndBarcode() {
         break;
     }
 
-    ui_->carton_start_line->setEnabled(false);
-
     scrollToValue(ui_->carton_table, ui_->carton_start_line->text());
 }
 
-void MainWindow::toTargetBarcode() { ui_->target_line->setFocus(); }
+void MainWindow::toTargetBarcode() {
+    ui_->carton_end_line->setEnabled(false);
+    ui_->target_line->setFocus();
+}
 
 void MainWindow::compareCarton() {
 
@@ -724,6 +731,7 @@ void MainWindow::refreshCartonTab() {
     ui_->carton_order_name_combo->clear();
     ui_->carton_check_format_label->clear();
     ui_->carton_start_line->clear();
+    ui_->carton_end_line->clear();
     ui_->carton_table->setRowCount(0);
     ui_->carton_datas_status_comb_box->setCurrentIndex(0);
 
@@ -904,13 +912,15 @@ void MainWindow::addOrderBtnClicked() {
         return;
     }
 
+    loading_->show();
+
     // 添加订单
-    if (order_dao_->add(std::make_shared<Order>(new_order))) {
-        QMessageBox::information(this, tr("添加成功"), tr("订单添加成功"));
-        refreshOrderTab();
-    } else {
-        QMessageBox::warning(this, tr("添加失败"), tr("订单添加失败"));
-    }
+    HandleOrder *handle_order = new HandleOrder(order_dao_, std::make_shared<Order>(new_order));
+
+    connect(handle_order, &HandleOrder::addOrderSuccess, this, &MainWindow::addOrderSuccess);
+    connect(handle_order, &HandleOrder::addOrderFailure, this, &MainWindow::addOrderFailure);
+
+    handle_order->start();
 }
 
 void MainWindow::updateOrderBtnClicked() {
@@ -933,9 +943,9 @@ void MainWindow::updateOrderBtnClicked() {
     check_format.sprintf("卡片：%d 位 - %d 位\n内盒：%d 位 - %d 位\n外箱：%d 位 - %d 位", card_start_check_num, card_end_check_num, box_start_check_num,
                          box_end_check_num, carton_start_check_num, carton_end_check_num);
     std::string            create_time = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss").toStdString();
-    std::shared_ptr<Order> new_order =
-        std::make_shared<Order>(Order{0, order_name, check_format.toStdString(), carton_start_check_num, carton_end_check_num, box_start_check_num,
-                                      box_end_check_num, card_start_check_num, card_end_check_num, box_scanned_num, carton_scanned_num, mode_id, create_time});
+    std::shared_ptr<Order> new_order   = std::make_shared<Order>(Order{0, order_name, check_format.toStdString(), carton_start_check_num, carton_end_check_num,
+                                                                     box_start_check_num, box_end_check_num, card_start_check_num, card_end_check_num,
+                                                                     box_scanned_num, carton_scanned_num, mode_id, "", "", create_time});
 
     if (order_name == "" || box_end_check_num == 0 || index == -1) {
         QMessageBox::warning(this, tr("修改失败"), tr("订单号或校验位数不能为空"));
@@ -1204,6 +1214,16 @@ void MainWindow::refreshUserTab() {
         ui_->selected_password_edit->setEnabled(false);
         ui_->selected_combo_box->setEnabled(false);
     }
+}
+
+void MainWindow::addOrderSuccess() {
+    loading_->hide();
+    QMessageBox::information(this, tr("添加成功"), tr("订单添加成功"));
+    refreshOrderTab();
+}
+void MainWindow::addOrderFailure() {
+    loading_->hide();
+    QMessageBox::warning(this, tr("添加失败"), tr("订单添加失败"));
 }
 
 void MainWindow::switchLanguage(const QString &language_file) {

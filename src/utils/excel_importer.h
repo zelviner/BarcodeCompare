@@ -34,6 +34,8 @@ class ExcelImporter {
 
     std::string removeSpaces(const std::string &s);
 
+    std::vector<std::string> split(const std::string &str, const std::string &delim);
+
   private:
     std::string                          box_file_path_;    // tag file path of box data
     std::string                          carton_file_path_; // tag file path of carton data
