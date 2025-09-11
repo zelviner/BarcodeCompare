@@ -13,6 +13,8 @@ class BoxWidget : public QWidget {
 
     void unscanned();
 
+    void pending();
+
     void scanned();
 
     int id();

@@ -9,11 +9,11 @@
 #include <memory>
 #include <qstring>
 
-class Compare {
+class Comparison {
 
   public:
-    Compare(const std::shared_ptr<Order> &order, const std::shared_ptr<BoxDataDao> &box_data_dao, const std::shared_ptr<CartonDataDao> &carton_data_dao);
-    ~Compare();
+    Comparison(const std::shared_ptr<Order> &order, const std::shared_ptr<BoxDataDao> &box_data_dao, const std::shared_ptr<CartonDataDao> &carton_data_dao);
+    ~Comparison();
 
     /// @brief Compare box barcodes
     int box(const std::shared_ptr<BoxInfo> &box_info);

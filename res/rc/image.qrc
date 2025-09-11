@@ -3,6 +3,7 @@
      <file>../image/xh_logo.png</file>
      <file>../image/success.png</file>
      <file>../image/box-unscanned.png</file>
+     <file>../image/box-pending.png</file>
      <file>../image/box-scanned.png</file>
  </qresource>
  </RCC>

@@ -1,8 +1,8 @@
 #include "main_window.h"
 
 #include "box_widget.h"
-#include "compare/carton_info.h"
-#include "compare/compare.h"
+#include "comparison/carton_info.h"
+#include "comparison/comparison.h"
 #include "data/box_data.h"
 #include "data/box_data_dao.h"
 #include "data/carton_data_dao.h"
@@ -32,6 +32,7 @@
 #include <qpushbutton.h>
 #include <qpushbutton>
 #include <qtimer>
+#include <queue>
 #include <vector>
 
 MainWindow::MainWindow(const std::shared_ptr<SQLite::Database> &db, const std::shared_ptr<UserDao> &user_dao, QMainWindow *parent)
@@ -373,8 +374,8 @@ void MainWindow::toCardStartBarcode() { ui_->card_start_line->setFocus(); }
 void MainWindow::toCardEndBarcode() { ui_->card_end_line->setFocus(); }
 
 void MainWindow::compareBox() {
-    auto    box_data_dao = std::make_shared<BoxDataDao>(db_, order_dao_->currentOrder()->name);
-    Compare compare(order_dao_->currentOrder(), box_data_dao, nullptr);
+    auto       box_data_dao = std::make_shared<BoxDataDao>(db_, order_dao_->currentOrder()->name);
+    Comparison comparison(order_dao_->currentOrder(), box_data_dao, nullptr);
 
     QString error, log_msg;
     auto    box_info             = std::make_shared<BoxInfo>();
@@ -383,7 +384,7 @@ void MainWindow::compareBox() {
     box_info->card_start_barcode = ui_->card_start_line->text();
     box_info->card_end_barcode   = ui_->card_end_line->text();
 
-    int result = compare.box(box_info);
+    int result = comparison.box(box_info);
 
     if (result == 0) {
         log_msg.sprintf("用户[%s] 内盒起始条码[%s] 内盒结束条码[%s] 首卡条码[%s] 尾卡条码[%s], 扫描成功", user_dao_->currentUser()->name.c_str(),
@@ -659,26 +660,29 @@ void MainWindow::compareCarton() {
     bool                           is_end          = false;
     std::shared_ptr<BoxDataDao>    box_data_dao    = std::make_shared<BoxDataDao>(db_, order_dao_->currentOrder()->name);
     std::shared_ptr<CartonDataDao> carton_data_dao = std::make_shared<CartonDataDao>(db_, order_dao_->currentOrder()->name);
-    std::shared_ptr<Compare>       compare         = std::make_shared<Compare>(order_dao_->currentOrder(), box_data_dao, carton_data_dao);
+    std::shared_ptr<Comparison>    comparison      = std::make_shared<Comparison>(order_dao_->currentOrder(), box_data_dao, carton_data_dao);
     int                            box_widget_id   = 0;
-    int                            result          = compare->carton(carton_info, box_widget_id);
+    int                            result          = comparison->carton(carton_info, box_widget_id);
+
+    // Check if the target barcodes are sequence.
+    if (box_widgets_.front()->id() != box_widget_id) {
+        if (result == 0) {
+            result = 4;
+        }
+    }
+
     if (result == 0) {
         log_msg.sprintf("用户[%s] 外箱起始条码[%s] 外箱结束条码[%s] 内盒起始或结束条码[%s], 扫描成功", user_dao_->currentUser()->name.c_str(),
                         carton_info->carton_start_barcode.toStdString().c_str(), carton_info->carton_end_barcode.toStdString().c_str(),
                         carton_info->target_barcode.toStdString().c_str());
-        for (auto it = box_widgets_.begin(); it != box_widgets_.end();) {
-            if ((*it)->id() == box_widget_id) {
-                (*it)->scanned();
-                it = box_widgets_.erase(it); // 删除并返回下一个迭代器
-            } else {
-                ++it;
-            }
-        }
+        box_widgets_.front()->scanned();
 
+        box_widgets_.pop();
         if (box_widgets_.empty()) {
             is_end = true;
+        } else {
+            box_widgets_.front()->pending();
         }
-
     } else {
         switch (result) {
 
@@ -694,6 +698,11 @@ void MainWindow::compareCarton() {
 
         case 3: {
             error = tr("内盒条码不在该外箱范围内, 请核对!");
+            break;
+        }
+
+        case 4: {
+            error = tr("内盒顺序错误, 请核对!");
             break;
         }
         }
@@ -719,6 +728,8 @@ void MainWindow::compareCarton() {
         ui_->target_line->clear();
 
         ui_->carton_start_line->setEnabled(true);
+        ui_->carton_end_line->setEnabled(true);
+
         ui_->carton_start_line->setFocus();
     } else {
         ui_->target_line->clear();
@@ -808,7 +819,8 @@ void MainWindow::refreshCartonTable(const std::string &order_name, const int &st
 }
 
 void MainWindow::refreshBoxCompareGroup(const int &cols, const std::string &selected_carton_start_barcode) {
-    box_widgets_.clear();
+    box_widgets_ = std::queue<BoxWidget *>();
+
     if (ui_->box_compare_group_box->layout()) {
         clearBoxCompareGroupLayout(ui_->box_compare_group_box->layout());
         delete ui_->box_compare_group_box->layout();
@@ -831,11 +843,15 @@ void MainWindow::refreshBoxCompareGroup(const int &cols, const std::string &sele
         int col = i % cols;
         layout->addWidget(box, row, col, Qt::AlignCenter);
 
+        if (i == 0) {
+            box->pending();
+        }
+
         if (carton_data->status) {
             box->scanned();
         }
 
-        box_widgets_.push_back(box);
+        box_widgets_.push(box);
     }
 }
 

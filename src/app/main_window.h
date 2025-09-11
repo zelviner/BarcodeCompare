@@ -13,7 +13,7 @@
 #include <memory>
 #include <qmainwindow>
 #include <qtranslator>
-#include <vector>
+#include <queue>
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -173,7 +173,7 @@ class MainWindow : public QMainWindow {
     Ui_MainWindow           *ui_;
     QTranslator              translator_;
     std::shared_ptr<Loading> loading_;
-    std::vector<BoxWidget *> box_widgets_;
+    std::queue<BoxWidget *>  box_widgets_;
 
     std::shared_ptr<SQLite::Database> db_;
     std::shared_ptr<RoleDao>          role_dao_;
