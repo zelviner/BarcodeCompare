@@ -23,11 +23,6 @@ class Setting : public QMainWindow {
     /// @brief 初始化信号槽
     void initSignalSlot();
 
-    void initDatabase();
-
-    /// @brief 加载用户信息
-    void loadUserInfo();
-
   private:
     Ui_Setting                       *ui_;
     std::shared_ptr<SQLite::Database> db_;

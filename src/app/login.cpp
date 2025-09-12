@@ -16,6 +16,8 @@ Login::Login(QMainWindow *parent)
 
     initWindow();
 
+    initDir();
+
     initDatabase();
 
     initUI();
@@ -30,8 +32,7 @@ void Login::initWindow() {
     setWindowTitle(tr("条码比对系统"));
 }
 
-void Login::initUI() {
-
+void Login::initDir() {
     QString current_path       = QCoreApplication::applicationDirPath();
     QString data_path          = current_path + "/data";
     QString inner_box_log_path = current_path + "/log/内盒";
@@ -41,7 +42,24 @@ void Login::initUI() {
     createFolder(data_path);
     createFolder(inner_box_log_path);
     createFolder(outer_box_log_path);
+}
 
+void Login::initDatabase() {
+    db_                 = std::make_shared<SQLite::Database>("data/barcode_compare.db", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+    auto box_data_db    = std::make_shared<SQLite::Database>("data/box_data.db", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+    auto carton_data_db = std::make_shared<SQLite::Database>("data/carton_data.db", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+    auto box_log_db     = std::make_shared<SQLite::Database>("data/box_log.db", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+    auto carton_log_db  = std::make_shared<SQLite::Database>("data/carton_log.db", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+
+    db_->exec("ATTACH DATABASE 'data/box_data.db' AS box_data;");
+    db_->exec("ATTACH DATABASE 'data/carton_data.db' AS carton_data;");
+    db_->exec("ATTACH DATABASE 'data/box_log.db' AS box_log;");
+    db_->exec("ATTACH DATABASE 'data/carton_log.db' AS carton_log;");
+
+    user_dao_ = std::make_shared<UserDao>(db_);
+}
+
+void Login::initUI() {
     // 加载用户信息
     loadUserInfo();
 
@@ -72,28 +90,6 @@ void Login::initSignalSlot() {
 
     // 退出按钮
     connect(ui_->exit_btn, &QPushButton::clicked, this, &Login::exitBtnClicked);
-}
-
-void Login::initDatabase() {
-    // 创建 data 文件夹
-    QDir data_dir("data");
-    if (!data_dir.exists()) {
-        data_dir.mkpath(".");
-    }
-
-    db_                 = std::make_shared<SQLite::Database>("data/barcode_compare.db", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
-    auto box_data_db    = std::make_shared<SQLite::Database>("data/box_data.db", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
-    auto carton_data_db = std::make_shared<SQLite::Database>("data/carton_data.db", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
-    auto box_log_db     = std::make_shared<SQLite::Database>("data/box_log.db", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
-    auto carton_log_db  = std::make_shared<SQLite::Database>("data/carton_log.db", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
-
-    db_->exec("ATTACH DATABASE 'data/box_data.db' AS box_data;");
-    db_->exec("ATTACH DATABASE 'data/carton_data.db' AS carton_data;");
-    db_->exec("ATTACH DATABASE 'data/box_log.db' AS box_log;");
-    db_->exec("ATTACH DATABASE 'data/carton_log.db' AS carton_log;");
-
-    // role_dao_ = std::make_shared<RoleDao>(db_);
-    user_dao_ = std::make_shared<UserDao>(db_);
 }
 
 void Login::loadUserInfo() {

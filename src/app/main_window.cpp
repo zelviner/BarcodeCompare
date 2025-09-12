@@ -55,221 +55,6 @@ MainWindow::MainWindow(const std::shared_ptr<SQLite::Database> &db, const std::s
 
 MainWindow::~MainWindow() { delete ui_; }
 
-void MainWindow::initWindow() {
-    // 设置窗口标题
-    setWindowTitle(tr("条码比对系统"));
-}
-
-void MainWindow::initUi() {
-    // 初始化内盒比对 tab
-    initBoxTab();
-
-    // 初始化外箱比对 tab
-    initCartonTab();
-
-    // 初始化订单管理 tab
-    initOrderTab();
-
-    // 初始化用户管理 tab
-    initUserTab();
-}
-
-void MainWindow::initDao() {
-    role_dao_   = std::make_shared<RoleDao>(db_);
-    mode_dao_   = std::make_shared<ModeDao>(db_);
-    order_dao_  = std::make_shared<OrderDao>(db_);
-    format_dao_ = std::make_shared<FormatDao>(db_);
-}
-
-void MainWindow::initBoxTab() {
-    ui_->box_order_name_combo->setEditable(true);
-    ui_->box_order_name_combo->lineEdit()->setPlaceholderText(tr("请输入订单号"));
-    ui_->box_order_name_combo->lineEdit()->setAlignment(Qt::AlignCenter);
-
-    // 下拉框模糊匹配
-    QStringList order_name_list;
-    for (auto &order : order_dao_->all()) {
-        order_name_list.append(QString::fromStdString(order->name));
-    }
-
-    QCompleter *completer = new QCompleter(order_name_list, this);
-    completer->setFilterMode(Qt::MatchContains);
-    ui_->box_order_name_combo->setCompleter(completer);
-
-    // 设置内盒数据状态下拉框内容
-    QStringList box_data_status = {tr("全部"), tr("未扫描"), tr("已扫描")};
-    ui_->box_datas_status_comb_box->addItems(box_data_status);
-    ui_->box_datas_status_comb_box->setEditable(true);
-    ui_->box_datas_status_comb_box->lineEdit()->setAlignment(Qt::AlignCenter);
-    ui_->box_datas_status_comb_box->lineEdit()->setReadOnly(true);
-
-    QStringList box_header = {tr("内盒起始条码"), tr("内盒结束条码"), tr("首卡条码"), tr("尾卡条码")};
-    initTable(ui_->box_table, box_header, box_header.size());
-}
-
-void MainWindow::initCartonTab() {
-    ui_->carton_order_name_combo->setEditable(true);
-    ui_->carton_order_name_combo->lineEdit()->setPlaceholderText(tr("请输入订单号"));
-    ui_->carton_order_name_combo->lineEdit()->setAlignment(Qt::AlignCenter);
-
-    // 下拉框模糊匹配
-    QStringList order_name_list;
-    for (auto order : order_dao_->all()) {
-        order_name_list.append(QString::fromStdString(order->name));
-    }
-
-    QCompleter *completer = new QCompleter(order_name_list, this);
-    completer->setFilterMode(Qt::MatchContains);
-    ui_->carton_order_name_combo->setCompleter(completer);
-
-    QStringList carton_data_status = {tr("全部"), tr("未扫描"), tr("已扫描")};
-    ui_->carton_datas_status_comb_box->addItems(carton_data_status);
-    ui_->carton_datas_status_comb_box->setEditable(true);
-    ui_->carton_datas_status_comb_box->lineEdit()->setAlignment(Qt::AlignCenter);
-    ui_->carton_datas_status_comb_box->lineEdit()->setReadOnly(true);
-
-    QStringList carton_header = {tr("外箱起始条码"), tr("外箱结束条码"), tr("内盒起始或结束条码")};
-    initTable(ui_->carton_table, carton_header, carton_header.size());
-}
-
-void MainWindow::initOrderTab() {
-    QStringList order_header = {tr("订单号"), tr("校验格式"), tr("条码模式"), tr("创建时间")};
-    initTable(ui_->order_table, order_header, order_header.size());
-    // 设置条码模式下拉框内容
-    for (auto &mode : mode_dao_->all()) {
-        ui_->barcode_mode_combo_box->addItem(QString::fromStdString(mode->description));
-    }
-}
-
-void MainWindow::initUserTab() {
-    QStringList user_header = {tr("用户名"), tr("权限")};
-    initTable(ui_->user_table, user_header, user_header.size());
-    // 设置权限下拉框内容
-    for (auto &role : role_dao_->all()) {
-        ui_->selected_combo_box->addItem(QString::fromStdString(role->description));
-    }
-}
-
-void MainWindow::initTable(QTableWidget *table, QStringList header, int col_count) {
-    table->setRowCount(0);            // 设置行数
-    table->setColumnCount(col_count); // 设置列数
-    table->setHorizontalHeaderLabels(header);
-
-    // 设置表格样式
-    table->setEditTriggers(QAbstractItemView::NoEditTriggers);   // 禁止编辑
-    table->setSelectionBehavior(QAbstractItemView::SelectRows);  // 选中整行
-    table->setSelectionMode(QAbstractItemView::SingleSelection); // 只能选中一行
-    table->setAlternatingRowColors(true);                        // 隔行变色
-
-    // 设置表头字体
-    QFont header_font;
-    header_font.setPointSize(12);
-    header_font.setBold(true);
-    table->horizontalHeader()->setFont(header_font);
-    table->verticalHeader()->setFont(header_font);
-
-    // 设置表头内容颜色
-    table->horizontalHeader()->setStyleSheet("QHeaderView::section{background:skyblue;}");
-    table->verticalHeader()->setStyleSheet("QHeaderView::section{background:skyblue;}");
-
-    // 设置表格字体
-    QFont font;
-    font.setPointSize(12);
-    table->setFont(font);
-
-    // 设置自动调整列宽,并可以通过拖动表头来调整列宽
-    table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-
-    // 设置表格内容居中
-    table->horizontalHeader()->setDefaultAlignment(Qt::AlignCenter);
-    table->verticalHeader()->setDefaultAlignment(Qt::AlignCenter);
-
-    // 设置表格内容颜色
-    table->setStyleSheet("selection-background-color:lightblue;"); // 选中行背景色
-    table->setStyleSheet("background-color:transparent;");         // 背景透明
-    table->setStyleSheet("alternate-background-color:lightgray;"); // 隔行变色
-    table->setStyleSheet("color:black;");                          // 字体颜色
-
-    // 设置表格边框
-    table->setFrameShape(QFrame::NoFrame);                 // 无边框
-    table->setShowGrid(false);                             // 不显示网格线
-    table->setStyleSheet("border:none;");                  // 边框颜色
-    table->setStyleSheet("gridline-color:rgba(0,0,0,0);"); // 网格线颜色
-}
-
-void MainWindow::initSignalSlot() {
-    // 工具栏 - 用户
-    connect(ui_->switch_user_action, &QAction::triggered, this, &MainWindow::switchUserActionTriggered);
-
-    // 工具栏 - 语言
-    connect(ui_->chinese_action, &QAction::triggered, this, &MainWindow::chineseActionTriggered);
-    connect(ui_->english_action, &QAction::triggered, this, &MainWindow::englishActionTriggered);
-
-    // 工具栏 - 配置
-    connect(ui_->set_tag_data_action, &QAction::triggered, this, &MainWindow::setTagDataActionTriggered);
-
-    // 切换 tab
-    connect(ui_->tabWidget, &QTabWidget::currentChanged, [=](int index) {
-        switch (index) {
-
-        // 内盒比对
-        case 0:
-            refreshBoxTab();
-            break;
-
-        // 外箱比对
-        case 1:
-            refreshCartonTab();
-            break;
-
-        // 订单管理
-        case 2:
-            refreshOrderTab();
-            break;
-
-        // 用户管理
-        case 3:
-            refreshUserTab();
-            break;
-
-        default:
-            break;
-        }
-    });
-
-    // 内盒比对 Tab
-    connect(ui_->box_order_name_combo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &MainWindow::boxSelectOrder);
-    connect(ui_->box_datas_status_comb_box, &QComboBox::currentTextChanged, this, &MainWindow::selectBoxDatasStatus);
-    connect(ui_->box_start_line, &QLineEdit::returnPressed, this, &MainWindow::toBoxEndBarcode);
-    connect(ui_->box_end_line, &QLineEdit::returnPressed, this, &MainWindow::toCardStartBarcode);
-    connect(ui_->card_start_line, &QLineEdit::returnPressed, this, &MainWindow::toCardEndBarcode);
-    connect(ui_->card_end_line, &QLineEdit::returnPressed, this, &MainWindow::compareBox);
-
-    // 外箱比对 Tab
-    connect(ui_->carton_order_name_combo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &MainWindow::cartonSelectOrder);
-    connect(ui_->carton_table, &QTableWidget::itemSelectionChanged, this, &MainWindow::showSelectedCarton);
-    connect(ui_->carton_datas_status_comb_box, &QComboBox::currentTextChanged, this, &MainWindow::selectCartonDatasStatus);
-    connect(ui_->carton_start_line, &QLineEdit::returnPressed, this, &MainWindow::toCartonEndBarcode);
-    connect(ui_->carton_end_line, &QLineEdit::returnPressed, this, &MainWindow::toTargetBarcode);
-    connect(ui_->target_line, &QLineEdit::returnPressed, this, &MainWindow::compareCarton);
-
-    // 订单配置 tab
-    connect(ui_->select_box_file_ptn, &QPushButton::clicked, this, &MainWindow::selectBoxFileBtnClicked);
-    connect(ui_->select_carton_file_ptn, &QPushButton::clicked, this, &MainWindow::selectCartonFileBtnClicked);
-    connect(ui_->order_table, &QTableWidget::itemSelectionChanged, this, &MainWindow::showSelectedOrder);
-    connect(ui_->add_order_btn, &QPushButton::clicked, this, &MainWindow::addOrderBtnClicked);
-    connect(ui_->update_order_btn, &QPushButton::clicked, this, &MainWindow::updateOrderBtnClicked);
-    connect(ui_->remove_order_btn, &QPushButton::clicked, this, &MainWindow::removeOrderBtnClicked);
-    connect(ui_->clear_order_btn, &QPushButton::clicked, this, &MainWindow::clearOrderBtnClicked);
-
-    // 用户配置 tab
-    connect(ui_->user_table, &QTableWidget::itemSelectionChanged, this, &MainWindow::showSelectedUser);
-    connect(ui_->update_user_btn, &QPushButton::clicked, this, &MainWindow::updateUserBtnClicked);
-    connect(ui_->add_user_btn, &QPushButton::clicked, this, &MainWindow::addUserBtnClicked);
-    connect(ui_->remove_user_btn, &QPushButton::clicked, this, &MainWindow::removeUserBtnClicked);
-    connect(ui_->clear_user_btn, &QPushButton::clicked, this, &MainWindow::clearUserBtnClicked);
-}
-
 void MainWindow::switchUserActionTriggered() {
     // 关闭键盘监听
     this->releaseKeyboard();
@@ -1240,6 +1025,221 @@ void MainWindow::addOrderSuccess() {
 void MainWindow::addOrderFailure() {
     loading_->hide();
     QMessageBox::warning(this, tr("添加失败"), tr("订单添加失败"));
+}
+
+void MainWindow::initWindow() {
+    // 设置窗口标题
+    setWindowTitle(tr("条码比对系统"));
+}
+
+void MainWindow::initUi() {
+    // 初始化内盒比对 tab
+    initBoxTab();
+
+    // 初始化外箱比对 tab
+    initCartonTab();
+
+    // 初始化订单管理 tab
+    initOrderTab();
+
+    // 初始化用户管理 tab
+    initUserTab();
+}
+
+void MainWindow::initDao() {
+    role_dao_   = std::make_shared<RoleDao>(db_);
+    mode_dao_   = std::make_shared<ModeDao>(db_);
+    order_dao_  = std::make_shared<OrderDao>(db_);
+    format_dao_ = std::make_shared<FormatDao>(db_);
+}
+
+void MainWindow::initBoxTab() {
+    ui_->box_order_name_combo->setEditable(true);
+    ui_->box_order_name_combo->lineEdit()->setPlaceholderText(tr("请输入订单号"));
+    ui_->box_order_name_combo->lineEdit()->setAlignment(Qt::AlignCenter);
+
+    // 下拉框模糊匹配
+    QStringList order_name_list;
+    for (auto &order : order_dao_->all()) {
+        order_name_list.append(QString::fromStdString(order->name));
+    }
+
+    QCompleter *completer = new QCompleter(order_name_list, this);
+    completer->setFilterMode(Qt::MatchContains);
+    ui_->box_order_name_combo->setCompleter(completer);
+
+    // 设置内盒数据状态下拉框内容
+    QStringList box_data_status = {tr("全部"), tr("未扫描"), tr("已扫描")};
+    ui_->box_datas_status_comb_box->addItems(box_data_status);
+    ui_->box_datas_status_comb_box->setEditable(true);
+    ui_->box_datas_status_comb_box->lineEdit()->setAlignment(Qt::AlignCenter);
+    ui_->box_datas_status_comb_box->lineEdit()->setReadOnly(true);
+
+    QStringList box_header = {tr("内盒起始条码"), tr("内盒结束条码"), tr("首卡条码"), tr("尾卡条码")};
+    initTable(ui_->box_table, box_header, box_header.size());
+}
+
+void MainWindow::initCartonTab() {
+    ui_->carton_order_name_combo->setEditable(true);
+    ui_->carton_order_name_combo->lineEdit()->setPlaceholderText(tr("请输入订单号"));
+    ui_->carton_order_name_combo->lineEdit()->setAlignment(Qt::AlignCenter);
+
+    // 下拉框模糊匹配
+    QStringList order_name_list;
+    for (auto order : order_dao_->all()) {
+        order_name_list.append(QString::fromStdString(order->name));
+    }
+
+    QCompleter *completer = new QCompleter(order_name_list, this);
+    completer->setFilterMode(Qt::MatchContains);
+    ui_->carton_order_name_combo->setCompleter(completer);
+
+    QStringList carton_data_status = {tr("全部"), tr("未扫描"), tr("已扫描")};
+    ui_->carton_datas_status_comb_box->addItems(carton_data_status);
+    ui_->carton_datas_status_comb_box->setEditable(true);
+    ui_->carton_datas_status_comb_box->lineEdit()->setAlignment(Qt::AlignCenter);
+    ui_->carton_datas_status_comb_box->lineEdit()->setReadOnly(true);
+
+    QStringList carton_header = {tr("外箱起始条码"), tr("外箱结束条码"), tr("内盒起始或结束条码")};
+    initTable(ui_->carton_table, carton_header, carton_header.size());
+}
+
+void MainWindow::initOrderTab() {
+    QStringList order_header = {tr("订单号"), tr("校验格式"), tr("条码模式"), tr("创建时间")};
+    initTable(ui_->order_table, order_header, order_header.size());
+    // 设置条码模式下拉框内容
+    for (auto &mode : mode_dao_->all()) {
+        ui_->barcode_mode_combo_box->addItem(QString::fromStdString(mode->description));
+    }
+}
+
+void MainWindow::initUserTab() {
+    QStringList user_header = {tr("用户名"), tr("权限")};
+    initTable(ui_->user_table, user_header, user_header.size());
+    // 设置权限下拉框内容
+    for (auto &role : role_dao_->all()) {
+        ui_->selected_combo_box->addItem(QString::fromStdString(role->description));
+    }
+}
+
+void MainWindow::initTable(QTableWidget *table, QStringList header, int col_count) {
+    table->setRowCount(0);            // 设置行数
+    table->setColumnCount(col_count); // 设置列数
+    table->setHorizontalHeaderLabels(header);
+
+    // 设置表格样式
+    table->setEditTriggers(QAbstractItemView::NoEditTriggers);   // 禁止编辑
+    table->setSelectionBehavior(QAbstractItemView::SelectRows);  // 选中整行
+    table->setSelectionMode(QAbstractItemView::SingleSelection); // 只能选中一行
+    table->setAlternatingRowColors(true);                        // 隔行变色
+
+    // 设置表头字体
+    QFont header_font;
+    header_font.setPointSize(12);
+    header_font.setBold(true);
+    table->horizontalHeader()->setFont(header_font);
+    table->verticalHeader()->setFont(header_font);
+
+    // 设置表头内容颜色
+    table->horizontalHeader()->setStyleSheet("QHeaderView::section{background:skyblue;}");
+    table->verticalHeader()->setStyleSheet("QHeaderView::section{background:skyblue;}");
+
+    // 设置表格字体
+    QFont font;
+    font.setPointSize(12);
+    table->setFont(font);
+
+    // 设置自动调整列宽,并可以通过拖动表头来调整列宽
+    table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
+    // 设置表格内容居中
+    table->horizontalHeader()->setDefaultAlignment(Qt::AlignCenter);
+    table->verticalHeader()->setDefaultAlignment(Qt::AlignCenter);
+
+    // 设置表格内容颜色
+    table->setStyleSheet("selection-background-color:lightblue;"); // 选中行背景色
+    table->setStyleSheet("background-color:transparent;");         // 背景透明
+    table->setStyleSheet("alternate-background-color:lightgray;"); // 隔行变色
+    table->setStyleSheet("color:black;");                          // 字体颜色
+
+    // 设置表格边框
+    table->setFrameShape(QFrame::NoFrame);                 // 无边框
+    table->setShowGrid(false);                             // 不显示网格线
+    table->setStyleSheet("border:none;");                  // 边框颜色
+    table->setStyleSheet("gridline-color:rgba(0,0,0,0);"); // 网格线颜色
+}
+
+void MainWindow::initSignalSlot() {
+    // 工具栏 - 用户
+    connect(ui_->switch_user_action, &QAction::triggered, this, &MainWindow::switchUserActionTriggered);
+
+    // 工具栏 - 语言
+    connect(ui_->chinese_action, &QAction::triggered, this, &MainWindow::chineseActionTriggered);
+    connect(ui_->english_action, &QAction::triggered, this, &MainWindow::englishActionTriggered);
+
+    // 工具栏 - 配置
+    connect(ui_->set_tag_data_action, &QAction::triggered, this, &MainWindow::setTagDataActionTriggered);
+
+    // 切换 tab
+    connect(ui_->tabWidget, &QTabWidget::currentChanged, [=](int index) {
+        switch (index) {
+
+        // 内盒比对
+        case 0:
+            refreshBoxTab();
+            break;
+
+        // 外箱比对
+        case 1:
+            refreshCartonTab();
+            break;
+
+        // 订单管理
+        case 2:
+            refreshOrderTab();
+            break;
+
+        // 用户管理
+        case 3:
+            refreshUserTab();
+            break;
+
+        default:
+            break;
+        }
+    });
+
+    // 内盒比对 Tab
+    connect(ui_->box_order_name_combo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &MainWindow::boxSelectOrder);
+    connect(ui_->box_datas_status_comb_box, &QComboBox::currentTextChanged, this, &MainWindow::selectBoxDatasStatus);
+    connect(ui_->box_start_line, &QLineEdit::returnPressed, this, &MainWindow::toBoxEndBarcode);
+    connect(ui_->box_end_line, &QLineEdit::returnPressed, this, &MainWindow::toCardStartBarcode);
+    connect(ui_->card_start_line, &QLineEdit::returnPressed, this, &MainWindow::toCardEndBarcode);
+    connect(ui_->card_end_line, &QLineEdit::returnPressed, this, &MainWindow::compareBox);
+
+    // 外箱比对 Tab
+    connect(ui_->carton_order_name_combo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &MainWindow::cartonSelectOrder);
+    connect(ui_->carton_table, &QTableWidget::itemSelectionChanged, this, &MainWindow::showSelectedCarton);
+    connect(ui_->carton_datas_status_comb_box, &QComboBox::currentTextChanged, this, &MainWindow::selectCartonDatasStatus);
+    connect(ui_->carton_start_line, &QLineEdit::returnPressed, this, &MainWindow::toCartonEndBarcode);
+    connect(ui_->carton_end_line, &QLineEdit::returnPressed, this, &MainWindow::toTargetBarcode);
+    connect(ui_->target_line, &QLineEdit::returnPressed, this, &MainWindow::compareCarton);
+
+    // 订单配置 tab
+    connect(ui_->select_box_file_ptn, &QPushButton::clicked, this, &MainWindow::selectBoxFileBtnClicked);
+    connect(ui_->select_carton_file_ptn, &QPushButton::clicked, this, &MainWindow::selectCartonFileBtnClicked);
+    connect(ui_->order_table, &QTableWidget::itemSelectionChanged, this, &MainWindow::showSelectedOrder);
+    connect(ui_->add_order_btn, &QPushButton::clicked, this, &MainWindow::addOrderBtnClicked);
+    connect(ui_->update_order_btn, &QPushButton::clicked, this, &MainWindow::updateOrderBtnClicked);
+    connect(ui_->remove_order_btn, &QPushButton::clicked, this, &MainWindow::removeOrderBtnClicked);
+    connect(ui_->clear_order_btn, &QPushButton::clicked, this, &MainWindow::clearOrderBtnClicked);
+
+    // 用户配置 tab
+    connect(ui_->user_table, &QTableWidget::itemSelectionChanged, this, &MainWindow::showSelectedUser);
+    connect(ui_->update_user_btn, &QPushButton::clicked, this, &MainWindow::updateUserBtnClicked);
+    connect(ui_->add_user_btn, &QPushButton::clicked, this, &MainWindow::addUserBtnClicked);
+    connect(ui_->remove_user_btn, &QPushButton::clicked, this, &MainWindow::removeUserBtnClicked);
+    connect(ui_->clear_user_btn, &QPushButton::clicked, this, &MainWindow::clearUserBtnClicked);
 }
 
 void MainWindow::switchLanguage(const QString &language_file) {

@@ -21,34 +21,6 @@ class MainWindow : public QMainWindow {
     MainWindow(const std::shared_ptr<SQLite::Database> &db, const std::shared_ptr<UserDao> &user_dao, QMainWindow *parent = nullptr);
     ~MainWindow();
 
-  private:
-    /// @brief 初始化窗口
-    void initWindow();
-
-    /// @brief 初始化 UI
-    void initUi();
-
-    /// @brief 初始化数据库
-    void initDao();
-
-    /// @brief 初始化内盒比对 Tab
-    void initBoxTab();
-
-    /// @brief 初始化外箱比对 Tab
-    void initCartonTab();
-
-    /// @brief 初始化订单管理 Tab
-    void initOrderTab();
-
-    /// @brief 初始化用户管理 Tab
-    void initUserTab();
-
-    /// @brief 初始化表格
-    void initTable(QTableWidget *table, QStringList header, int col_count);
-
-    /// @brief 初始化信号槽
-    void initSignalSlot();
-
     /// @brief 切换用户动作触发
     void switchUserActionTriggered();
 
@@ -159,6 +131,33 @@ class MainWindow : public QMainWindow {
     void addOrderFailure();
 
   private:
+    /// @brief 初始化窗口
+    void initWindow();
+
+    /// @brief 初始化 UI
+    void initUi();
+
+    /// @brief 初始化数据库
+    void initDao();
+
+    /// @brief 初始化内盒比对 Tab
+    void initBoxTab();
+
+    /// @brief 初始化外箱比对 Tab
+    void initCartonTab();
+
+    /// @brief 初始化订单管理 Tab
+    void initOrderTab();
+
+    /// @brief 初始化用户管理 Tab
+    void initUserTab();
+
+    /// @brief 初始化表格
+    void initTable(QTableWidget *table, QStringList header, int col_count);
+
+    /// @brief 初始化信号槽
+    void initSignalSlot();
+
     /// @brief 切换语言
     void switchLanguage(const QString &language_file);
 

@@ -28,7 +28,7 @@ class OrderDao {
     /// @brief Get all orders from the database.
     std::vector<std::shared_ptr<Order>> all();
 
-    /// @brief Get an order by its id and name.
+    /// @brief Get an order by its id or name.
     std::shared_ptr<Order> get(const int &id);
     std::shared_ptr<Order> get(const std::string &name);
 
