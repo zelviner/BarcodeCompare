@@ -104,9 +104,14 @@ std::vector<std::shared_ptr<BoxData>> ExcelImporter::boxDatas(const std::shared_
         box_data->end_number   = getStr(row, format->end_number);
         box_data->quantity     = getInt(row, format->quantity);
 
-        std::vector<std::string> barcodes = split(getStr(row, format->barcode), ",");
-        box_data->start_barcode           = barcodes[0];
-        box_data->end_barcode             = barcodes.size() == 1 ? "" : barcodes[1];
+        if (format->barcode != "") {
+            std::vector<std::string> barcodes = split(getStr(row, format->barcode), ",");
+            box_data->start_barcode           = barcodes[0];
+            box_data->end_barcode             = barcodes.size() == 1 ? "" : barcodes[1];
+        } else {
+            box_data->start_barcode = getStr(row, format->start_number);
+            box_data->end_barcode   = getStr(row, format->end_number);
+        }
 
         box_datas.push_back(std::move(box_data));
     }
@@ -161,9 +166,14 @@ std::vector<std::shared_ptr<CartonData>> ExcelImporter::cartonDatas(const std::s
         carton_data->end_number    = getStr(row, format->end_number);
         carton_data->quantity      = getInt(row, format->quantity);
 
-        std::vector<std::string> barcodes = split(getStr(row, format->barcode), ",");
-        carton_data->start_barcode        = barcodes[0];
-        carton_data->end_barcode          = barcodes.size() == 1 ? "" : barcodes[1];
+        if (format->barcode != "") {
+            std::vector<std::string> barcodes = split(getStr(row, format->barcode), ",");
+            carton_data->start_barcode        = barcodes[0];
+            carton_data->end_barcode          = barcodes.size() == 1 ? "" : barcodes[1];
+        } else {
+            carton_data->start_barcode = getStr(row, format->start_number);
+            carton_data->end_barcode   = getStr(row, format->end_number);
+        }
 
         carton_datas.push_back(std::move(carton_data));
     }

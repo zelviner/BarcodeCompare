@@ -262,6 +262,12 @@ void OrderDao::init() {
 bool OrderDao::hasRequiredValues(const std::vector<std::string> &headers, const std::shared_ptr<Format> &format) {
     std::unordered_set<std::string> headerSet(headers.begin(), headers.end());
 
-    return headerSet.count(format->box_number) && headerSet.count(format->start_number) && headerSet.count(format->end_number) &&
-        headerSet.count(format->quantity) && headerSet.count(format->barcode);
+    bool result = headerSet.count(format->box_number) && headerSet.count(format->start_number) && headerSet.count(format->end_number) &&
+        headerSet.count(format->quantity);
+
+    if (format->barcode != "") {
+        return result && headerSet.count(format->barcode);
+    } else {
+        return true;
+    }
 }

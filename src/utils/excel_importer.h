@@ -17,14 +17,16 @@ class ExcelImporter {
     ExcelImporter(const std::string &box_file_path, const std::string &carton_file_path);
     ~ExcelImporter();
 
-    /// @brief Get the header data of box
+    /// @brief Get the header data of box.
     std::vector<std::string> boxHeaders();
 
-    /// @brief Get the header data of carton
+    /// @brief Get the header data of carton.
     std::vector<std::string> cartonHeaders();
 
+    /// @brief Get the box data from tag data file.
     std::vector<std::shared_ptr<BoxData>> boxDatas(const std::shared_ptr<Format> &format);
 
+    /// @brief Get the carton data from tag data file.
     std::vector<std::shared_ptr<CartonData>> cartonDatas(const std::shared_ptr<Format> &format);
 
   private:
