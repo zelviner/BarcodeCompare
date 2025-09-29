@@ -1,4 +1,4 @@
-#include "excel_importer.h"
+#include "excel.h"
 #include "data/box_data.h"
 #include "data/carton_data.h"
 
@@ -7,15 +7,7 @@
 #include <xlnt/workbook/workbook.hpp>
 #include <xlnt/worksheet/cell_vector.hpp>
 
-namespace utils {
-
-ExcelImporter::ExcelImporter(const std::string &box_file_path, const std::string &carton_file_path)
-    : box_file_path_(box_file_path)
-    , carton_file_path_(carton_file_path) {}
-
-ExcelImporter::~ExcelImporter() {}
-
-std::vector<std::string> ExcelImporter::boxHeaders() {
+std::vector<std::string> Excel::boxHeaders() {
     std::vector<std::string> headers;
 
     xlnt::workbook wb;
@@ -36,7 +28,7 @@ std::vector<std::string> ExcelImporter::boxHeaders() {
     return headers;
 }
 
-std::vector<std::string> ExcelImporter::cartonHeaders() {
+std::vector<std::string> Excel::cartonHeaders() {
     std::vector<std::string> headers;
 
     xlnt::workbook wb;
@@ -57,7 +49,7 @@ std::vector<std::string> ExcelImporter::cartonHeaders() {
     return headers;
 }
 
-std::vector<std::shared_ptr<BoxData>> ExcelImporter::boxDatas(const std::shared_ptr<Format> &format) {
+std::vector<std::shared_ptr<BoxData>> Excel::boxDatas(const std::shared_ptr<Format> &format) {
     std::vector<std::shared_ptr<BoxData>> box_datas;
     header_index_.clear();
 
@@ -98,19 +90,19 @@ std::vector<std::shared_ptr<BoxData>> ExcelImporter::boxDatas(const std::shared_
         auto box_data = std::make_shared<BoxData>();
         box_data->id  = id_counter++;
 
-        box_data->filename     = getStr(row, format->filename);
-        box_data->box_number   = getStr(row, format->box_number);
-        box_data->start_number = getStr(row, format->start_number);
-        box_data->end_number   = getStr(row, format->end_number);
-        box_data->quantity     = getInt(row, format->quantity);
+        box_data->filename     = get_str(row, format->filename);
+        box_data->box_number   = get_str(row, format->box_number);
+        box_data->start_number = get_str(row, format->start_number);
+        box_data->end_number   = get_str(row, format->end_number);
+        box_data->quantity     = get_int(row, format->quantity);
 
         if (format->barcode != "") {
-            std::vector<std::string> barcodes = split(getStr(row, format->barcode), ",");
+            std::vector<std::string> barcodes = split(get_str(row, format->barcode), ",");
             box_data->start_barcode           = barcodes[0];
             box_data->end_barcode             = barcodes.size() == 1 ? "" : barcodes[1];
         } else {
-            box_data->start_barcode = getStr(row, format->start_number);
-            box_data->end_barcode   = getStr(row, format->end_number);
+            box_data->start_barcode = get_str(row, format->start_number);
+            box_data->end_barcode   = get_str(row, format->end_number);
         }
 
         box_datas.push_back(std::move(box_data));
@@ -119,7 +111,7 @@ std::vector<std::shared_ptr<BoxData>> ExcelImporter::boxDatas(const std::shared_
     return box_datas;
 }
 
-std::vector<std::shared_ptr<CartonData>> ExcelImporter::cartonDatas(const std::shared_ptr<Format> &format) {
+std::vector<std::shared_ptr<CartonData>> Excel::cartonDatas(const std::shared_ptr<Format> &format) {
     std::vector<std::shared_ptr<CartonData>> carton_datas;
     header_index_.clear();
 
@@ -160,19 +152,19 @@ std::vector<std::shared_ptr<CartonData>> ExcelImporter::cartonDatas(const std::s
         auto carton_data = std::make_shared<CartonData>();
         carton_data->id  = id_counter++;
 
-        carton_data->filename      = getStr(row, format->filename);
-        carton_data->carton_number = getStr(row, format->box_number);
-        carton_data->start_number  = getStr(row, format->start_number);
-        carton_data->end_number    = getStr(row, format->end_number);
-        carton_data->quantity      = getInt(row, format->quantity);
+        carton_data->filename      = get_str(row, format->filename);
+        carton_data->carton_number = get_str(row, format->box_number);
+        carton_data->start_number  = get_str(row, format->start_number);
+        carton_data->end_number    = get_str(row, format->end_number);
+        carton_data->quantity      = get_int(row, format->quantity);
 
         if (format->barcode != "") {
-            std::vector<std::string> barcodes = split(getStr(row, format->barcode), ",");
+            std::vector<std::string> barcodes = split(get_str(row, format->barcode), ",");
             carton_data->start_barcode        = barcodes[0];
             carton_data->end_barcode          = barcodes.size() == 1 ? "" : barcodes[1];
         } else {
-            carton_data->start_barcode = getStr(row, format->start_number);
-            carton_data->end_barcode   = getStr(row, format->end_number);
+            carton_data->start_barcode = get_str(row, format->start_number);
+            carton_data->end_barcode   = get_str(row, format->end_number);
         }
 
         carton_datas.push_back(std::move(carton_data));
@@ -181,7 +173,7 @@ std::vector<std::shared_ptr<CartonData>> ExcelImporter::cartonDatas(const std::s
     return carton_datas;
 }
 
-std::string ExcelImporter::getStr(const xlnt::cell_vector &row, const std::string &header) {
+std::string Excel::get_str(const xlnt::cell_vector &row, const std::string &header) {
     if (header_index_.count(header) && header_index_[header] < int(row.length())) {
         return removeSpaces(row[header_index_[header]].to_string());
     }
@@ -189,7 +181,7 @@ std::string ExcelImporter::getStr(const xlnt::cell_vector &row, const std::strin
     return "";
 }
 
-int ExcelImporter::getInt(const xlnt::cell_vector &row, const std::string &header) {
+int Excel::get_int(const xlnt::cell_vector &row, const std::string &header) {
     if (header_index_.count(header) && header_index_[header] < int(row.length())) {
         try {
             return row[header_index_[header]].value<int>();
@@ -200,30 +192,3 @@ int ExcelImporter::getInt(const xlnt::cell_vector &row, const std::string &heade
 
     return 0;
 }
-
-std::string ExcelImporter::removeSpaces(const std::string &s) {
-    std::string result;
-    result.reserve(s.size());
-    for (char c : s) {
-        if (c != ' ') result.push_back(c);
-    }
-    return result;
-}
-
-std::vector<std::string> ExcelImporter::split(const std::string &str, const std::string &delim) {
-    std::vector<std::string> ret;
-    std::string::size_type   pos1, pos2;
-    pos2 = str.find(delim);
-    pos1 = 0;
-    while (std::string::npos != pos2) {
-        ret.push_back(str.substr(pos1, pos2 - pos1));
-
-        pos1 = pos2 + delim.size();
-        pos2 = str.find(delim, pos1);
-    }
-    if (pos1 != str.length()) ret.push_back(str.substr(pos1));
-
-    return ret;
-}
-
-} // namespace utils

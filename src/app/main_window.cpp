@@ -641,7 +641,7 @@ void MainWindow::refreshBoxCompareGroup(const int &cols, const std::string &sele
 }
 
 void MainWindow::selectBoxFileBtnClicked() {
-    QString file_path = QFileDialog::getOpenFileName(this, tr("选择内盒标签文件路径"), "templates", "*.xlsx");
+    QString file_path = QFileDialog::getOpenFileName(this, tr("选择内盒标签文件路径"), "templates", tr("Excel/CSV 文件 (*.xlsx *.csv)"));
 
     if (file_path.isEmpty()) return;
 
@@ -649,7 +649,7 @@ void MainWindow::selectBoxFileBtnClicked() {
 }
 
 void MainWindow::selectCartonFileBtnClicked() {
-    QString file_path = QFileDialog::getOpenFileName(this, tr("选择外箱标签文件路径"), "templates", "*.xlsx");
+    QString file_path = QFileDialog::getOpenFileName(this, tr("选择外箱标签文件路径"), "templates", tr("Excel/CSV 文件 (*.xlsx *.csv)"));
 
     if (file_path.isEmpty()) return;
 

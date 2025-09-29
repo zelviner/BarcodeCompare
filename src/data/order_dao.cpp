@@ -3,10 +3,11 @@
 #include "carton_data_dao.h"
 #include "data/box_data.h"
 #include "data/format_dao.h"
-#include "utils/excel_importer.h"
+#include "importer/importer_factory.hpp"
 
 #include <SQLiteCpp/Database.h>
 #include <SQLiteCpp/Statement.h>
+#include <cstddef>
 #include <memory>
 #include <unordered_set>
 #include <vector>
@@ -19,9 +20,21 @@ OrderDao::OrderDao(const std::shared_ptr<SQLite::Database> &db)
 OrderDao::~OrderDao() {}
 
 bool OrderDao::add(const std::shared_ptr<Order> &order) {
-    std::shared_ptr<utils::ExcelImporter>    excel_importer = std::make_shared<utils::ExcelImporter>(order->box_file_path, order->carton_file_path);
-    auto                                     box_headers    = excel_importer->boxHeaders();
-    auto                                     carton_headers = excel_importer->cartonHeaders();
+    size_t                    index          = order->box_file_path.find(".");
+    std::string               file_extension = order->box_file_path.substr(index, order->box_file_path.size() - index);
+    std::shared_ptr<Importer> importer;
+
+    // 根据不同类型文件选择不同的导入器
+    if (file_extension == ".xlsx") {
+        importer = ImporterFactory::create(ImporterFactory::FileType::XLSX, order->box_file_path, order->carton_file_path);
+    } else if (file_extension == ".csv") {
+        importer = ImporterFactory::create(ImporterFactory::FileType::CSV, order->box_file_path, order->carton_file_path);
+    } else {
+        return false;
+    }
+
+    auto                                     box_headers    = importer->boxHeaders();
+    auto                                     carton_headers = importer->cartonHeaders();
     std::vector<std::shared_ptr<BoxData>>    box_datas;
     std::vector<std::shared_ptr<CartonData>> carton_datas;
 
@@ -32,11 +45,11 @@ bool OrderDao::add(const std::shared_ptr<Order> &order) {
     for (auto format : formats) {
         switch (format->type) {
         case 1:
-            if (hasRequiredValues(box_headers, format)) box_datas = excel_importer->boxDatas(format);
+            if (hasRequiredValues(box_headers, format)) box_datas = importer->boxDatas(format);
             break;
 
         case 2:
-            if (hasRequiredValues(carton_headers, format)) carton_datas = excel_importer->cartonDatas(format);
+            if (hasRequiredValues(carton_headers, format)) carton_datas = importer->cartonDatas(format);
             break;
         }
     }

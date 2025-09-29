@@ -97,11 +97,9 @@ void FormatDao::init() {
         std::shared_ptr<Format> cq02_box    = std::make_shared<Format>(Format{0, "CQ02", 1, "", "盒号", "J", "K", "L", ""});
         std::shared_ptr<Format> cq02_carton = std::make_shared<Format>(Format{0, "CQ02", 2, "", "箱号", "J", "K", "L", ""});
         std::shared_ptr<Format> surabaya_box =
-            std::make_shared<Format>(Format{0, "Surabaya", 1, "No.WO/OF \n(数据文件名)", "Inner Box No.\n（内盒号）", "First SN\n（起始序列号）",
-                                            "Last SN\n（终止序列号）", "Quantity\n（数量）", "Barcode\n（条形码）"});
+            std::make_shared<Format>(Format{0, "Surabaya", 1, "No.WO/OF", "Inner Box No.", "First SN", "Last SN", "Quantity", "Barcode"});
         std::shared_ptr<Format> surabaya_carton =
-            std::make_shared<Format>(Format{0, "Surabaya", 2, "No.WO/OF \n(数据文件名)", "Outer Box No.\n（外箱号）", "First SN\n（起始序列号）",
-                                            "Last SN\n（终止序列号）", "Quantity\n（数量）", "Barcode\n（条形码）"});
+            std::make_shared<Format>(Format{0, "Surabaya", 2, "No.WO/OF", "Outer Box No.", "First SN", "Last SN", "Quantity", "Barcode"});
 
         add(cq01_box);
         add(cq01_carton);
