@@ -38,10 +38,10 @@ std::vector<std::shared_ptr<User>> UserDao::all() {
     std::vector<std::shared_ptr<User>> users;
     while (query.executeStep()) {
         std::shared_ptr<User> user = std::make_shared<User>();
-        user->id                   = query.getColumn(0);
-        user->name                 = query.getColumn(1).getString();
-        user->password             = query.getColumn(2).getString();
-        user->role_id              = query.getColumn(3);
+        user->id                   = query.getColumn("id");
+        user->name                 = query.getColumn("name").getString();
+        user->password             = query.getColumn("password").getString();
+        user->role_id              = query.getColumn("role_id");
 
         users.push_back(user);
     }
@@ -84,11 +84,10 @@ std::shared_ptr<User> UserDao::get(const int &id) {
 
     if (query.executeStep()) {
         std::shared_ptr<User> user = std::make_shared<User>();
-
-        user->id       = query.getColumn(0);
-        user->name     = query.getColumn(1).getString();
-        user->password = query.getColumn(2).getString();
-        user->role_id  = query.getColumn(3);
+        user->id       = query.getColumn("id");
+        user->name     = query.getColumn("name").getString();
+        user->password = query.getColumn("password").getString();
+        user->role_id  = query.getColumn("role_id");
 
         return user;
     }

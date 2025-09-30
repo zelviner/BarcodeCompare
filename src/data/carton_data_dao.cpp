@@ -60,16 +60,15 @@ std::vector<std::shared_ptr<CartonData>> CartonDataDao::all(const int &status) {
     std::vector<std::shared_ptr<CartonData>> carton_datas;
     while (all.executeStep()) {
         std::shared_ptr<CartonData> carton_data = std::make_shared<CartonData>();
-
-        carton_data->id            = all.getColumn(0);
-        carton_data->filename      = all.getColumn(1).getString();
-        carton_data->carton_number = all.getColumn(2).getString();
-        carton_data->start_number  = all.getColumn(3).getString();
-        carton_data->end_number    = all.getColumn(4).getString();
-        carton_data->quantity      = all.getColumn(5).getInt();
-        carton_data->start_barcode = all.getColumn(6).getString();
-        carton_data->end_barcode   = all.getColumn(7).getString();
-        carton_data->status        = all.getColumn(8);
+        carton_data->id            = all.getColumn("id");
+        carton_data->filename      = all.getColumn("filename").getString();
+        carton_data->carton_number = all.getColumn("carton_number").getString();
+        carton_data->start_number  = all.getColumn("start_number").getString();
+        carton_data->end_number    = all.getColumn("end_number").getString();
+        carton_data->quantity      = all.getColumn("quantity").getInt();
+        carton_data->start_barcode = all.getColumn("start_barcode").getString();
+        carton_data->end_barcode   = all.getColumn("end_barcode").getString();
+        carton_data->status        = all.getColumn("status");
 
         carton_datas.push_back(carton_data);
     }
@@ -90,16 +89,15 @@ std::shared_ptr<CartonData> CartonDataDao::get(const std::string &start_barcode)
 
     if (get.executeStep()) {
         std::shared_ptr<CartonData> carton_data = std::make_shared<CartonData>();
-
-        carton_data->id            = get.getColumn(0);
-        carton_data->filename      = get.getColumn(1).getString();
-        carton_data->carton_number = get.getColumn(2).getString();
-        carton_data->start_number  = get.getColumn(3).getString();
-        carton_data->end_number    = get.getColumn(4).getString();
-        carton_data->quantity      = get.getColumn(5).getInt();
-        carton_data->start_barcode = get.getColumn(6).getString();
-        carton_data->end_barcode   = get.getColumn(7).getString();
-        carton_data->status        = get.getColumn(8);
+        carton_data->id            = get.getColumn("id");
+        carton_data->filename      = get.getColumn("filename").getString();
+        carton_data->carton_number = get.getColumn("carton_number").getString();
+        carton_data->start_number  = get.getColumn("start_number").getString();
+        carton_data->end_number    = get.getColumn("end_number").getString();
+        carton_data->quantity      = get.getColumn("quantity").getInt();
+        carton_data->start_barcode = get.getColumn("start_barcode").getString();
+        carton_data->end_barcode   = get.getColumn("end_barcode").getString();
+        carton_data->status        = get.getColumn("status");
 
         return carton_data;
     }

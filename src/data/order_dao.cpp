@@ -20,7 +20,7 @@ OrderDao::OrderDao(const std::shared_ptr<SQLite::Database> &db)
 OrderDao::~OrderDao() {}
 
 bool OrderDao::add(const std::shared_ptr<Order> &order) {
-    size_t                    index          = order->box_file_path.find(".");
+    size_t                    index          = order->box_file_path.rfind(".");
     std::string               file_extension = order->box_file_path.substr(index, order->box_file_path.size() - index);
     std::shared_ptr<Importer> importer;
 
@@ -54,6 +54,7 @@ bool OrderDao::add(const std::shared_ptr<Order> &order) {
         }
     }
 
+    // 找不到预设文件头信息
     if (box_datas.size() == 0 || carton_datas.size() == 0) {
         return false;
     }
@@ -146,21 +147,20 @@ std::vector<std::shared_ptr<Order>> OrderDao::all() {
 
     std::vector<std::shared_ptr<Order>> orders;
     while (all.executeStep()) {
-        std::shared_ptr<Order> order = std::make_shared<Order>();
-
-        order->id                     = all.getColumn(0);
-        order->name                   = all.getColumn(1).getString();
-        order->check_format           = all.getColumn(2).getString();
-        order->carton_start_check_num = all.getColumn(3);
-        order->carton_end_check_num   = all.getColumn(4);
-        order->box_start_check_num    = all.getColumn(5);
-        order->box_end_check_num      = all.getColumn(6);
-        order->card_start_check_num   = all.getColumn(7);
-        order->card_end_check_num     = all.getColumn(8);
-        order->box_scanned_num        = all.getColumn(9);
-        order->carton_scanned_num     = all.getColumn(10);
-        order->mode_id                = all.getColumn(11);
-        order->create_time            = all.getColumn(12).getString();
+        std::shared_ptr<Order> order  = std::make_shared<Order>();
+        order->id                     = all.getColumn("id");
+        order->name                   = all.getColumn("name").getString();
+        order->check_format           = all.getColumn("check_format").getString();
+        order->carton_start_check_num = all.getColumn("carton_start_check_num");
+        order->carton_end_check_num   = all.getColumn("carton_end_check_num");
+        order->box_start_check_num    = all.getColumn("box_start_check_num");
+        order->box_end_check_num      = all.getColumn("box_end_check_num");
+        order->card_start_check_num   = all.getColumn("card_start_check_num");
+        order->card_end_check_num     = all.getColumn("card_end_check_num");
+        order->box_scanned_num        = all.getColumn("box_scanned_num");
+        order->carton_scanned_num     = all.getColumn("carton_scanned_num");
+        order->mode_id                = all.getColumn("mode_id");
+        order->create_time            = all.getColumn("create_time").getString();
 
         orders.push_back(order);
     }
@@ -174,21 +174,20 @@ std::shared_ptr<Order> OrderDao::get(const int &id) {
     get.bind(1, id);
 
     if (get.executeStep()) {
-        std::shared_ptr<Order> order = std::make_shared<Order>();
-
-        order->id                     = get.getColumn(0);
-        order->name                   = get.getColumn(1).getString();
-        order->check_format           = get.getColumn(2).getString();
-        order->carton_start_check_num = get.getColumn(3);
-        order->carton_end_check_num   = get.getColumn(4);
-        order->box_start_check_num    = get.getColumn(5);
-        order->box_end_check_num      = get.getColumn(6);
-        order->card_start_check_num   = get.getColumn(7);
-        order->card_end_check_num     = get.getColumn(8);
-        order->box_scanned_num        = get.getColumn(9);
-        order->carton_scanned_num     = get.getColumn(10);
-        order->mode_id                = get.getColumn(11);
-        order->create_time            = get.getColumn(12).getString();
+        std::shared_ptr<Order> order  = std::make_shared<Order>();
+        order->id                     = get.getColumn("id");
+        order->name                   = get.getColumn("name").getString();
+        order->check_format           = get.getColumn("check_format").getString();
+        order->carton_start_check_num = get.getColumn("carton_start_check_num");
+        order->carton_end_check_num   = get.getColumn("carton_end_check_num");
+        order->box_start_check_num    = get.getColumn("box_start_check_num");
+        order->box_end_check_num      = get.getColumn("box_end_check_num");
+        order->card_start_check_num   = get.getColumn("card_start_check_num");
+        order->card_end_check_num     = get.getColumn("card_end_check_num");
+        order->box_scanned_num        = get.getColumn("box_scanned_num");
+        order->carton_scanned_num     = get.getColumn("carton_scanned_num");
+        order->mode_id                = get.getColumn("mode_id");
+        order->create_time            = get.getColumn("create_time").getString();
 
         return order;
     }
@@ -202,21 +201,20 @@ std::shared_ptr<Order> OrderDao::get(const std::string &name) {
     get.bind(1, name);
 
     if (get.executeStep()) {
-        std::shared_ptr<Order> order = std::make_shared<Order>();
-
-        order->id                     = get.getColumn(0);
-        order->name                   = get.getColumn(1).getString();
-        order->check_format           = get.getColumn(2).getString();
-        order->carton_start_check_num = get.getColumn(3);
-        order->carton_end_check_num   = get.getColumn(4);
-        order->box_start_check_num    = get.getColumn(5);
-        order->box_end_check_num      = get.getColumn(6);
-        order->card_start_check_num   = get.getColumn(7);
-        order->card_end_check_num     = get.getColumn(8);
-        order->box_scanned_num        = get.getColumn(9);
-        order->carton_scanned_num     = get.getColumn(10);
-        order->mode_id                = get.getColumn(11);
-        order->create_time            = get.getColumn(12).getString();
+        std::shared_ptr<Order> order  = std::make_shared<Order>();
+        order->id                     = get.getColumn("id");
+        order->name                   = get.getColumn("name").getString();
+        order->check_format           = get.getColumn("check_format").getString();
+        order->carton_start_check_num = get.getColumn("carton_start_check_num");
+        order->carton_end_check_num   = get.getColumn("carton_end_check_num");
+        order->box_start_check_num    = get.getColumn("box_start_check_num");
+        order->box_end_check_num      = get.getColumn("box_end_check_num");
+        order->card_start_check_num   = get.getColumn("card_start_check_num");
+        order->card_end_check_num     = get.getColumn("card_end_check_num");
+        order->box_scanned_num        = get.getColumn("box_scanned_num");
+        order->carton_scanned_num     = get.getColumn("carton_scanned_num");
+        order->mode_id                = get.getColumn("mode_id");
+        order->create_time            = get.getColumn("create_time").getString();
 
         return order;
     }

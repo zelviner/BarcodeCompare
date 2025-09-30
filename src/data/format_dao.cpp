@@ -31,16 +31,15 @@ std::vector<std::shared_ptr<Format>> FormatDao::all() {
     std::vector<std::shared_ptr<Format>> roles;
     while (query.executeStep()) {
         std::shared_ptr<Format> format = std::make_shared<Format>();
-
-        format->id           = query.getColumn(0);
-        format->name         = query.getColumn(1).getString();
-        format->type         = query.getColumn(2);
-        format->filename     = query.getColumn(3).getString();
-        format->box_number   = query.getColumn(4).getString();
-        format->start_number = query.getColumn(5).getString();
-        format->end_number   = query.getColumn(6).getString();
-        format->quantity     = query.getColumn(7).getString();
-        format->barcode      = query.getColumn(8).getString();
+        format->id           = query.getColumn("id");
+        format->name         = query.getColumn("name").getString();
+        format->type         = query.getColumn("type");
+        format->filename     = query.getColumn("filename").getString();
+        format->box_number   = query.getColumn("box_number").getString();
+        format->start_number = query.getColumn("start_number").getString();
+        format->end_number   = query.getColumn("end_number").getString();
+        format->quantity     = query.getColumn("quantity").getString();
+        format->barcode      = query.getColumn("barcode").getString();
 
         roles.push_back(format);
     }
@@ -55,16 +54,15 @@ std::shared_ptr<Format> FormatDao::get(const int id) {
 
     if (query.executeStep()) {
         std::shared_ptr<Format> format = std::make_shared<Format>();
-
-        format->id           = query.getColumn(0);
-        format->name         = query.getColumn(1).getString();
-        format->type         = query.getColumn(2);
-        format->filename     = query.getColumn(3).getString();
-        format->box_number   = query.getColumn(4).getString();
-        format->start_number = query.getColumn(5).getString();
-        format->end_number   = query.getColumn(6).getString();
-        format->quantity     = query.getColumn(7).getString();
-        format->barcode      = query.getColumn(8).getString();
+        format->id           = query.getColumn("id");
+        format->name         = query.getColumn("name").getString();
+        format->type         = query.getColumn("type");
+        format->filename     = query.getColumn("filename").getString();
+        format->box_number   = query.getColumn("box_number").getString();
+        format->start_number = query.getColumn("start_number").getString();
+        format->end_number   = query.getColumn("end_number").getString();
+        format->quantity     = query.getColumn("quantity").getString();
+        format->barcode      = query.getColumn("barcode").getString();
 
         return format;
     }
@@ -87,7 +85,7 @@ void FormatDao::init() {
               "box_number TEXT,"
               "start_number TEXT,"
               "end_number TEXT,"
-              "quantity INTEGER,"
+              "quantity TEXT,"
               "barcode TEXT);";
         db_->exec(sql);
 

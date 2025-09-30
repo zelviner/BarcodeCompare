@@ -27,9 +27,9 @@ std::vector<std::shared_ptr<Mode>> ModeDao::all() {
     std::vector<std::shared_ptr<Mode>> modes;
     while (all.executeStep()) {
         std::shared_ptr<Mode> mode = std::make_shared<Mode>();
-        mode->id                   = all.getColumn(0);
-        mode->name                 = all.getColumn(1).getString();
-        mode->description          = all.getColumn(2).getString();
+        mode->id          = all.getColumn("id");
+        mode->name        = all.getColumn("name").getString();
+        mode->description = all.getColumn("description").getString();
 
         modes.push_back(mode);
     }
@@ -44,10 +44,9 @@ std::shared_ptr<Mode> ModeDao::get(const int &id) {
 
     if (query.executeStep()) {
         std::shared_ptr<Mode> mode = std::make_shared<Mode>();
-
-        mode->id          = query.getColumn(0);
-        mode->name        = query.getColumn(1).getString();
-        mode->description = query.getColumn(2).getString();
+        mode->id          = query.getColumn("id");
+        mode->name        = query.getColumn("name").getString();
+        mode->description = query.getColumn("description").getString();
 
         return mode;
     }

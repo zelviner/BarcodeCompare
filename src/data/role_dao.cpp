@@ -22,14 +22,14 @@ bool RoleDao::add(const std::shared_ptr<Role> &role) {
 
 std::vector<std::shared_ptr<Role>> RoleDao::all() {
     std::string       sql = "SELECT * FROM roles";
-    SQLite::Statement query(*db_, sql);
+    SQLite::Statement all(*db_, sql);
 
     std::vector<std::shared_ptr<Role>> roles;
-    while (query.executeStep()) {
+    while (all.executeStep()) {
         std::shared_ptr<Role> role = std::make_shared<Role>();
-        role->id                   = query.getColumn(0);
-        role->name                 = query.getColumn(1).getString();
-        role->description          = query.getColumn(2).getString();
+        role->id          = all.getColumn("id");
+        role->name        = all.getColumn("name").getString();
+        role->description = all.getColumn("description").getString();
 
         roles.push_back(role);
     }
@@ -39,15 +39,14 @@ std::vector<std::shared_ptr<Role>> RoleDao::all() {
 
 std::shared_ptr<Role> RoleDao::get(const int id) {
     std::string       sql = "SELECT * FROM roles WHERE id = ?";
-    SQLite::Statement query(*db_, sql);
-    query.bind(1, id);
+    SQLite::Statement get(*db_, sql);
+    get.bind(1, id);
 
-    if (query.executeStep()) {
+    if (get.executeStep()) {
         std::shared_ptr<Role> role = std::make_shared<Role>();
-
-        role->id          = query.getColumn(0);
-        role->name        = query.getColumn(1).getString();
-        role->description = query.getColumn(2).getString();
+        role->id          = get.getColumn("id");
+        role->name        = get.getColumn("name").getString();
+        role->description = get.getColumn("description").getString();
 
         return role;
     }

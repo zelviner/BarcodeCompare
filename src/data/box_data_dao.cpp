@@ -61,16 +61,15 @@ std::vector<std::shared_ptr<BoxData>> BoxDataDao::all(const int &status) {
     std::vector<std::shared_ptr<BoxData>> box_datas;
     while (all.executeStep()) {
         std::shared_ptr<BoxData> box_data = std::make_shared<BoxData>();
-
-        box_data->id            = all.getColumn(0);
-        box_data->filename      = all.getColumn(1).getString();
-        box_data->box_number    = all.getColumn(2).getString();
-        box_data->start_number  = all.getColumn(3).getString();
-        box_data->end_number    = all.getColumn(4).getString();
-        box_data->quantity      = all.getColumn(5).getInt();
-        box_data->start_barcode = all.getColumn(6).getString();
-        box_data->end_barcode   = all.getColumn(7).getString();
-        box_data->status        = all.getColumn(8);
+        box_data->id                      = all.getColumn("id");
+        box_data->filename                = all.getColumn("filename").getString();
+        box_data->box_number              = all.getColumn("box_number").getString();
+        box_data->start_number            = all.getColumn("start_number").getString();
+        box_data->end_number              = all.getColumn("end_number").getString();
+        box_data->quantity                = all.getColumn("quantity").getInt();
+        box_data->start_barcode           = all.getColumn("start_barcode").getString();
+        box_data->end_barcode             = all.getColumn("end_barcode").getString();
+        box_data->status                  = all.getColumn("status");
 
         box_datas.push_back(box_data);
     }
@@ -87,16 +86,15 @@ std::vector<std::shared_ptr<BoxData>> BoxDataDao::all(const std::string &start_n
     std::vector<std::shared_ptr<BoxData>> box_datas;
     while (all.executeStep()) {
         std::shared_ptr<BoxData> box_data = std::make_shared<BoxData>();
-
-        box_data->id            = all.getColumn(0);
-        box_data->filename      = all.getColumn(1).getString();
-        box_data->box_number    = all.getColumn(2).getString();
-        box_data->start_number  = all.getColumn(3).getString();
-        box_data->end_number    = all.getColumn(4).getString();
-        box_data->quantity      = all.getColumn(5).getInt();
-        box_data->start_barcode = all.getColumn(6).getString();
-        box_data->end_barcode   = all.getColumn(7).getString();
-        box_data->status        = all.getColumn(8);
+        box_data->id                      = all.getColumn("id");
+        box_data->filename                = all.getColumn("filename").getString();
+        box_data->box_number              = all.getColumn("box_number").getString();
+        box_data->start_number            = all.getColumn("start_number").getString();
+        box_data->end_number              = all.getColumn("end_number").getString();
+        box_data->quantity                = all.getColumn("quantity").getInt();
+        box_data->start_barcode           = all.getColumn("start_barcode").getString();
+        box_data->end_barcode             = all.getColumn("end_barcode").getString();
+        box_data->status                  = all.getColumn("status");
 
         box_datas.push_back(box_data);
     }
@@ -117,16 +115,15 @@ std::shared_ptr<BoxData> BoxDataDao::get(const std::string &start_barcode) {
 
     if (get.executeStep()) {
         std::shared_ptr<BoxData> box_data = std::make_shared<BoxData>();
-
-        box_data->id            = get.getColumn(0);
-        box_data->filename      = get.getColumn(1).getString();
-        box_data->box_number    = get.getColumn(2).getString();
-        box_data->start_number  = get.getColumn(3).getString();
-        box_data->end_number    = get.getColumn(4).getString();
-        box_data->quantity      = get.getColumn(5).getInt();
-        box_data->start_barcode = get.getColumn(6).getString();
-        box_data->end_barcode   = get.getColumn(7).getString();
-        box_data->status        = get.getColumn(8);
+        box_data->id                      = get.getColumn("id");
+        box_data->filename                = get.getColumn("filename").getString();
+        box_data->box_number              = get.getColumn("box_number").getString();
+        box_data->start_number            = get.getColumn("start_number").getString();
+        box_data->end_number              = get.getColumn("end_number").getString();
+        box_data->quantity                = get.getColumn("quantity").getInt();
+        box_data->start_barcode           = get.getColumn("start_barcode").getString();
+        box_data->end_barcode             = get.getColumn("end_barcode").getString();
+        box_data->status                  = get.getColumn("status");
 
         return box_data;
     }
