@@ -1,6 +1,6 @@
 #pragma once
 
-#include "data/format.h"
+#include "database/format/format.h"
 #include "order.h"
 
 #include <SQLiteCpp/Database.h>

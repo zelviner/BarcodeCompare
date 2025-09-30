@@ -1,25 +1,15 @@
-#include "box_data_dao.h"
-#include "data/box_data.h"
+#include "box_data_sqlite_dao.h"
 
 #include <SQLiteCpp/Statement.h>
 #include <SQLiteCpp/Transaction.h>
 #include <exception>
 #include <iostream>
 #include <memory>
-#include <vector>
 
-BoxDataDao::BoxDataDao(const std::shared_ptr<SQLite::Database> &db, const std::string &order_name)
-    : db_(db)
-    , order_name_(order_name) {
-    init();
-}
-
-BoxDataDao::~BoxDataDao() {}
-
-bool BoxDataDao::batchAdd(const std::vector<std::shared_ptr<BoxData>> &box_datas) {
+bool BoxDataSqliteDao::batchAdd(const std::vector<std::shared_ptr<BoxData>> &box_datas) {
     try {
-        SQLite::Transaction transaction(*db_);
-        SQLite::Statement   query(*db_,
+        SQLite::Transaction transaction(*sqlite_db_);
+        SQLite::Statement   query(*sqlite_db_,
                                   "INSERT INTO box_data.[" + order_name_ +
                                       "] (filename,box_number, start_number, end_number, quantity, start_barcode, end_barcode) VALUES (?,?,?,?,?,?,?)");
         for (const std::shared_ptr<BoxData> &box_data : box_datas) {
@@ -45,7 +35,7 @@ bool BoxDataDao::batchAdd(const std::vector<std::shared_ptr<BoxData>> &box_datas
     return true;
 }
 
-std::vector<std::shared_ptr<BoxData>> BoxDataDao::all(const int &status) {
+std::vector<std::shared_ptr<BoxData>> BoxDataSqliteDao::all(const int &status) {
     std::string sql;
     if (status == -1) {
         sql = "SELECT * FROM box_data.[" + order_name_ + "]";
@@ -53,7 +43,7 @@ std::vector<std::shared_ptr<BoxData>> BoxDataDao::all(const int &status) {
         sql = "SELECT * FROM box_data.[" + order_name_ + "] WHERE status = ?";
     }
 
-    SQLite::Statement all(*db_, sql);
+    SQLite::Statement all(*sqlite_db_, sql);
     if (status != -1) {
         all.bind(1, status);
     }
@@ -77,9 +67,9 @@ std::vector<std::shared_ptr<BoxData>> BoxDataDao::all(const int &status) {
     return box_datas;
 }
 
-std::vector<std::shared_ptr<BoxData>> BoxDataDao::all(const std::string &start_number, const std::string &end_number) {
+std::vector<std::shared_ptr<BoxData>> BoxDataSqliteDao::all(const std::string &start_number, const std::string &end_number) {
     std::string       sql = "SELECT * FROM box_data.[" + order_name_ + "] WHERE start_number >= ? AND end_number <= ?";
-    SQLite::Statement all(*db_, sql);
+    SQLite::Statement all(*sqlite_db_, sql);
     all.bind(1, start_number);
     all.bind(2, end_number);
 
@@ -102,15 +92,15 @@ std::vector<std::shared_ptr<BoxData>> BoxDataDao::all(const std::string &start_n
     return box_datas;
 }
 
-bool BoxDataDao::scanned(const std::string &start_barcode) {
+bool BoxDataSqliteDao::scanned(const std::string &start_barcode) {
     auto box_data    = get(start_barcode);
     box_data->status = 1;
     return update(box_data->id, box_data);
 }
 
-std::shared_ptr<BoxData> BoxDataDao::get(const std::string &start_barcode) {
+std::shared_ptr<BoxData> BoxDataSqliteDao::get(const std::string &start_barcode) {
     std::string       sql = "SELECT * FROM box_data.[" + order_name_ + "] WHERE start_barcode = ?";
-    SQLite::Statement get(*db_, sql);
+    SQLite::Statement get(*sqlite_db_, sql);
     get.bind(1, start_barcode);
 
     if (get.executeStep()) {
@@ -131,11 +121,11 @@ std::shared_ptr<BoxData> BoxDataDao::get(const std::string &start_barcode) {
     return nullptr;
 }
 
-bool BoxDataDao::update(const int &id, std::shared_ptr<BoxData> &box_data) {
+bool BoxDataSqliteDao::update(const int &id, std::shared_ptr<BoxData> &box_data) {
     try {
         std::string sql = "UPDATE box_data.[" + order_name_ +
             "] SET filename = ?,box_number = ?, start_number = ?, end_number = ?, quantity = ?, start_barcode = ?, end_barcode = ?, status = ? WHERE id = ?";
-        SQLite::Statement update(*db_, sql);
+        SQLite::Statement update(*sqlite_db_, sql);
         update.bind(1, box_data->filename);
         update.bind(2, box_data->box_number);
         update.bind(3, box_data->start_number);
@@ -155,14 +145,14 @@ bool BoxDataDao::update(const int &id, std::shared_ptr<BoxData> &box_data) {
     return true;
 }
 
-bool BoxDataDao::clear() {
+bool BoxDataSqliteDao::clear() {
     std::string sql = "DROP TABLE  IF EXISTS box_data.[" + order_name_ + "]";
-    return db_->exec(sql);
+    return sqlite_db_->exec(sql);
 }
 
-void BoxDataDao::init() {
+void BoxDataSqliteDao::init() {
     std::string       sql = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'box_data." + order_name_ + "'";
-    SQLite::Statement query(*db_, sql);
+    SQLite::Statement query(*sqlite_db_, sql);
 
     if (!query.executeStep()) {
         sql = "CREATE TABLE IF NOT EXISTS box_data.[" + order_name_ +
@@ -176,6 +166,6 @@ void BoxDataDao::init() {
             "end_barcode TEXT,"
             "status INTEGER DEFAULT 0)";
 
-        db_->exec(sql);
+        sqlite_db_->exec(sql);
     }
 }

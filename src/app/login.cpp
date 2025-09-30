@@ -1,6 +1,5 @@
 #include "login.h"
 
-#include "data/user_dao.h"
 #include "main_window.h"
 
 #include <memory>
@@ -44,7 +43,9 @@ void Login::initDir() {
     createFolder(outer_box_log_path);
 }
 
-void Login::initDatabase() {
+void Login::initDatabase() { initSQLite(); }
+
+void Login::initSQLite() {
     db_                 = std::make_shared<SQLite::Database>("data/barcode_compare.db", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
     auto box_data_db    = std::make_shared<SQLite::Database>("data/box_data.db", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
     auto carton_data_db = std::make_shared<SQLite::Database>("data/carton_data.db", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
@@ -58,6 +59,8 @@ void Login::initDatabase() {
 
     user_dao_ = std::make_shared<UserDao>(db_);
 }
+
+void Login::initMySQL() {}
 
 void Login::initUI() {
     // 加载用户信息

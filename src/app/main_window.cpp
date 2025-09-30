@@ -3,12 +3,7 @@
 #include "box_widget.h"
 #include "comparison/carton_info.h"
 #include "comparison/comparison.h"
-#include "data/box_data.h"
-#include "data/box_data_dao.h"
-#include "data/carton_data_dao.h"
-#include "data/mode.h"
-#include "data/mode_dao.h"
-#include "data/role_dao.h"
+#include "database/box_data/box_data_dao_factory.h"
 #include "loading.h"
 #include "login.h"
 #include "setting.h"
@@ -159,7 +154,7 @@ void MainWindow::toCardStartBarcode() { ui_->card_start_line->setFocus(); }
 void MainWindow::toCardEndBarcode() { ui_->card_end_line->setFocus(); }
 
 void MainWindow::compareBox() {
-    auto       box_data_dao = std::make_shared<BoxDataDao>(db_, order_dao_->currentOrder()->name);
+    auto       box_data_dao = BoxDataDaoFactory::create(BoxDataDaoFactory::SQLITE, db_, order_dao_->currentOrder()->name);
     Comparison comparison(order_dao_->currentOrder(), box_data_dao, nullptr);
 
     QString error, log_msg;
@@ -260,8 +255,7 @@ void MainWindow::refreshBoxTab() {
 }
 
 void MainWindow::refreshBoxTable(const std::string &order_name, const int &status) {
-
-    std::shared_ptr<BoxDataDao>           box_data_dao = std::make_shared<BoxDataDao>(db_, order_name);
+    auto                                  box_data_dao = BoxDataDaoFactory::create(BoxDataDaoFactory::SQLITE, db_, order_name);
     std::vector<std::shared_ptr<BoxData>> box_datas;
 
     if (status == -1) {
@@ -443,7 +437,7 @@ void MainWindow::compareCarton() {
 
     QString                        error, log_msg;
     bool                           is_end          = false;
-    std::shared_ptr<BoxDataDao>    box_data_dao    = std::make_shared<BoxDataDao>(db_, order_dao_->currentOrder()->name);
+    auto                           box_data_dao    = BoxDataDaoFactory::create(BoxDataDaoFactory::SQLITE, db_, order_dao_->currentOrder()->name);
     std::shared_ptr<CartonDataDao> carton_data_dao = std::make_shared<CartonDataDao>(db_, order_dao_->currentOrder()->name);
     std::shared_ptr<Comparison>    comparison      = std::make_shared<Comparison>(order_dao_->currentOrder(), box_data_dao, carton_data_dao);
     int                            box_widget_id   = 0;
@@ -616,7 +610,7 @@ void MainWindow::refreshBoxCompareGroup(const int &cols, const std::string &sele
     layout->setContentsMargins(10, 10, 10, 10);
     layout->setAlignment(Qt::AlignCenter);
 
-    std::shared_ptr<BoxDataDao>    box_data_dao    = std::make_shared<BoxDataDao>(db_, order_dao_->currentOrder()->name);
+    auto                           box_data_dao    = BoxDataDaoFactory::create(BoxDataDaoFactory::SQLITE, db_, order_dao_->currentOrder()->name);
     std::shared_ptr<CartonDataDao> carton_data_dao = std::make_shared<CartonDataDao>(db_, order_dao_->currentOrder()->name);
     std::shared_ptr<CartonData>    carton_data     = carton_data_dao->get(selected_carton_start_barcode);
 

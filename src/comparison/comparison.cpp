@@ -1,7 +1,4 @@
 #include "comparison.h"
-#include "data/carton_data.h"
-#include "data/carton_data_dao.h"
-#include "data/order.h"
 
 #include <memory>
 #include <qdebug>

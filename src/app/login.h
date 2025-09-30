@@ -1,6 +1,6 @@
 #pragma once
 
-#include "data/user_dao.h"
+#include "database/user/user_dao.h"
 
 #include <memory>
 #include <qmainwindow>
@@ -28,6 +28,12 @@ class Login : public QMainWindow {
 
     /// @brief 初始化数据库
     void initDatabase();
+
+    /// @brief 初始化 SQLite 数据库
+    void initSQLite();
+
+    /// @brief 初始化 MySQL 数据库
+    void initMySQL();
 
     /// @brief 初始化UI
     void initUI();

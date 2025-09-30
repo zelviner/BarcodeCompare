@@ -1,6 +1,5 @@
 #include "setting.h"
 
-#include "data/user_dao.h"
 #include "main_window.h"
 
 #include <memory>

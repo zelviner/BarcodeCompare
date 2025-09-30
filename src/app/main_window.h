@@ -1,11 +1,11 @@
 #pragma once
 
 #include "box_widget.h"
-#include "data/format_dao.h"
-#include "data/mode_dao.h"
-#include "data/order_dao.h"
-#include "data/role_dao.h"
-#include "data/user_dao.h"
+#include "database/format/format_dao.h"
+#include "database/mode/mode_dao.h"
+#include "database/order/order_dao.h"
+#include "database/role/role_dao.h"
+#include "database/user/user_dao.h"
 #include "loading.h"
 #include "ui_main_window.h"
 

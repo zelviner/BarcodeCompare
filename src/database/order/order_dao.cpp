@@ -1,8 +1,7 @@
 #include "order_dao.h"
-#include "box_data_dao.h"
-#include "carton_data_dao.h"
-#include "data/box_data.h"
-#include "data/format_dao.h"
+#include "database/box_data/box_data_dao_factory.h"
+#include "database/carton_data/carton_data_dao.h"
+#include "database/format/format_dao.h"
 #include "importer/importer_factory.hpp"
 
 #include <SQLiteCpp/Database.h>
@@ -59,7 +58,7 @@ bool OrderDao::add(const std::shared_ptr<Order> &order) {
         return false;
     }
 
-    std::shared_ptr<BoxDataDao> box_data_dao = std::make_shared<BoxDataDao>(db_, order->name);
+    auto box_data_dao = BoxDataDaoFactory::create(BoxDataDaoFactory::SQLITE, db_, order->name);
     if (!box_data_dao->batchAdd(box_datas)) {
         return false;
     }
@@ -92,7 +91,7 @@ bool OrderDao::add(const std::shared_ptr<Order> &order) {
 bool OrderDao::remove(const int &id) {
 
     std::shared_ptr<Order>         order           = get(id);
-    std::shared_ptr<BoxDataDao>    box_data_dao    = std::make_shared<BoxDataDao>(db_, order->name);
+    auto                           box_data_dao    = BoxDataDaoFactory::create(BoxDataDaoFactory::SQLITE, db_, order->name);
     std::shared_ptr<CartonDataDao> carton_data_dao = std::make_shared<CartonDataDao>(db_, order->name);
     box_data_dao->clear();
     carton_data_dao->clear();
@@ -107,7 +106,7 @@ bool OrderDao::remove(const int &id) {
 bool OrderDao::clear() {
     std::vector<std::shared_ptr<Order>> orders = all();
     for (auto order : orders) {
-        std::shared_ptr<BoxDataDao>    box_data_dao    = std::make_shared<BoxDataDao>(db_, order->name);
+        auto                           box_data_dao    = BoxDataDaoFactory::create(BoxDataDaoFactory::SQLITE, db_, order->name);
         std::shared_ptr<CartonDataDao> carton_data_dao = std::make_shared<CartonDataDao>(db_, order->name);
         box_data_dao->clear();
         carton_data_dao->clear();
