@@ -1,6 +1,7 @@
 #pragma once
 
-#include "database/user/user_dao.h"
+#include "database/dao/user/user_dao.h"
+#include "database/myorm/database.h"
 
 #include <memory>
 #include <qmainwindow>
@@ -26,14 +27,20 @@ class Login : public QMainWindow {
     /// @brief 初始化文件夹
     void initDir();
 
+    /// @brief 初始化配置文件
+    void initConfig();
+
+    /// @brief 初始化日志器
+    void initLogger();
+
     /// @brief 初始化数据库
     void initDatabase();
 
     /// @brief 初始化 SQLite 数据库
-    void initSQLite();
+    bool initSQLite();
 
     /// @brief 初始化 MySQL 数据库
-    void initMySQL();
+    bool initMySQL();
 
     /// @brief 初始化UI
     void initUI();
@@ -49,7 +56,8 @@ class Login : public QMainWindow {
     QString createFolder(const QString &folder_path);
 
   private:
-    Ui_Login                         *ui_;
-    std::shared_ptr<SQLite::Database> db_;
-    std::shared_ptr<UserDao>          user_dao_;
+    Ui_Login                             *ui_;
+    std::shared_ptr<SQLite::Database>     sqlite_db_;
+    std::shared_ptr<zel::myorm::Database> mysql_db_;
+    std::shared_ptr<UserDao>              user_dao_;
 };

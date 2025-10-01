@@ -3,7 +3,12 @@
 #include "box_widget.h"
 #include "comparison/carton_info.h"
 #include "comparison/comparison.h"
-#include "database/box_data/box_data_dao_factory.h"
+#include "database/dao/box_data/box_data_dao_factory.h"
+#include "database/dao/carton_data/carton_data_dao_factory.h"
+#include "database/dao/format/format_dao_factory.h"
+#include "database/dao/mode/mode_dao_factory.h"
+#include "database/dao/order/order_dao_factory.h"
+#include "database/dao/role/role_dao_factory.h"
 #include "loading.h"
 #include "login.h"
 #include "setting.h"
@@ -30,11 +35,13 @@
 #include <queue>
 #include <vector>
 
-MainWindow::MainWindow(const std::shared_ptr<SQLite::Database> &db, const std::shared_ptr<UserDao> &user_dao, QMainWindow *parent)
+MainWindow::MainWindow(const std::shared_ptr<SQLite::Database> &sqlite_db, const std::shared_ptr<zel::myorm::Database> &mysql_db,
+                       const std::shared_ptr<UserDao> &user_dao, QMainWindow *parent)
     : QMainWindow(parent)
     , ui_(new Ui_MainWindow)
     , loading_(std::make_shared<Loading>())
-    , db_(db)
+    , sqlite_db_(sqlite_db)
+    , mysql_db_(mysql_db)
     , user_dao_(user_dao) {
     ui_->setupUi(this);
     initWindow();
@@ -154,7 +161,7 @@ void MainWindow::toCardStartBarcode() { ui_->card_start_line->setFocus(); }
 void MainWindow::toCardEndBarcode() { ui_->card_end_line->setFocus(); }
 
 void MainWindow::compareBox() {
-    auto       box_data_dao = BoxDataDaoFactory::create(BoxDataDaoFactory::SQLITE, db_, order_dao_->currentOrder()->name);
+    auto       box_data_dao = BoxDataDaoFactory::create(sqlite_db_, mysql_db_, order_dao_->currentOrder()->name);
     Comparison comparison(order_dao_->currentOrder(), box_data_dao, nullptr);
 
     QString error, log_msg;
@@ -255,7 +262,7 @@ void MainWindow::refreshBoxTab() {
 }
 
 void MainWindow::refreshBoxTable(const std::string &order_name, const int &status) {
-    auto                                  box_data_dao = BoxDataDaoFactory::create(BoxDataDaoFactory::SQLITE, db_, order_name);
+    auto                                  box_data_dao = BoxDataDaoFactory::create(sqlite_db_, mysql_db_, order_name);
     std::vector<std::shared_ptr<BoxData>> box_datas;
 
     if (status == -1) {
@@ -435,13 +442,13 @@ void MainWindow::compareCarton() {
     carton_info->carton_end_barcode         = ui_->carton_end_line->text();
     carton_info->target_barcode             = ui_->target_line->text();
 
-    QString                        error, log_msg;
-    bool                           is_end          = false;
-    auto                           box_data_dao    = BoxDataDaoFactory::create(BoxDataDaoFactory::SQLITE, db_, order_dao_->currentOrder()->name);
-    std::shared_ptr<CartonDataDao> carton_data_dao = std::make_shared<CartonDataDao>(db_, order_dao_->currentOrder()->name);
-    std::shared_ptr<Comparison>    comparison      = std::make_shared<Comparison>(order_dao_->currentOrder(), box_data_dao, carton_data_dao);
-    int                            box_widget_id   = 0;
-    int                            result          = comparison->carton(carton_info, box_widget_id);
+    QString error, log_msg;
+    bool    is_end          = false;
+    auto    box_data_dao    = BoxDataDaoFactory::create(sqlite_db_, mysql_db_, order_dao_->currentOrder()->name);
+    auto    carton_data_dao = CartonDataDaoFactory::create(sqlite_db_, mysql_db_, order_dao_->currentOrder()->name);
+    auto    comparison      = std::make_shared<Comparison>(order_dao_->currentOrder(), box_data_dao, carton_data_dao);
+    int     box_widget_id   = 0;
+    int     result          = comparison->carton(carton_info, box_widget_id);
 
     // Check if the target barcodes are sequence.
     if (box_widgets_.front()->id() != box_widget_id) {
@@ -555,7 +562,7 @@ void MainWindow::refreshCartonTab() {
 }
 
 void MainWindow::refreshCartonTable(const std::string &order_name, const int &status) {
-    std::shared_ptr<CartonDataDao>           carton_data_dao = std::make_shared<CartonDataDao>(db_, order_name);
+    auto                                     carton_data_dao = CartonDataDaoFactory::create(sqlite_db_, mysql_db_, order_name);
     std::vector<std::shared_ptr<CartonData>> carton_datas;
 
     if (status == -1) {
@@ -610,9 +617,9 @@ void MainWindow::refreshBoxCompareGroup(const int &cols, const std::string &sele
     layout->setContentsMargins(10, 10, 10, 10);
     layout->setAlignment(Qt::AlignCenter);
 
-    auto                           box_data_dao    = BoxDataDaoFactory::create(BoxDataDaoFactory::SQLITE, db_, order_dao_->currentOrder()->name);
-    std::shared_ptr<CartonDataDao> carton_data_dao = std::make_shared<CartonDataDao>(db_, order_dao_->currentOrder()->name);
-    std::shared_ptr<CartonData>    carton_data     = carton_data_dao->get(selected_carton_start_barcode);
+    auto box_data_dao    = BoxDataDaoFactory::create(sqlite_db_, mysql_db_, order_dao_->currentOrder()->name);
+    auto carton_data_dao = CartonDataDaoFactory::create(sqlite_db_, mysql_db_, order_dao_->currentOrder()->name);
+    auto carton_data     = carton_data_dao->get(selected_carton_start_barcode);
 
     auto box_datas = box_data_dao->all(carton_data->start_number, carton_data->end_number);
     for (int i = 0; i < int(box_datas.size()); ++i) {
@@ -1041,10 +1048,10 @@ void MainWindow::initUi() {
 }
 
 void MainWindow::initDao() {
-    role_dao_   = std::make_shared<RoleDao>(db_);
-    mode_dao_   = std::make_shared<ModeDao>(db_);
-    order_dao_  = std::make_shared<OrderDao>(db_);
-    format_dao_ = std::make_shared<FormatDao>(db_);
+    role_dao_   = RoleDaoFactory::create(sqlite_db_, mysql_db_);
+    mode_dao_   = ModeDaoFactory::create(sqlite_db_, mysql_db_);
+    order_dao_  = OrderDaoFactory::create(sqlite_db_, mysql_db_);
+    format_dao_ = FormatDaoFactory::create(sqlite_db_, mysql_db_);
 }
 
 void MainWindow::initBoxTab() {

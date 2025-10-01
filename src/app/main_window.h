@@ -1,15 +1,15 @@
 #pragma once
 
 #include "box_widget.h"
-#include "database/format/format_dao.h"
-#include "database/mode/mode_dao.h"
-#include "database/order/order_dao.h"
-#include "database/role/role_dao.h"
-#include "database/user/user_dao.h"
+#include "database/dao/format/format_dao.h"
+#include "database/dao/mode/mode_dao.h"
+#include "database/dao/order/order_dao.h"
+#include "database/dao/role/role_dao.h"
+#include "database/dao/user/user_dao.h"
+#include "database/myorm/database.h"
 #include "loading.h"
 #include "ui_main_window.h"
 
-#include <SQLiteCpp/Database.h>
 #include <memory>
 #include <qmainwindow>
 #include <qtranslator>
@@ -18,7 +18,8 @@
 class MainWindow : public QMainWindow {
     Q_OBJECT
   public:
-    MainWindow(const std::shared_ptr<SQLite::Database> &db, const std::shared_ptr<UserDao> &user_dao, QMainWindow *parent = nullptr);
+    MainWindow(const std::shared_ptr<SQLite::Database> &sqlite_db, const std::shared_ptr<zel::myorm::Database> &mysql_db,
+               const std::shared_ptr<UserDao> &user_dao, QMainWindow *parent = nullptr);
     ~MainWindow();
 
     /// @brief 切换用户动作触发
@@ -174,10 +175,11 @@ class MainWindow : public QMainWindow {
     std::shared_ptr<Loading> loading_;
     std::queue<BoxWidget *>  box_widgets_;
 
-    std::shared_ptr<SQLite::Database> db_;
-    std::shared_ptr<RoleDao>          role_dao_;
-    std::shared_ptr<UserDao>          user_dao_;
-    std::shared_ptr<ModeDao>          mode_dao_;
-    std::shared_ptr<OrderDao>         order_dao_;
-    std::shared_ptr<FormatDao>        format_dao_;
+    std::shared_ptr<SQLite::Database>     sqlite_db_;
+    std::shared_ptr<zel::myorm::Database> mysql_db_;
+    std::shared_ptr<RoleDao>              role_dao_;
+    std::shared_ptr<UserDao>              user_dao_;
+    std::shared_ptr<ModeDao>              mode_dao_;
+    std::shared_ptr<OrderDao>             order_dao_;
+    std::shared_ptr<FormatDao>            format_dao_;
 };

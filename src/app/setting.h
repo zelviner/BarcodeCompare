@@ -1,6 +1,6 @@
 #pragma once
 
-#include "database/user/user_dao.h"
+#include "database/dao/user/user_dao.h"
 
 #include <memory>
 #include <qmainwindow>

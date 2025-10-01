@@ -2,9 +2,9 @@
 
 #include "box_info.h"
 #include "carton_info.h"
-#include "database/box_data/box_data_dao.h"
-#include "database/carton_data/carton_data_dao.h"
-#include "database/order/order.h"
+#include "database/dao/box_data/box_data_dao.h"
+#include "database/dao/carton_data/carton_data_dao.h"
+#include "database/dao/order/order.h"
 
 #include <memory>
 #include <qstring>

@@ -1,5 +1,6 @@
 #include "login.h"
 
+#include "database/dao/user/user_dao_factory.h"
 #include "main_window.h"
 
 #include <memory>
@@ -7,15 +8,24 @@
 #include <qdir>
 #include <qfile>
 #include <qmessagebox>
+#include <qsettings>
+#include <zel/utility/logger.h>
+using namespace zel::utility;
 
 Login::Login(QMainWindow *parent)
     : QMainWindow(parent)
-    , ui_(new Ui_Login) {
+    , ui_(new Ui_Login)
+    , sqlite_db_(nullptr)
+    , mysql_db_(nullptr) {
     ui_->setupUi(this);
 
     initWindow();
 
     initDir();
+
+    initConfig();
+
+    initLogger();
 
     initDatabase();
 
@@ -43,24 +53,78 @@ void Login::initDir() {
     createFolder(outer_box_log_path);
 }
 
-void Login::initDatabase() { initSQLite(); }
+void Login::initConfig() {
+    // 查看是否有配置文件
+    QFile config_file("config.ini");
+    if (config_file.exists()) {
+        // // 读取配置文件
+        // QSettings settings("config.ini", QSettings::IniFormat);
+        // settings.beginGroup("login");
+        // ui_->user_combo_box->setCurrentText(settings.value("user").toString());
+        // ui_->password_edit->setText(settings.value("password").toString());
+        // settings.endGroup();
+    } else {
+        // 创建配置文件
+        QSettings settings("config.ini", QSettings::IniFormat);
 
-void Login::initSQLite() {
-    db_                 = std::make_shared<SQLite::Database>("data/barcode_compare.db", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+        settings.beginGroup("mysql");
+        settings.setValue("host", "127.0.0.1");
+        settings.setValue("port", "3306");
+        settings.setValue("user", "root");
+        settings.setValue("password", "root");
+        settings.setValue("database", "barcode_compare");
+        settings.endGroup();
+    }
+}
+
+void Login::initLogger() {
+    zel::utility::Logger::instance().open("barcode_compare.log");
+    zel::utility::Logger::instance().setLevel(zel::utility::Logger::LOG_DEBUG);
+}
+
+void Login::initDatabase() {
+    if (!initMySQL()) {
+        initSQLite();
+    }
+}
+
+bool Login::initSQLite() {
+    sqlite_db_          = std::make_shared<SQLite::Database>("data/barcode_compare.db", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
     auto box_data_db    = std::make_shared<SQLite::Database>("data/box_data.db", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
     auto carton_data_db = std::make_shared<SQLite::Database>("data/carton_data.db", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
     auto box_log_db     = std::make_shared<SQLite::Database>("data/box_log.db", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
     auto carton_log_db  = std::make_shared<SQLite::Database>("data/carton_log.db", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
 
-    db_->exec("ATTACH DATABASE 'data/box_data.db' AS box_data;");
-    db_->exec("ATTACH DATABASE 'data/carton_data.db' AS carton_data;");
-    db_->exec("ATTACH DATABASE 'data/box_log.db' AS box_log;");
-    db_->exec("ATTACH DATABASE 'data/carton_log.db' AS carton_log;");
+    sqlite_db_->exec("ATTACH DATABASE 'data/box_data.db' AS box_data;");
+    sqlite_db_->exec("ATTACH DATABASE 'data/carton_data.db' AS carton_data;");
+    sqlite_db_->exec("ATTACH DATABASE 'data/box_log.db' AS box_log;");
+    sqlite_db_->exec("ATTACH DATABASE 'data/carton_log.db' AS carton_log;");
 
-    user_dao_ = std::make_shared<UserDao>(db_);
+    user_dao_ = UserDaoFactory::create(sqlite_db_, nullptr);
+
+    return true;
 }
 
-void Login::initMySQL() {}
+bool Login::initMySQL() {
+    // 读取配置文件
+    QSettings settings("config.ini", QSettings::IniFormat);
+    settings.beginGroup("mysql");
+    std::string host     = settings.value("host").toString().toStdString();
+    int         port     = settings.value("port").toInt();
+    std::string user     = settings.value("user").toString().toStdString();
+    std::string password = settings.value("password").toString().toStdString();
+    std::string database = settings.value("database").toString().toStdString();
+    settings.endGroup();
+
+    mysql_db_ = std::make_shared<zel::myorm::Database>();
+    if (!mysql_db_->connect(host, port, user, password, database)) {
+        return false;
+    }
+
+    user_dao_ = UserDaoFactory::create(nullptr, mysql_db_);
+    QMessageBox::information(this, tr("提示"), tr("MySQL数据库连接成功, 进入在线模"));
+    return true;
+}
 
 void Login::initUI() {
     // 加载用户信息
@@ -115,7 +179,7 @@ void Login::loginBtnClicked() {
         this->hide();
 
         // 显示主界面
-        MainWindow *mainWindow = new MainWindow(db_, user_dao_);
+        MainWindow *mainWindow = new MainWindow(sqlite_db_, mysql_db_, user_dao_);
         mainWindow->show();
     } else {
         // 登录失败
