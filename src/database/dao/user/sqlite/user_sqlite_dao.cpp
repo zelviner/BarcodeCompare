@@ -120,8 +120,7 @@ void UserSqliteDao::init() {
         db_->exec(sql);
 
         // initialize user data
-        std::shared_ptr<User> admin = std::make_shared<User>(User{1, "admin", "1234", 1});
-
+        std::shared_ptr<User> admin = std::make_shared<User>(User{1, "admin", "iflogic2025", 1});
         add(admin);
     }
 }

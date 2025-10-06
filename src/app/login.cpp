@@ -27,8 +27,6 @@ Login::Login(QMainWindow *parent)
 
     initLogger();
 
-    initDatabase();
-
     initUI();
 
     initSignalSlot();
@@ -82,12 +80,6 @@ void Login::initLogger() {
     zel::utility::Logger::instance().setLevel(zel::utility::Logger::LOG_DEBUG);
 }
 
-void Login::initDatabase() {
-    if (!initMySQL()) {
-        initSQLite();
-    }
-}
-
 bool Login::initSQLite() {
     sqlite_db_          = std::make_shared<SQLite::Database>("data/barcode_compare.db", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
     auto box_data_db    = std::make_shared<SQLite::Database>("data/box_data.db", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
@@ -100,7 +92,7 @@ bool Login::initSQLite() {
     sqlite_db_->exec("ATTACH DATABASE 'data/box_log.db' AS box_log;");
     sqlite_db_->exec("ATTACH DATABASE 'data/carton_log.db' AS carton_log;");
 
-    user_dao_ = UserDaoFactory::create(sqlite_db_, nullptr);
+    user_dao_ = UserDaoFactory::create(sqlite_db_, mysql_db_);
 
     return true;
 }
@@ -121,33 +113,35 @@ bool Login::initMySQL() {
         return false;
     }
 
-    user_dao_ = UserDaoFactory::create(nullptr, mysql_db_);
-    QMessageBox::information(this, tr("提示"), tr("MySQL数据库连接成功, 进入在线模"));
+    // 创建数据库
+    std::string create_box_data_sql    = "CREATE DATABASE IF NOT EXISTS box_data DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;";
+    std::string create_carton_data_sql = "CREATE DATABASE IF NOT EXISTS carton_data DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;";
+    mysql_db_->execute(create_box_data_sql);
+    mysql_db_->execute(create_carton_data_sql);
+
+    user_dao_ = UserDaoFactory::create(sqlite_db_, mysql_db_);
     return true;
 }
 
 void Login::initUI() {
-    // 加载用户信息
-    loadUserInfo();
+    // ui_->user_combo_box->setEditable(true);
+    // ui_->user_combo_box->lineEdit()->setPlaceholderText(tr("请输入用户名"));
+    // ui_->user_combo_box->lineEdit()->setAlignment(Qt::AlignCenter);
 
-    ui_->user_combo_box->setEditable(true);
-    ui_->user_combo_box->lineEdit()->setPlaceholderText(tr("请输入用户名"));
-    ui_->user_combo_box->lineEdit()->setAlignment(Qt::AlignCenter);
+    // // 下拉框模糊匹配
+    // QStringList user_list;
+    // for (auto &user : user_dao_->all()) {
+    //     user_list.append(QString::fromStdString(user->name));
+    // }
 
-    // 下拉框模糊匹配
-    QStringList user_list;
-    for (auto &user : user_dao_->all()) {
-        user_list.append(QString::fromStdString(user->name));
-    }
-
-    QCompleter *completer = new QCompleter(user_list, this);
-    completer->setFilterMode(Qt::MatchContains);
-    ui_->user_combo_box->setCompleter(completer);
+    // QCompleter *completer = new QCompleter(user_list, this);
+    // completer->setFilterMode(Qt::MatchContains);
+    // ui_->user_combo_box->setCompleter(completer);
 }
 
 void Login::initSignalSlot() {
 
-    connect(ui_->user_combo_box, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=]() { ui_->password_edit->setFocus(); });
+    // connect(ui_->user_combo_box, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=]() { ui_->password_edit->setFocus(); });
 
     // 回车键
     connect(ui_->password_edit, &QLineEdit::returnPressed, this, &Login::loginBtnClicked);
@@ -159,19 +153,23 @@ void Login::initSignalSlot() {
     connect(ui_->exit_btn, &QPushButton::clicked, this, &Login::exitBtnClicked);
 }
 
-void Login::loadUserInfo() {
-    for (auto &user : user_dao_->all()) {
-        ui_->user_combo_box->addItem(QString::fromStdString(user->name));
-    }
-
-    ui_->user_combo_box->setCurrentIndex(-1);
-}
-
 void Login::loginBtnClicked() {
 
     // 获取用户名和密码
-    std::string entered_name     = ui_->user_combo_box->currentText().toStdString();
+    std::string entered_name     = ui_->username_edit->text().toStdString();
     std::string entered_password = ui_->password_edit->text().toStdString();
+
+    if (ui_->online_radio_button->isChecked()) {
+        if (!initMySQL()) {
+            QMessageBox::warning(this, tr("连接数据库失败"), tr("请检查服务器数据库配置,或使用离线模式登录"));
+            return;
+        }
+    } else if (ui_->offline_radio_button->isChecked()) {
+        initSQLite();
+    } else {
+        QMessageBox::warning(this, tr("请选择登录模式"), tr("请选择登录模式"));
+        return;
+    }
 
     // 登录
     if (user_dao_->login(entered_name, entered_password)) {

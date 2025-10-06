@@ -33,9 +33,6 @@ class Login : public QMainWindow {
     /// @brief 初始化日志器
     void initLogger();
 
-    /// @brief 初始化数据库
-    void initDatabase();
-
     /// @brief 初始化 SQLite 数据库
     bool initSQLite();
 
@@ -47,9 +44,6 @@ class Login : public QMainWindow {
 
     /// @brief 初始化信号槽
     void initSignalSlot();
-
-    /// @brief 加载用户信息
-    void loadUserInfo();
 
     /// @brief 创建文件夹
     /// @param folder_path  文件夹路径
