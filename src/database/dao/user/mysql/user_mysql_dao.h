@@ -1,7 +1,7 @@
 #pragma once
 
 #include "database/dao/user/user_dao.h"
-#include "users.h"
+#include "users.hpp"
 
 #include <memory>
 #include <vector>

@@ -13,7 +13,7 @@ using namespace zel::utility;
 namespace zel {
 namespace myorm {
 
-template <typename T> class ZEL_EXPORT Model {
+template <typename T> class Model {
   public:
     Model();
     Model(Connection *conn);

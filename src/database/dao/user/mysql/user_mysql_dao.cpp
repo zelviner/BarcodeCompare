@@ -87,24 +87,16 @@ bool UserMysqlDao::exists(const std::string &name) {
 }
 
 void UserMysqlDao::init() {
-    std::string sql = "SELECT COUNT(*)"
-                      "FROM information_schema.tables"
-                      "WHERE table_schema = 'barcode_compare'"
-                      "  AND table_name = 'users'";
-
     users_ = std::make_shared<Users>(*db_);
-
-    // auto qurey = db_->query(sql);
-    // if (qurey.size() == 0 || qurey[0]["COUNT(*)"].asInt() == 0) {
 
     // check if table exists
     if (!users_->exists()) {
         // create table if not exists
-        sql = "CREATE TABLE IF NOT EXISTS users ("
-              "id integer PRIMARY KEY AUTO_INCREMENT,"
-              "name varchar(255) NOT NULL,"
-              "password varchar(255) NOT NULL,"
-              "role_id integer NOT NULL);";
+        std::string sql = "CREATE TABLE IF NOT EXISTS users ("
+                          "id integer PRIMARY KEY AUTO_INCREMENT,"
+                          "name varchar(255) NOT NULL,"
+                          "password varchar(255) NOT NULL,"
+                          "role_id integer NOT NULL);";
         db_->execute(sql);
 
         // initialize user data
