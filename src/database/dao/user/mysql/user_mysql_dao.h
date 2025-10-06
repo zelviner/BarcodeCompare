@@ -1,7 +1,7 @@
 #pragma once
 
 #include "database/dao/user/user_dao.h"
-#include "database/myorm/database.h"
+#include "users.h"
 
 #include <memory>
 #include <vector>
@@ -45,5 +45,6 @@ class UserMysqlDao : public UserDao {
 
   private:
     std::shared_ptr<zel::myorm::Database> db_;
+    std::shared_ptr<Users>                users_;
     int                                   current_user_id_;
 };

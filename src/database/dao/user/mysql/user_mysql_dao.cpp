@@ -22,37 +22,83 @@ bool UserMysqlDao::login(const std::string &entered_name, const std::string &ent
 }
 
 bool UserMysqlDao::add(const std::shared_ptr<User> &user) {
-    std::string sql = "INSERT INTO users(name, password, role_id) VALUES(?,?,?)";
-    return false;
+    (*users_)["name"]     = user->name;
+    (*users_)["password"] = user->password;
+    (*users_)["role_id"]  = user->role_id;
+
+    return users_->save();
 }
 
 std::vector<std::shared_ptr<User>> UserMysqlDao::all() {
     std::vector<std::shared_ptr<User>> users;
 
+    auto all = users_->all();
+    for (auto one : all) {
+        std::shared_ptr<User> user = std::make_shared<User>();
+        user->id                   = one["id"].asInt();
+        user->name                 = one["name"].asString();
+        user->password             = one["password"].asString();
+        user->role_id              = one["role_id"].asInt();
+
+        users.push_back(user);
+    }
+
     return users;
 }
 
-bool UserMysqlDao::remove(const int &id) { return false; }
+bool UserMysqlDao::remove(const int &id) {
+    auto one = users_->where("id", id).one();
+    one.remove();
 
-bool UserMysqlDao::clear() { return false; }
+    return true;
+}
 
-bool UserMysqlDao::update(const int &id, const std::shared_ptr<User> &user) { return false; }
+bool UserMysqlDao::clear() {
+    users_->remove();
+    return true;
+}
+
+bool UserMysqlDao::update(const int &id, const std::shared_ptr<User> &user) {
+    auto one        = users_->where("id", id).one();
+    one["name"]     = user->name;
+    one["password"] = user->password;
+    one["role_id"]  = user->role_id;
+
+    return users_->save();
+}
 
 std::shared_ptr<User> UserMysqlDao::currentUser() { return get(current_user_id_); }
 
-std::shared_ptr<User> UserMysqlDao::get(const int &id) { return nullptr; }
+std::shared_ptr<User> UserMysqlDao::get(const int &id) {
+    std::shared_ptr<User> user = std::make_shared<User>();
+    auto                  one  = users_->where("id", id).one();
+    user->id                   = one["id"].asInt();
+    user->name                 = one["name"].asString();
+    user->password             = one["password"].asString();
+    user->role_id              = one["role_id"].asInt();
 
-bool UserMysqlDao::exists(const std::string &name) { return false; }
+    return user;
+}
+
+bool UserMysqlDao::exists(const std::string &name) {
+    auto one = users_->where("name", name).one()["name"].asString();
+
+    return one == "" ? false : true;
+}
 
 void UserMysqlDao::init() {
-    // check if table exists
     std::string sql = "SELECT COUNT(*)"
                       "FROM information_schema.tables"
                       "WHERE table_schema = 'barcode_compare'"
                       "  AND table_name = 'users'";
 
-    auto qurey = db_->query(sql);
-    if (qurey.size() == 0 || qurey[0]["COUNT(*)"].asInt() == 0) {
+    users_ = std::make_shared<Users>(*db_);
+
+    // auto qurey = db_->query(sql);
+    // if (qurey.size() == 0 || qurey[0]["COUNT(*)"].asInt() == 0) {
+
+    // check if table exists
+    if (!users_->exists()) {
         // create table if not exists
         sql = "CREATE TABLE IF NOT EXISTS users ("
               "id integer PRIMARY KEY AUTO_INCREMENT,"
