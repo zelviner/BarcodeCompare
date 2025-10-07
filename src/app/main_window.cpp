@@ -46,6 +46,7 @@ MainWindow::MainWindow(const std::shared_ptr<SQLite::Database> &sqlite_db, const
     ui_->setupUi(this);
     initWindow();
 
+    printf("1\n");
     initDao();
 
     initUi();

@@ -28,7 +28,7 @@ std::vector<std::shared_ptr<Format>> FormatSqliteDao::all() {
     std::string       sql = "SELECT * FROM formats";
     SQLite::Statement query(*db_, sql);
 
-    std::vector<std::shared_ptr<Format>> roles;
+    std::vector<std::shared_ptr<Format>> formats;
     while (query.executeStep()) {
         std::shared_ptr<Format> format = std::make_shared<Format>();
         format->id                     = query.getColumn("id");
@@ -41,10 +41,10 @@ std::vector<std::shared_ptr<Format>> FormatSqliteDao::all() {
         format->quantity               = query.getColumn("quantity").getString();
         format->barcode                = query.getColumn("barcode").getString();
 
-        roles.push_back(format);
+        formats.push_back(format);
     }
 
-    return roles;
+    return formats;
 }
 
 std::shared_ptr<Format> FormatSqliteDao::get(const int id) {

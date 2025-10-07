@@ -3,6 +3,7 @@
 #include "database/dao/format/format.h"
 #include "database/dao/order/order_dao.h"
 #include "database/myorm/database.h"
+#include "orders.hpp"
 
 #include <memory>
 #include <vector>
@@ -49,5 +50,6 @@ class OrderMysqlDao : public OrderDao {
 
   private:
     std::shared_ptr<zel::myorm::Database> db_;
+    std::shared_ptr<Orders>               orders_;
     int                                   current_order_id_;
 };

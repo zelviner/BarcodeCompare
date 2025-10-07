@@ -35,10 +35,10 @@ std::vector<std::shared_ptr<User>> UserMysqlDao::all() {
     auto all = users_->all();
     for (auto one : all) {
         std::shared_ptr<User> user = std::make_shared<User>();
-        user->id                   = one["id"].asInt();
-        user->name                 = one["name"].asString();
-        user->password             = one["password"].asString();
-        user->role_id              = one["role_id"].asInt();
+        user->id                   = one("id").asInt();
+        user->name                 = one("name").asString();
+        user->password             = one("password").asString();
+        user->role_id              = one("role_id").asInt();
 
         users.push_back(user);
     }

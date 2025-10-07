@@ -2,6 +2,7 @@
 
 #include "database/dao/format/format_dao.h"
 #include "database/myorm/database.h"
+#include "formats.hpp"
 
 #include <memory>
 #include <vector>
@@ -27,4 +28,5 @@ class FormatMysqlDao : public FormatDao {
 
   private:
     std::shared_ptr<zel::myorm::Database> db_;
+    std::shared_ptr<Formats>              formats_;
 };

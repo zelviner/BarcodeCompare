@@ -66,7 +66,21 @@ bool OrderMysqlDao::add(const std::shared_ptr<Order> &order) {
         return false;
     }
 
-    return false;
+    (*orders_)["name"]                   = order->name;
+    (*orders_)["check_format"]           = order->check_format;
+    (*orders_)["carton_start_check_num"] = order->carton_start_check_num;
+    (*orders_)["carton_end_check_num"]   = order->carton_end_check_num;
+    (*orders_)["box_start_check_num"]    = order->box_start_check_num;
+    (*orders_)["box_end_check_num"]      = order->box_end_check_num;
+    (*orders_)["card_start_check_num"]   = order->card_start_check_num;
+    (*orders_)["card_end_check_num"]     = order->card_end_check_num;
+    (*orders_)["box_scanned_num"]        = order->box_scanned_num;
+    (*orders_)["carton_scanned_num"]     = order->carton_scanned_num;
+    (*orders_)["mode_id"]                = order->mode_id;
+    (*orders_)["create_time"]            = order->create_time;
+    orders_->save();
+
+    return true;
 }
 
 bool OrderMysqlDao::remove(const int &id) {
@@ -77,7 +91,10 @@ bool OrderMysqlDao::remove(const int &id) {
     box_data_dao->clear();
     carton_data_dao->clear();
 
-    return false;
+    auto one = orders_->where("id", id).one();
+    one.remove();
+
+    return true;
 }
 
 bool OrderMysqlDao::clear() {
@@ -89,22 +106,100 @@ bool OrderMysqlDao::clear() {
         carton_data_dao->clear();
     }
 
-    return false;
+    orders_->remove();
+
+    return true;
 }
 
-bool OrderMysqlDao::update(const int &id, const std::shared_ptr<Order> &order) { return false; }
+bool OrderMysqlDao::update(const int &id, const std::shared_ptr<Order> &order) {
+
+    auto one = orders_->where("id", id).one();
+
+    one["name"]                   = order->name;
+    one["check_format"]           = order->check_format;
+    one["carton_start_check_num"] = order->carton_start_check_num;
+    one["carton_end_check_num"]   = order->carton_end_check_num;
+    one["box_start_check_num"]    = order->box_start_check_num;
+    one["box_end_check_num"]      = order->box_end_check_num;
+    one["card_start_check_num"]   = order->card_start_check_num;
+    one["card_end_check_num"]     = order->card_end_check_num;
+    one["box_scanned_num"]        = order->box_scanned_num;
+    one["carton_scanned_num"]     = order->carton_scanned_num;
+    one["mode_id"]                = order->mode_id;
+    one["create_time"]            = order->create_time;
+
+    return one.save();
+}
 
 std::vector<std::shared_ptr<Order>> OrderMysqlDao::all() {
     std::vector<std::shared_ptr<Order>> orders;
 
+    auto all = orders_->all();
+    for (auto one : all) {
+        std::shared_ptr<Order> order  = std::make_shared<Order>();
+        order->id                     = one["id"].asInt();
+        order->name                   = one["name"].asString();
+        order->check_format           = one["check_format"].asString();
+        order->carton_start_check_num = one["carton_start_check_num"].asInt();
+        order->carton_end_check_num   = one["carton_end_check_num"].asInt();
+        order->box_start_check_num    = one["box_start_check_num"].asInt();
+        order->box_end_check_num      = one["box_end_check_num"].asInt();
+        order->card_start_check_num   = one["card_start_check_num"].asInt();
+        order->card_end_check_num     = one["card_end_check_num"].asInt();
+        order->box_scanned_num        = one["box_scanned_num"].asInt();
+        order->mode_id                = one["mode_id"].asInt();
+        order->create_time            = one["create_time"].asString();
+
+        orders.push_back(order);
+    }
+
     return orders;
 }
 
-std::shared_ptr<Order> OrderMysqlDao::get(const int &id) { return nullptr; }
+std::shared_ptr<Order> OrderMysqlDao::get(const int &id) {
+    std::shared_ptr<Order> order = std::make_shared<Order>();
 
-std::shared_ptr<Order> OrderMysqlDao::get(const std::string &name) { return nullptr; }
+    auto one                      = orders_->where("id", id).one();
+    order->id                     = one["id"].asInt();
+    order->name                   = one["name"].asString();
+    order->check_format           = one["check_format"].asString();
+    order->carton_start_check_num = one["carton_start_check_num"].asInt();
+    order->carton_end_check_num   = one["carton_end_check_num"].asInt();
+    order->box_start_check_num    = one["box_start_check_num"].asInt();
+    order->box_end_check_num      = one["box_end_check_num"].asInt();
+    order->card_start_check_num   = one["card_start_check_num"].asInt();
+    order->card_end_check_num     = one["card_end_check_num"].asInt();
+    order->box_scanned_num        = one["box_scanned_num"].asInt();
+    order->mode_id                = one["mode_id"].asInt();
+    order->create_time            = one["create_time"].asString();
 
-bool OrderMysqlDao::exists(const std::string &name) { return false; }
+    return order;
+}
+
+std::shared_ptr<Order> OrderMysqlDao::get(const std::string &name) {
+    std::shared_ptr<Order> order = std::make_shared<Order>();
+
+    auto one                      = orders_->where("name", name).one();
+    order->id                     = one["id"].asInt();
+    order->name                   = one["name"].asString();
+    order->check_format           = one["check_format"].asString();
+    order->carton_start_check_num = one["carton_start_check_num"].asInt();
+    order->carton_end_check_num   = one["carton_end_check_num"].asInt();
+    order->box_start_check_num    = one["box_start_check_num"].asInt();
+    order->box_end_check_num      = one["box_end_check_num"].asInt();
+    order->card_start_check_num   = one["card_start_check_num"].asInt();
+    order->card_end_check_num     = one["card_end_check_num"].asInt();
+    order->box_scanned_num        = one["box_scanned_num"].asInt();
+    order->mode_id                = one["mode_id"].asInt();
+    order->create_time            = one["create_time"].asString();
+
+    return order;
+}
+
+bool OrderMysqlDao::exists(const std::string &name) {
+    auto one = orders_->where("name", name).one()["name"].asString();
+    return one == "" ? false : true;
+}
 
 bool OrderMysqlDao::currentOrder(const int &order_id) {
     current_order_id_ = order_id;
@@ -119,7 +214,28 @@ std::shared_ptr<Order> OrderMysqlDao::currentOrder() {
     return get(current_order_id_);
 }
 
-void OrderMysqlDao::init() {}
+void OrderMysqlDao::init() {
+    orders_ = std::make_shared<Orders>(*db_);
+
+    // check if table exists
+    if (!orders_->exists()) {
+        std::string sql = "CREATE TABLE IF NOT EXISTS orders ("
+                          "id integer PRIMARY KEY AUTOINCREMENT,"
+                          "name VARCHAR(255) NOT NULL UNIQUE,"
+                          "check_format VARCHAR(255) NOT NULL,"
+                          "carton_start_check_num integer NOT NULL,"
+                          "carton_end_check_num integer NOT NULL,"
+                          "box_start_check_num integer NOT NULL,"
+                          "box_end_check_num integer NOT NULL,"
+                          "card_start_check_num integer NOT NULL,"
+                          "card_end_check_num integer NOT NULL,"
+                          "box_scanned_num integer NOT NULL,"
+                          "carton_scanned_num integer NOT NULL,"
+                          "mode_id integer NOT NULL,"
+                          "create_time DATETIME NOT NULL);";
+        db_->execute(sql);
+    }
+}
 
 bool OrderMysqlDao::hasRequiredValues(const std::vector<std::string> &headers, const std::shared_ptr<Format> &format) {
     std::unordered_set<std::string> headerSet(headers.begin(), headers.end());
