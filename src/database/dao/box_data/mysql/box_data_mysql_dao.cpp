@@ -1,8 +1,6 @@
 #include "box_data_mysql_dao.h"
 #include "box_tables.hpp"
 
-#include <exception>
-#include <iostream>
 #include <memory>
 #include <qsettings>
 
