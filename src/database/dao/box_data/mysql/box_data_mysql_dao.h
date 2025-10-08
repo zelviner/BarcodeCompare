@@ -9,7 +9,7 @@
 class BoxDataMysqlDao : public BoxDataDao {
 
   public:
-    BoxDataMysqlDao(const std::shared_ptr<zel::myorm::Database> &db, const std::string &order_name);
+    BoxDataMysqlDao(const std::string &order_name);
     ~BoxDataMysqlDao();
 
     /// @brief Batch insert new box datas into the database.

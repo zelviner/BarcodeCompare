@@ -12,21 +12,22 @@ ModeMysqlDao::ModeMysqlDao(const std::shared_ptr<zel::myorm::Database> &db)
 ModeMysqlDao::~ModeMysqlDao() {}
 
 bool ModeMysqlDao::add(const std::shared_ptr<Mode> &mode) {
-    (*modes_)["name"]        = mode->name;
-    (*modes_)["description"] = mode->description;
+    auto modes           = Modes(*db_);
+    modes["name"]        = mode->name;
+    modes["description"] = mode->description;
 
-    return modes_->save();
+    return modes.save();
 }
 
 std::vector<std::shared_ptr<Mode>> ModeMysqlDao::all() {
     std::vector<std::shared_ptr<Mode>> modes;
 
-    auto all = modes_->all();
+    auto all = Modes(*db_).all();
     for (auto one : all) {
         std::shared_ptr<Mode> mode = std::make_shared<Mode>();
-        mode->id                   = one["id"].asInt();
-        mode->name                 = one["name"].asString();
-        mode->description          = one["description"].asString();
+        mode->id                   = one("id").asInt();
+        mode->name                 = one("name").asString();
+        mode->description          = one("description").asString();
 
         modes.push_back(mode);
     }
@@ -35,26 +36,25 @@ std::vector<std::shared_ptr<Mode>> ModeMysqlDao::all() {
 }
 
 std::shared_ptr<Mode> ModeMysqlDao::get(const int &id) {
-    auto one = modes_->where("id", id).one();
+    auto one = Modes(*db_).where("id", id).one();
 
     std::shared_ptr<Mode> mode = std::make_shared<Mode>();
-    mode->id                   = one["id"].asInt();
-    mode->name                 = one["name"].asString();
-    mode->description          = one["description"].asString();
+    mode->id                   = one("id").asInt();
+    mode->name                 = one("name").asString();
+    mode->description          = one("description").asString();
 
     return mode;
 }
 
 void ModeMysqlDao::init() {
-    modes_ = std::make_shared<Modes>(*db_);
-
     // check if not exists
-    if (!modes_->exists()) {
+    if (!Modes(*db_).exists()) {
         // create if not exists
         std::string sql = "CREATE TABLE IF NOT EXISTS modes ("
-                          "id integer PRIMARY KEY AUTOINCREMENT,"
-                          "name VAECHAR(255) NOT NULL UNIQUE,"
-                          "description VAECHAR(255) NOT NULL);";
+                          "id INT AUTO_INCREMENT PRIMARY KEY,"
+                          "name VARCHAR(255) NOT NULL UNIQUE,"
+                          "description VARCHAR(255) NOT NULL"
+                          ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
         db_->execute(sql);
 
         // initialize mode data

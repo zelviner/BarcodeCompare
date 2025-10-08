@@ -46,7 +46,6 @@ MainWindow::MainWindow(const std::shared_ptr<SQLite::Database> &sqlite_db, const
     ui_->setupUi(this);
     initWindow();
 
-    printf("1\n");
     initDao();
 
     initUi();
@@ -824,14 +823,15 @@ void MainWindow::showSelectedOrder() {
 }
 
 void MainWindow::refreshOrderTab() {
-    ui_->order_table->setRowCount(order_dao_->all().size());
+    auto orders = order_dao_->all();
+    ui_->order_table->setRowCount(orders.size());
 
     // 设置表格内容
-    for (int i = 0; i < int(order_dao_->all().size()); i++) {
-        ui_->order_table->setItem(i, 0, new QTableWidgetItem(QString::fromStdString(order_dao_->all()[i]->name)));
-        ui_->order_table->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(order_dao_->all()[i]->check_format)));
-        ui_->order_table->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(mode_dao_->get(order_dao_->all()[i]->mode_id)->description)));
-        ui_->order_table->setItem(i, 3, new QTableWidgetItem(QString::fromStdString(order_dao_->all()[i]->create_time)));
+    for (int i = 0; i < int(orders.size()); i++) {
+        ui_->order_table->setItem(i, 0, new QTableWidgetItem(QString::fromStdString(orders[i]->name)));
+        ui_->order_table->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(orders[i]->check_format)));
+        ui_->order_table->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(mode_dao_->get(orders[i]->mode_id)->description)));
+        ui_->order_table->setItem(i, 3, new QTableWidgetItem(QString::fromStdString(orders[i]->create_time)));
 
         // 设置内容居中
         ui_->order_table->item(i, 0)->setTextAlignment(Qt::AlignCenter);
@@ -989,12 +989,13 @@ void MainWindow::showSelectedUser() {
 }
 
 void MainWindow::refreshUserTab() {
-    ui_->user_table->setRowCount(user_dao_->all().size());
+    auto users = user_dao_->all();
+    ui_->user_table->setRowCount(users.size());
 
     // 设置表格内容
-    for (int i = 0; i < int(user_dao_->all().size()); i++) {
-        ui_->user_table->setItem(i, 0, new QTableWidgetItem(QString::fromStdString(user_dao_->all()[i]->name)));
-        ui_->user_table->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(role_dao_->get(user_dao_->all()[i]->role_id)->description)));
+    for (int i = 0; i < int(users.size()); i++) {
+        ui_->user_table->setItem(i, 0, new QTableWidgetItem(QString::fromStdString(users[i]->name)));
+        ui_->user_table->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(role_dao_->get(users[i]->role_id)->description)));
 
         // 设置内容居中
         ui_->user_table->item(i, 0)->setTextAlignment(Qt::AlignCenter);
@@ -1004,7 +1005,6 @@ void MainWindow::refreshUserTab() {
     ui_->selected_user_edit->clear();
     ui_->selected_password_edit->clear();
     ui_->selected_combo_box->setCurrentIndex(-1);
-
     if (user_dao_->currentUser()->role_id == 2) {
         ui_->clear_user_btn->setEnabled(false);
     } else if (user_dao_->currentUser()->role_id == 3) {

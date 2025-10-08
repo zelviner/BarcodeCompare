@@ -1,4 +1,5 @@
 #include "role_mysql_dao.h"
+#include "roles.hpp"
 
 #include <immintrin.h>
 #include <memory>
@@ -12,22 +13,23 @@ RoleMysqlDao::RoleMysqlDao(const std::shared_ptr<zel::myorm::Database> &db)
 RoleMysqlDao::~RoleMysqlDao() {}
 
 bool RoleMysqlDao::add(const std::shared_ptr<Role> &role) {
-    (*roles_)["name"]        = role->name;
-    (*roles_)["description"] = role->description;
+    auto roles           = Roles(*db_);
+    roles["name"]        = role->name;
+    roles["description"] = role->description;
 
-    return roles_->save();
+    return roles.save();
 }
 
 std::vector<std::shared_ptr<Role>> RoleMysqlDao::all() {
     std::vector<std::shared_ptr<Role>> roles;
 
-    auto all = roles_->all();
+    auto all = Roles(*db_).all();
     for (auto one : all) {
         std::shared_ptr<Role> role = std::make_shared<Role>();
 
-        role->id          = one["id"].asInt();
-        role->name        = one["name"].asString();
-        role->description = one["description"].asString();
+        role->id          = one("id").asInt();
+        role->name        = one("name").asString();
+        role->description = one("description").asString();
 
         roles.push_back(role);
     }
@@ -38,24 +40,23 @@ std::vector<std::shared_ptr<Role>> RoleMysqlDao::all() {
 std::shared_ptr<Role> RoleMysqlDao::get(const int id) {
     std::shared_ptr<Role> role = std::make_shared<Role>();
 
-    auto one          = roles_->where("id", id).one();
-    role->id          = one["id"].asInt();
-    role->name        = one["name"].asString();
-    role->description = one["description"].asString();
+    auto one          = Roles(*db_).where("id", id).one();
+    role->id          = one("id").asInt();
+    role->name        = one("name").asString();
+    role->description = one("description").asString();
 
     return role;
 }
 
 void RoleMysqlDao::init() {
-    roles_ = std::make_shared<Roles>(*db_);
-
     // check if table exists
-    if (!roles_->exists()) {
+    if (!Roles(*db_).exists()) {
         // create table if not exists
         std::string sql = "CREATE TABLE IF NOT EXISTS roles ("
-                          "id INTEGER PRIMARY key AUTOINCREMENT,"
+                          "id INT AUTO_INCREMENT PRIMARY KEY,"
                           "name VARCHAR(255) NOT NULL UNIQUE,"
-                          "description VARCHAR(255);";
+                          "description VARCHAR(255)"
+                          ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
         db_->execute(sql);
 
         // initialize role data

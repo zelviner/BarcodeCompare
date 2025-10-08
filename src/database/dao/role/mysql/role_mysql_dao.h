@@ -2,7 +2,6 @@
 
 #include "database/dao/role/role_dao.h"
 #include "database/myorm/database.h"
-#include "roles.hpp"
 
 #include <memory>
 #include <vector>
@@ -28,5 +27,4 @@ class RoleMysqlDao : public RoleDao {
 
   private:
     std::shared_ptr<zel::myorm::Database> db_;
-    std::shared_ptr<Roles>                roles_;
 };

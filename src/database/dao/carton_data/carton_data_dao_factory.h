@@ -14,7 +14,7 @@ class CartonDataDaoFactory {
     static std::shared_ptr<CartonDataDao> create(const std::shared_ptr<SQLite::Database> &sqlite_db, const std::shared_ptr<zel::myorm::Database> &mysql_db,
                                                  const std::string &order_name) {
         if (mysql_db != nullptr) {
-            return std::make_shared<CartonDataMysqlDao>(mysql_db, order_name);
+            return std::make_shared<CartonDataMysqlDao>(order_name);
         } else {
             return std::make_shared<CartonDataSqliteDao>(sqlite_db, order_name);
         }

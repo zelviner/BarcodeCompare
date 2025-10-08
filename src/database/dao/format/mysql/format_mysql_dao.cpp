@@ -1,5 +1,7 @@
 #include "format_mysql_dao.h"
 #include "database/dao/format/format.h"
+#include "formats.hpp"
+
 #include <memory>
 
 FormatMysqlDao::FormatMysqlDao(const std::shared_ptr<zel::myorm::Database> &db)
@@ -10,33 +12,34 @@ FormatMysqlDao::FormatMysqlDao(const std::shared_ptr<zel::myorm::Database> &db)
 FormatMysqlDao::~FormatMysqlDao() {}
 
 bool FormatMysqlDao::add(const std::shared_ptr<Format> &format) {
-    (*formats_)["name"]         = format->name;
-    (*formats_)["type"]         = format->type;
-    (*formats_)["filename"]     = format->filename;
-    (*formats_)["box_number"]   = format->box_number;
-    (*formats_)["start_number"] = format->start_number;
-    (*formats_)["end_number"]   = format->end_number;
-    (*formats_)["quantity"]     = format->quantity;
-    (*formats_)["barcode"]      = format->barcode;
+    auto formats            = Formats(*db_);
+    formats["name"]         = format->name;
+    formats["type"]         = format->type;
+    formats["filename"]     = format->filename;
+    formats["box_number"]   = format->box_number;
+    formats["start_number"] = format->start_number;
+    formats["end_number"]   = format->end_number;
+    formats["quantity"]     = format->quantity;
+    formats["barcode"]      = format->barcode;
 
-    return formats_->save();
+    return formats.save();
 }
 
 std::vector<std::shared_ptr<Format>> FormatMysqlDao::all() {
     std::vector<std::shared_ptr<Format>> formats;
 
-    auto all = formats_->all();
+    auto all = Formats(*db_).all();
     for (auto one : all) {
         std::shared_ptr<Format> format = std::make_shared<Format>();
-        format->id                     = one["id"].asInt();
-        format->name                   = one["name"].asString();
-        format->type                   = one["type"].asInt();
-        format->filename               = one["filename"].asString();
-        format->box_number             = one["box_number"].asString();
-        format->start_number           = one["start_number"].asString();
-        format->end_number             = one["end_number"].asString();
-        format->quantity               = one["quantity"].asString();
-        format->barcode                = one["barcode"].asString();
+        format->id                     = one("id").asInt();
+        format->name                   = one("name").asString();
+        format->type                   = one("type").asInt();
+        format->filename               = one("filename").asString();
+        format->box_number             = one("box_number").asString();
+        format->start_number           = one("start_number").asString();
+        format->end_number             = one("end_number").asString();
+        format->quantity               = one("quantity").asString();
+        format->barcode                = one("barcode").asString();
 
         formats.push_back(format);
     }
@@ -45,38 +48,37 @@ std::vector<std::shared_ptr<Format>> FormatMysqlDao::all() {
 }
 
 std::shared_ptr<Format> FormatMysqlDao::get(const int id) {
-    auto one = formats_->where("id", id).one();
+    auto one = Formats(*db_).where("id", id).one();
 
     std::shared_ptr<Format> format = std::make_shared<Format>();
-    format->id                     = one["id"].asInt();
-    format->name                   = one["name"].asString();
-    format->type                   = one["type"].asInt();
-    format->filename               = one["filename"].asString();
-    format->box_number             = one["box_number"].asString();
-    format->start_number           = one["start_number"].asString();
-    format->end_number             = one["end_number"].asString();
-    format->quantity               = one["quantity"].asString();
-    format->barcode                = one["barcode"].asString();
+    format->id                     = one("id").asInt();
+    format->name                   = one("name").asString();
+    format->type                   = one("type").asInt();
+    format->filename               = one("filename").asString();
+    format->box_number             = one("box_number").asString();
+    format->start_number           = one("start_number").asString();
+    format->end_number             = one("end_number").asString();
+    format->quantity               = one("quantity").asString();
+    format->barcode                = one("barcode").asString();
 
     return format;
 }
 
 void FormatMysqlDao::init() {
-    formats_ = std::make_shared<Formats>(*db_);
-
     // check if not exists
-    if (!formats_->exists()) {
+    if (!Formats(*db_).exists()) {
         // create if not exists
         std::string sql = "CREATE TABLE IF NOT EXISTS formats ("
-                          "id INTEGER PRIMARY KEY AUTOINCREMENT,"
-                          "name VARCHAR(255) NOT NULL UNQIUE,"
-                          "type INTEGER NOT NULL,"
-                          "filename VARCHAE(255) NOT NULL,"
-                          "box_number VARCHAE(255) NOT NULL,"
-                          "start_number VARCHAE(255) NOT NULL,"
-                          "end_number VARCHAE(255) NOT NULL,"
-                          "quantity VARCHAE(255) NOT NULL,"
-                          "barcode VARCHAE(255) NOT NULL);";
+                          "id INT AUTO_INCREMENT PRIMARY KEY,"
+                          "name VARCHAR(255) NOT NULL,"
+                          "type INT NOT NULL,"
+                          "filename VARCHAR(255) NOT NULL,"
+                          "box_number VARCHAR(255) NOT NULL,"
+                          "start_number VARCHAR(255) NOT NULL,"
+                          "end_number VARCHAR(255) NOT NULL,"
+                          "quantity VARCHAR(255) NOT NULL,"
+                          "barcode VARCHAR(255) NOT NULL"
+                          ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
         db_->execute(sql);
 
         // initialize format data

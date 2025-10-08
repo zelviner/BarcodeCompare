@@ -154,7 +154,6 @@ void Login::initSignalSlot() {
 }
 
 void Login::loginBtnClicked() {
-
     // 获取用户名和密码
     std::string entered_name     = ui_->username_edit->text().toStdString();
     std::string entered_password = ui_->password_edit->text().toStdString();

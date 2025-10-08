@@ -2,7 +2,6 @@
 
 #include "database/dao/mode/mode_dao.h"
 #include "database/myorm/database.h"
-#include "modes.hpp"
 
 #include <memory>
 #include <vector>
@@ -27,5 +26,4 @@ class ModeMysqlDao : public ModeDao {
 
   private:
     std::shared_ptr<zel::myorm::Database> db_;
-    std::shared_ptr<Modes>                modes_;
 };

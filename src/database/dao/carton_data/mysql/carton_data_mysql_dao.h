@@ -8,7 +8,7 @@
 
 class CartonDataMysqlDao : public CartonDataDao {
   public:
-    CartonDataMysqlDao(const std::shared_ptr<zel::myorm::Database> &db, const std::string &order_name);
+    CartonDataMysqlDao(const std::string &order_name);
     ~CartonDataMysqlDao();
 
     /// @brief Batch insert new box datas into the database.

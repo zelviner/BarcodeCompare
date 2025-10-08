@@ -13,9 +13,8 @@ class BoxDataDaoFactory {
 
     static std::shared_ptr<BoxDataDao> create(const std::shared_ptr<SQLite::Database> &sqlite_db, const std::shared_ptr<zel::myorm::Database> &mysql_db,
                                               const std::string &order_name) {
-
         if (mysql_db != nullptr) {
-            return std::make_shared<BoxDataMysqlDao>(mysql_db, order_name);
+            return std::make_shared<BoxDataMysqlDao>(order_name);
         } else {
             return std::make_shared<BoxDataSqliteDao>(sqlite_db, order_name);
         }
