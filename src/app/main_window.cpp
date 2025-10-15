@@ -44,13 +44,13 @@ MainWindow::MainWindow(const std::shared_ptr<SQLite::Database> &sqlite_db, const
     , mysql_db_(mysql_db)
     , user_dao_(user_dao) {
     ui_->setupUi(this);
-    initWindow();
+    init_window();
 
-    initDao();
+    init_dao();
 
-    initUi();
+    init_ui();
 
-    initSignalSlot();
+    init_signals_slots();
 
     refreshBoxTab();
 }
@@ -66,9 +66,9 @@ void MainWindow::switchUserActionTriggered() {
     this->close();
 }
 
-void MainWindow::chineseActionTriggered() { switchLanguage("zh_CN"); }
+void MainWindow::chineseActionTriggered() { switch_language("zh_CN"); }
 
-void MainWindow::englishActionTriggered() { switchLanguage("en_US"); }
+void MainWindow::englishActionTriggered() { switch_language("en_US"); }
 
 void MainWindow::setTagDataActionTriggered() {
     Setting *setting = new Setting();
@@ -153,7 +153,7 @@ void MainWindow::toBoxEndBarcode() {
         break;
     }
 
-    scrollToValue(ui_->box_table, ui_->box_start_line->text());
+    scroll_to_value(ui_->box_table, ui_->box_start_line->text());
 }
 
 void MainWindow::toCardStartBarcode() { ui_->card_start_line->setFocus(); }
@@ -180,7 +180,7 @@ void MainWindow::compareBox() {
         box_data_dao->scanned(box_info->box_start_barcode.toStdString());
 
         refreshBoxTable(order_dao_->currentOrder()->name, ui_->box_datas_status_comb_box->currentIndex() - 1);
-        scrollToValue(ui_->box_table, ui_->box_start_line->text(), false);
+        scroll_to_value(ui_->box_table, ui_->box_start_line->text(), false);
     } else {
         switch (result) {
 
@@ -398,7 +398,7 @@ void MainWindow::showSelectedCarton() {
 
 void MainWindow::selectCartonDatasStatus() {
     if (ui_->box_compare_group_box->layout()) {
-        clearBoxCompareGroupLayout(ui_->box_compare_group_box->layout());
+        clear_box_compare_group_layout(ui_->box_compare_group_box->layout());
         delete ui_->box_compare_group_box->layout();
     }
     refreshCartonTable(order_dao_->currentOrder()->name, ui_->carton_datas_status_comb_box->currentIndex() - 1);
@@ -427,7 +427,7 @@ void MainWindow::toCartonEndBarcode() {
         break;
     }
 
-    scrollToValue(ui_->carton_table, ui_->carton_start_line->text());
+    scroll_to_value(ui_->carton_table, ui_->carton_start_line->text());
 }
 
 void MainWindow::toTargetBarcode() {
@@ -507,7 +507,7 @@ void MainWindow::compareCarton() {
     if (is_end) {
         carton_data_dao->scanned(carton_info->carton_start_barcode.toStdString());
         refreshCartonTable(order_dao_->currentOrder()->name, ui_->carton_datas_status_comb_box->currentIndex() - 1);
-        scrollToValue(ui_->carton_table, ui_->carton_start_line->text(), false);
+        scroll_to_value(ui_->carton_table, ui_->carton_start_line->text(), false);
 
         ui_->carton_start_line->clear();
         ui_->carton_end_line->clear();
@@ -533,7 +533,7 @@ void MainWindow::refreshCartonTab() {
     ui_->carton_datas_status_comb_box->setCurrentIndex(0);
 
     if (ui_->box_compare_group_box->layout()) {
-        clearBoxCompareGroupLayout(ui_->box_compare_group_box->layout());
+        clear_box_compare_group_layout(ui_->box_compare_group_box->layout());
         delete ui_->box_compare_group_box->layout();
     }
 
@@ -608,7 +608,7 @@ void MainWindow::refreshBoxCompareGroup(const int &cols, const std::string &sele
     box_widgets_ = std::queue<BoxWidget *>();
 
     if (ui_->box_compare_group_box->layout()) {
-        clearBoxCompareGroupLayout(ui_->box_compare_group_box->layout());
+        clear_box_compare_group_layout(ui_->box_compare_group_box->layout());
         delete ui_->box_compare_group_box->layout();
     }
 
@@ -1029,33 +1029,33 @@ void MainWindow::addOrderFailure() {
     QMessageBox::warning(this, tr("添加失败"), tr("订单添加失败"));
 }
 
-void MainWindow::initWindow() {
+void MainWindow::init_window() {
     // 设置窗口标题
     setWindowTitle(tr("条码比对系统"));
 }
 
-void MainWindow::initUi() {
+void MainWindow::init_ui() {
     // 初始化内盒比对 tab
-    initBoxTab();
+    init_box_tab();
 
     // 初始化外箱比对 tab
-    initCartonTab();
+    init_carton_tab();
 
     // 初始化订单管理 tab
-    initOrderTab();
+    init_order_tab();
 
     // 初始化用户管理 tab
-    initUserTab();
+    init_user_tab();
 }
 
-void MainWindow::initDao() {
+void MainWindow::init_dao() {
     role_dao_   = RoleDaoFactory::create(sqlite_db_, mysql_db_);
     mode_dao_   = ModeDaoFactory::create(sqlite_db_, mysql_db_);
     order_dao_  = OrderDaoFactory::create(sqlite_db_, mysql_db_);
     format_dao_ = FormatDaoFactory::create(sqlite_db_, mysql_db_);
 }
 
-void MainWindow::initBoxTab() {
+void MainWindow::init_box_tab() {
     ui_->box_order_name_combo->setEditable(true);
     ui_->box_order_name_combo->lineEdit()->setPlaceholderText(tr("请输入订单号"));
     ui_->box_order_name_combo->lineEdit()->setAlignment(Qt::AlignCenter);
@@ -1078,10 +1078,10 @@ void MainWindow::initBoxTab() {
     ui_->box_datas_status_comb_box->lineEdit()->setReadOnly(true);
 
     QStringList box_header = {tr("内盒起始条码"), tr("内盒结束条码"), tr("首卡条码"), tr("尾卡条码")};
-    initTable(ui_->box_table, box_header, box_header.size());
+    init_table(ui_->box_table, box_header, box_header.size());
 }
 
-void MainWindow::initCartonTab() {
+void MainWindow::init_carton_tab() {
     ui_->carton_order_name_combo->setEditable(true);
     ui_->carton_order_name_combo->lineEdit()->setPlaceholderText(tr("请输入订单号"));
     ui_->carton_order_name_combo->lineEdit()->setAlignment(Qt::AlignCenter);
@@ -1103,28 +1103,28 @@ void MainWindow::initCartonTab() {
     ui_->carton_datas_status_comb_box->lineEdit()->setReadOnly(true);
 
     QStringList carton_header = {tr("外箱起始条码"), tr("外箱结束条码"), tr("内盒起始或结束条码")};
-    initTable(ui_->carton_table, carton_header, carton_header.size());
+    init_table(ui_->carton_table, carton_header, carton_header.size());
 }
 
-void MainWindow::initOrderTab() {
+void MainWindow::init_order_tab() {
     QStringList order_header = {tr("订单号"), tr("校验格式"), tr("条码模式"), tr("创建时间")};
-    initTable(ui_->order_table, order_header, order_header.size());
+    init_table(ui_->order_table, order_header, order_header.size());
     // 设置条码模式下拉框内容
     for (auto &mode : mode_dao_->all()) {
         ui_->barcode_mode_combo_box->addItem(QString::fromStdString(mode->description));
     }
 }
 
-void MainWindow::initUserTab() {
+void MainWindow::init_user_tab() {
     QStringList user_header = {tr("用户名"), tr("权限")};
-    initTable(ui_->user_table, user_header, user_header.size());
+    init_table(ui_->user_table, user_header, user_header.size());
     // 设置权限下拉框内容
     for (auto &role : role_dao_->all()) {
         ui_->selected_combo_box->addItem(QString::fromStdString(role->description));
     }
 }
 
-void MainWindow::initTable(QTableWidget *table, QStringList header, int col_count) {
+void MainWindow::init_table(QTableWidget *table, QStringList header, int col_count) {
     table->setRowCount(0);            // 设置行数
     table->setColumnCount(col_count); // 设置列数
     table->setHorizontalHeaderLabels(header);
@@ -1171,7 +1171,7 @@ void MainWindow::initTable(QTableWidget *table, QStringList header, int col_coun
     table->setStyleSheet("gridline-color:rgba(0,0,0,0);"); // 网格线颜色
 }
 
-void MainWindow::initSignalSlot() {
+void MainWindow::init_signals_slots() {
     // 工具栏 - 用户
     connect(ui_->switch_user_action, &QAction::triggered, this, &MainWindow::switchUserActionTriggered);
 
@@ -1244,7 +1244,7 @@ void MainWindow::initSignalSlot() {
     connect(ui_->clear_user_btn, &QPushButton::clicked, this, &MainWindow::clearUserBtnClicked);
 }
 
-void MainWindow::switchLanguage(const QString &language_file) {
+void MainWindow::switch_language(const QString &language_file) {
     qApp->removeTranslator(&translator_);
 
     if (translator_.load(":/translation/" + language_file + ".qm")) {
@@ -1281,7 +1281,7 @@ bool MainWindow::log(const QString &filename, const QString &msg) {
     return true;
 }
 
-void MainWindow::scrollToValue(QTableWidget *table, const QString &value, bool selected) {
+void MainWindow::scroll_to_value(QTableWidget *table, const QString &value, bool selected) {
 
     for (int row = 0; row < table->rowCount(); ++row) {
         for (int col = 0; col < table->columnCount(); ++col) {
@@ -1300,14 +1300,14 @@ void MainWindow::scrollToValue(QTableWidget *table, const QString &value, bool s
     }
 }
 
-void MainWindow::clearBoxCompareGroupLayout(QLayout *layout) {
+void MainWindow::clear_box_compare_group_layout(QLayout *layout) {
     if (!layout) return;
     while (QLayoutItem *item = layout->takeAt(0)) {
         if (QWidget *w = item->widget()) {
             delete w; // 删除控件
         }
         if (QLayout *childLayout = item->layout()) {
-            clearBoxCompareGroupLayout(childLayout); // 递归清理子布局
+            clear_box_compare_group_layout(childLayout); // 递归清理子布局
         }
         delete item; // 删除 layoutItem
     }

@@ -19,49 +19,42 @@ Login::Login(QMainWindow *parent)
     , mysql_db_(nullptr) {
     ui_->setupUi(this);
 
-    initWindow();
+    init_window();
 
-    initDir();
+    init_dir();
 
-    initConfig();
+    init_config();
 
-    initLogger();
+    init_logger();
 
-    initUI();
+    init_ui();
 
-    initSignalSlot();
+    init_signals_slots();
 }
 
 Login::~Login() { delete ui_; }
 
-void Login::initWindow() {
+void Login::init_window() {
     // 设置窗口标题
     setWindowTitle(tr("条码比对系统"));
 }
 
-void Login::initDir() {
+void Login::init_dir() {
     QString current_path       = QCoreApplication::applicationDirPath();
     QString data_path          = current_path + "/data";
     QString inner_box_log_path = current_path + "/log/内盒";
     QString outer_box_log_path = current_path + "/log/外箱";
 
     // 创建 data 和 log 目录
-    createFolder(data_path);
-    createFolder(inner_box_log_path);
-    createFolder(outer_box_log_path);
+    create_folder(data_path);
+    create_folder(inner_box_log_path);
+    create_folder(outer_box_log_path);
 }
 
-void Login::initConfig() {
+void Login::init_config() {
     // 查看是否有配置文件
     QFile config_file("config.ini");
-    if (config_file.exists()) {
-        // // 读取配置文件
-        // QSettings settings("config.ini", QSettings::IniFormat);
-        // settings.beginGroup("login");
-        // ui_->user_combo_box->setCurrentText(settings.value("user").toString());
-        // ui_->password_edit->setText(settings.value("password").toString());
-        // settings.endGroup();
-    } else {
+    if (!config_file.exists()) {
         // 创建配置文件
         QSettings settings("config.ini", QSettings::IniFormat);
 
@@ -75,12 +68,12 @@ void Login::initConfig() {
     }
 }
 
-void Login::initLogger() {
+void Login::init_logger() {
     zel::utility::Logger::instance().open("barcode_compare.log");
     zel::utility::Logger::instance().setLevel(zel::utility::Logger::LOG_DEBUG);
 }
 
-bool Login::initSQLite() {
+bool Login::init_sqlite() {
     sqlite_db_          = std::make_shared<SQLite::Database>("data/barcode_compare.db", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
     auto box_data_db    = std::make_shared<SQLite::Database>("data/box_data.db", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
     auto carton_data_db = std::make_shared<SQLite::Database>("data/carton_data.db", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
@@ -97,7 +90,7 @@ bool Login::initSQLite() {
     return true;
 }
 
-bool Login::initMySQL() {
+bool Login::init_mysql() {
     // 读取配置文件
     QSettings settings("config.ini", QSettings::IniFormat);
     settings.beginGroup("mysql");
@@ -123,25 +116,9 @@ bool Login::initMySQL() {
     return true;
 }
 
-void Login::initUI() {
-    // ui_->user_combo_box->setEditable(true);
-    // ui_->user_combo_box->lineEdit()->setPlaceholderText(tr("请输入用户名"));
-    // ui_->user_combo_box->lineEdit()->setAlignment(Qt::AlignCenter);
+void Login::init_ui() {}
 
-    // // 下拉框模糊匹配
-    // QStringList user_list;
-    // for (auto &user : user_dao_->all()) {
-    //     user_list.append(QString::fromStdString(user->name));
-    // }
-
-    // QCompleter *completer = new QCompleter(user_list, this);
-    // completer->setFilterMode(Qt::MatchContains);
-    // ui_->user_combo_box->setCompleter(completer);
-}
-
-void Login::initSignalSlot() {
-
-    // connect(ui_->user_combo_box, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=]() { ui_->password_edit->setFocus(); });
+void Login::init_signals_slots() {
 
     // 回车键
     connect(ui_->password_edit, &QLineEdit::returnPressed, this, &Login::loginBtnClicked);
@@ -159,12 +136,12 @@ void Login::loginBtnClicked() {
     std::string entered_password = ui_->password_edit->text().toStdString();
 
     if (ui_->online_radio_button->isChecked()) {
-        if (!initMySQL()) {
+        if (!init_mysql()) {
             QMessageBox::warning(this, tr("连接数据库失败"), tr("请检查服务器数据库配置,或使用离线模式登录"));
             return;
         }
     } else if (ui_->offline_radio_button->isChecked()) {
-        initSQLite();
+        init_sqlite();
     } else {
         QMessageBox::warning(this, tr("请选择登录模式"), tr("请选择登录模式"));
         return;
@@ -189,13 +166,13 @@ void Login::exitBtnClicked() {
     exit(0);
 }
 
-QString Login::createFolder(const QString &folder_path) {
+QString Login::create_folder(const QString &folder_path) {
     QDir dir(folder_path);
     if (dir.exists(folder_path)) {
         return folder_path;
     }
 
-    QString parentDir = createFolder(folder_path.mid(0, folder_path.lastIndexOf('/')));
+    QString parentDir = create_folder(folder_path.mid(0, folder_path.lastIndexOf('/')));
     QString dirName   = folder_path.mid(folder_path.lastIndexOf('/') + 1);
 
     QDir parentPath(parentDir);

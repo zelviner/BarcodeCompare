@@ -173,7 +173,7 @@ std::vector<std::shared_ptr<CartonData>> Excel::cartonDatas(const std::shared_pt
 
 std::string Excel::get_str(const xlnt::cell_vector &row, const std::string &header) {
     if (header_index_.count(header) && header_index_[header] < int(row.length())) {
-        return removeSpaces(row[header_index_[header]].to_string());
+        return remove_spaces(row[header_index_[header]].to_string());
     }
 
     return "";

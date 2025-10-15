@@ -7,9 +7,9 @@ Loading::Loading(QMainWindow *parent)
 
     ui_->loading_progress->setRange(0, 0);
 
-    initWindow();
+    init_window();
 }
 
 Loading::~Loading() { delete ui_; }
 
-void Loading::initWindow() {}
+void Loading::init_window() {}

@@ -23,16 +23,16 @@ class Comparison {
 
   private:
     /// @brief Remove prefixes and suffixes from card barcodes.
-    QString trimCardBarcode(const QString &card_barcode);
+    QString trim_card_barcode(const QString &card_barcode);
 
     /// @brief Remove prefixes and suffixes from box barcodes.
-    QString trimBoxBarcode(const QString &box_barcode);
+    QString trim_box_barcode(const QString &box_barcode);
 
     /// @brief Remove prefixes and suffixes from carton barcodes.
-    QString trimCartonBarcode(const QString &carton_barcode);
+    QString trim_carton_barcode(const QString &carton_barcode);
 
     /// @brief Remove prefixes and suffixes from barcodes.
-    QString trimBarcode(const QString &barcode, int start, int end);
+    QString trim_barcode(const QString &barcode, int start, int end);
 
   private:
     std::shared_ptr<Order>         order_;

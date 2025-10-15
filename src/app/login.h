@@ -22,32 +22,32 @@ class Login : public QMainWindow {
 
   private:
     /// @brief 初始化窗口
-    void initWindow();
+    void init_window();
 
     /// @brief 初始化文件夹
-    void initDir();
+    void init_dir();
 
     /// @brief 初始化配置文件
-    void initConfig();
+    void init_config();
 
     /// @brief 初始化日志器
-    void initLogger();
+    void init_logger();
 
     /// @brief 初始化 SQLite 数据库
-    bool initSQLite();
+    bool init_sqlite();
 
     /// @brief 初始化 MySQL 数据库
-    bool initMySQL();
+    bool init_mysql();
 
     /// @brief 初始化UI
-    void initUI();
+    void init_ui();
 
     /// @brief 初始化信号槽
-    void initSignalSlot();
+    void init_signals_slots();
 
     /// @brief 创建文件夹
     /// @param folder_path  文件夹路径
-    QString createFolder(const QString &folder_path);
+    QString create_folder(const QString &folder_path);
 
   private:
     Ui_Login                             *ui_;

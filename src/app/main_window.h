@@ -133,41 +133,41 @@ class MainWindow : public QMainWindow {
 
   private:
     /// @brief 初始化窗口
-    void initWindow();
+    void init_window();
 
     /// @brief 初始化 UI
-    void initUi();
+    void init_ui();
 
     /// @brief 初始化数据库
-    void initDao();
+    void init_dao();
 
     /// @brief 初始化内盒比对 Tab
-    void initBoxTab();
+    void init_box_tab();
 
     /// @brief 初始化外箱比对 Tab
-    void initCartonTab();
+    void init_carton_tab();
 
     /// @brief 初始化订单管理 Tab
-    void initOrderTab();
+    void init_order_tab();
 
     /// @brief 初始化用户管理 Tab
-    void initUserTab();
+    void init_user_tab();
 
     /// @brief 初始化表格
-    void initTable(QTableWidget *table, QStringList header, int col_count);
+    void init_table(QTableWidget *table, QStringList header, int col_count);
 
     /// @brief 初始化信号槽
-    void initSignalSlot();
+    void init_signals_slots();
 
     /// @brief 切换语言
-    void switchLanguage(const QString &language_file);
+    void switch_language(const QString &language_file);
 
     /// @brief 记录日志
     bool log(const QString &filename, const QString &msg);
 
-    void scrollToValue(QTableWidget *table, const QString &value, bool selected = true);
+    void scroll_to_value(QTableWidget *table, const QString &value, bool selected = true);
 
-    void clearBoxCompareGroupLayout(QLayout *layout);
+    void clear_box_compare_group_layout(QLayout *layout);
 
   private:
     Ui_MainWindow           *ui_;

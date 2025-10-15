@@ -20,10 +20,10 @@ int Comparison::box(const std::shared_ptr<BoxInfo> &box_info) {
         return 1; // 内盒起始条码不在该订单范围内
     }
 
-    QString box_start_barcode  = trimBoxBarcode(box_info->box_start_barcode);
-    QString box_end_barcode    = trimBoxBarcode(box_info->box_end_barcode);
-    QString card_start_barcode = trimCardBarcode(box_info->card_start_barcode);
-    QString card_end_barcode   = trimCardBarcode(box_info->card_end_barcode);
+    QString box_start_barcode  = trim_box_barcode(box_info->box_start_barcode);
+    QString box_end_barcode    = trim_box_barcode(box_info->box_end_barcode);
+    QString card_start_barcode = trim_card_barcode(box_info->card_start_barcode);
+    QString card_end_barcode   = trim_card_barcode(box_info->card_end_barcode);
 
     if (QString::fromStdString(box_data->end_barcode) != box_end_barcode) {
         log_error("Box end barcode not match: %s vs %s", box_data->end_barcode.c_str(), box_end_barcode.toStdString().c_str());
@@ -53,9 +53,9 @@ int Comparison::carton(const std::shared_ptr<CartonInfo> &carton_info, int &box_
 
     auto box_datas = box_data_dao_->all(carton_data->start_number, carton_data->end_number);
 
-    QString carton_start_barcode = trimCartonBarcode(carton_info->carton_start_barcode);
-    QString carton_end_barcode   = trimCartonBarcode(carton_info->carton_end_barcode);
-    QString target_barcode       = trimBoxBarcode(carton_info->target_barcode);
+    QString carton_start_barcode = trim_carton_barcode(carton_info->carton_start_barcode);
+    QString carton_end_barcode   = trim_carton_barcode(carton_info->carton_end_barcode);
+    QString target_barcode       = trim_box_barcode(carton_info->target_barcode);
 
     if (QString::fromStdString(carton_data->end_barcode) != carton_end_barcode) {
         log_error("Carton end barcode not match: %s vs %s", carton_data->end_barcode.c_str(), carton_end_barcode.toStdString().c_str());
@@ -79,28 +79,28 @@ int Comparison::carton(const std::shared_ptr<CartonInfo> &carton_info, int &box_
     return 0;
 }
 
-QString Comparison::trimCardBarcode(const QString &card_barcode) {
+QString Comparison::trim_card_barcode(const QString &card_barcode) {
     int card_start_check_num = order_->card_start_check_num - 1;
     int card_end_check_num   = order_->card_end_check_num;
 
-    return trimBarcode(card_barcode, card_start_check_num, card_end_check_num);
+    return trim_barcode(card_barcode, card_start_check_num, card_end_check_num);
 }
 
-QString Comparison::trimBoxBarcode(const QString &box_barcode) {
+QString Comparison::trim_box_barcode(const QString &box_barcode) {
     int box_start_check_num = order_->box_start_check_num - 1;
     int box_end_check_num   = order_->box_end_check_num;
 
-    return trimBarcode(box_barcode, box_start_check_num, box_end_check_num);
+    return trim_barcode(box_barcode, box_start_check_num, box_end_check_num);
 }
 
-QString Comparison::trimCartonBarcode(const QString &carton_barcode) {
+QString Comparison::trim_carton_barcode(const QString &carton_barcode) {
     int carton_start_check_num = order_->carton_start_check_num - 1;
     int carton_end_check_num   = order_->carton_end_check_num;
 
-    return trimBarcode(carton_barcode, carton_start_check_num, carton_end_check_num);
+    return trim_barcode(carton_barcode, carton_start_check_num, carton_end_check_num);
 }
 
-QString Comparison::trimBarcode(const QString &barcode, int start, int end) {
+QString Comparison::trim_barcode(const QString &barcode, int start, int end) {
     if (barcode.isEmpty()) {
         return QString();
     }

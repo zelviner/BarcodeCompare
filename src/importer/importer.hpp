@@ -31,7 +31,7 @@ class Importer {
     virtual std::vector<std::shared_ptr<CartonData>> cartonDatas(const std::shared_ptr<Format> &format) = 0;
 
   protected:
-    static std::string removeSpaces(const std::string &s) {
+    static std::string remove_spaces(const std::string &s) {
         std::string result;
         result.reserve(s.size());
         for (char c : s) {

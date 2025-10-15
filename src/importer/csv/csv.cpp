@@ -130,7 +130,7 @@ std::vector<std::shared_ptr<CartonData>> Csv::cartonDatas(const std::shared_ptr<
 
 std::string Csv::get_str(const std::vector<std::string> &row, const std::string &header) {
     if (header_index_.count(header) && header_index_[header] < int(row.size())) {
-        return removeSpaces(row[header_index_[header]]);
+        return remove_spaces(row[header_index_[header]]);
     }
 
     return "";

@@ -13,20 +13,20 @@ Setting::Setting(QMainWindow *parent)
     , ui_(new Ui_Setting) {
     ui_->setupUi(this);
 
-    initWindow();
+    init_window();
 
-    initUI();
+    init_ui();
 
-    initSignalSlot();
+    init_signals_slots();
 }
 
 Setting::~Setting() { delete ui_; }
 
-void Setting::initWindow() {
+void Setting::init_window() {
     // 设置窗口标题
     setWindowTitle(tr("条码比对系统"));
 }
 
-void Setting::initUI() {}
+void Setting::init_ui() {}
 
-void Setting::initSignalSlot() {}
+void Setting::init_signals_slots() {}

@@ -15,13 +15,13 @@ class Setting : public QMainWindow {
 
   private:
     /// @brief 初始化窗口
-    void initWindow();
+    void init_window();
 
     /// @brief 初始化UI
-    void initUI();
+    void init_ui();
 
     /// @brief 初始化信号槽
-    void initSignalSlot();
+    void init_signals_slots();
 
   private:
     Ui_Setting                       *ui_;
