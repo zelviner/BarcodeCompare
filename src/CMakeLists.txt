@@ -17,6 +17,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
 find_package(SQLiteCpp CONFIG REQUIRED)
 find_package(xlnt CONFIG REQUIRED)
+find_package(zel CONFIG REQUIRED)
 
 # [5] UI 搜索路径 -----------------------------------------------------
 list(APPEND CMAKE_AUTOUIC_SEARCH_PATHS ${CMAKE_SOURCE_DIR}/res/ui)
@@ -50,6 +51,6 @@ target_link_libraries(${APP_NAME} PRIVATE
     Qt5::Widgets
     SQLiteCpp
     xlnt::xlnt
-    zel
+    zel::zel
     mysql/libmysql
 )
