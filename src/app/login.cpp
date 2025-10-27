@@ -77,13 +77,15 @@ bool Login::init_sqlite() {
     sqlite_db_          = std::make_shared<SQLite::Database>("data/barcode_compare.db", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
     auto box_data_db    = std::make_shared<SQLite::Database>("data/box_data.db", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
     auto carton_data_db = std::make_shared<SQLite::Database>("data/carton_data.db", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
-    auto box_log_db     = std::make_shared<SQLite::Database>("data/box_log.db", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
-    auto carton_log_db  = std::make_shared<SQLite::Database>("data/carton_log.db", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+    auto card_data_db   = std::make_shared<SQLite::Database>("data/card_data.db", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+    // auto box_log_db     = std::make_shared<SQLite::Database>("data/box_log.db", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+    // auto carton_log_db  = std::make_shared<SQLite::Database>("data/carton_log.db", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
 
     sqlite_db_->exec("ATTACH DATABASE 'data/box_data.db' AS box_data;");
     sqlite_db_->exec("ATTACH DATABASE 'data/carton_data.db' AS carton_data;");
-    sqlite_db_->exec("ATTACH DATABASE 'data/box_log.db' AS box_log;");
-    sqlite_db_->exec("ATTACH DATABASE 'data/carton_log.db' AS carton_log;");
+    sqlite_db_->exec("ATTACH DATABASE 'data/card_data.db' AS card_data;");
+    // sqlite_db_->exec("ATTACH DATABASE 'data/box_log.db' AS box_log;");
+    // sqlite_db_->exec("ATTACH DATABASE 'data/carton_log.db' AS carton_log;");
 
     user_dao_ = UserDaoFactory::create(sqlite_db_, mysql_db_);
 
@@ -116,7 +118,7 @@ bool Login::init_mysql() {
     return true;
 }
 
-void Login::init_ui() {}
+void Login::init_ui() { ui_->offline_radio_button->setChecked(true); }
 
 void Login::init_signals_slots() {
 

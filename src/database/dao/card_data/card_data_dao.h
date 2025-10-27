@@ -1,0 +1,28 @@
+#pragma once
+
+#include "card_data.h"
+
+#include <SQLiteCpp/Database.h>
+#include <memory>
+#include <vector>
+
+class CardDataDao {
+  public:
+    /// @brief Batch insert new card datas into the database.
+    virtual bool batchAdd(const std::vector<std::shared_ptr<CardData>> &card_datas) = 0;
+
+    /// @brief Get all card datas from the database.
+    virtual std::vector<std::shared_ptr<CardData>> all(const int &status = -1) = 0;
+
+    /// @brief Set the status of the card data to 1 when it is scanned.
+    virtual bool scanned(const std::string &iccid_barcode) = 0;
+
+    /// @brief Get card data from the database by iccid barcode.
+    virtual std::shared_ptr<CardData> get(const std::string &iccid_barcode) = 0;
+
+    /// @brief Update card data in the database.
+    virtual bool update(const int &id, std::shared_ptr<CardData> &card_data) = 0;
+
+    /// @brief Clear all data in the database.
+    virtual bool clear() = 0;
+};

@@ -3,9 +3,12 @@ set(APP_NAME BarcodeCompare)
 string(TOUPPER ${APP_NAME} UPPER_APP_NAME)
 
 # [2] 输出目录配置 -----------------------------------------------------
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG   ${CMAKE_SOURCE_DIR}/lib)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${CMAKE_SOURCE_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG   ${CMAKE_SOURCE_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE ${CMAKE_SOURCE_DIR}/bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG   ${CMAKE_SOURCE_DIR}/bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_SOURCE_DIR}/bin)
 
 # [3] Qt 编译设置 -----------------------------------------------------
 set(CMAKE_AUTOMOC ON)
@@ -31,8 +34,8 @@ file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
 file(GLOB RESOURCES CONFIGURE_DEPENDS ${CMAKE_SOURCE_DIR}/res/rc/*)
 
 # [7] 添加可执行文件 ---------------------------------------------------
-# add_executable(${APP_NAME}  ${SOURCES} ${RESOURCES}) #debug
-add_executable(${APP_NAME} WIN32 ${SOURCES} ${RESOURCES}  ${MY_VERSIONINFO_RC}) # release
+add_executable(${APP_NAME}  ${SOURCES} ${RESOURCES}) #debug
+# add_executable(${APP_NAME} WIN32 ${SOURCES} ${RESOURCES}  ${MY_VERSIONINFO_RC}) # release
 
 # [8] 包含 Qt 的私有头（如果有需要，比如自定义窗口样式）--------------
 include_directories(${Qt5Gui_PRIVATE_INCLUDE_DIRS})

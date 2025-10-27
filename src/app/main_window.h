@@ -22,110 +22,62 @@ class MainWindow : public QMainWindow {
                const std::shared_ptr<UserDao> &user_dao, QMainWindow *parent = nullptr);
     ~MainWindow();
 
-    /// @brief 切换用户动作触发
-    void switchUserActionTriggered();
+    /// @brief 工具栏操作
+    void switchUserActionTriggered(); // 切换用户动作触发
+    void chineseActionTriggered();    // 切换中文动作触发
+    void englishActionTriggered();    // 切换英文动作触发
+    void setTagDataActionTriggered(); // 设置标签数据动作触发
 
-    /// @brief 切换中文动作触发
-    void chineseActionTriggered();
+    /// @brief 内盒比对 Tab
+    void boxSelectOrder();                                                  // 内盒选择订单
+    void selectBoxDatasStatus();                                            // 选择内盒数据状态
+    void toBoxEndBarcode();                                                 // 获取内盒结束条码
+    void toCardStartBarcode();                                              // 获取首卡条码
+    void toCardEndBarcode();                                                // 获取尾卡条码
+    void compareBox();                                                      // 比对内盒
+    void refreshBoxTab();                                                   // 刷新内盒比对 Tab
+    void refreshBoxTable(const std::string &order_name, const int &status); // 刷新内盒表格
 
-    /// @brief 切换英文动作触发
-    void englishActionTriggered();
+    /// @brief 外箱比对 Tab
+    void cartonSelectOrder();                                                                       // 外箱选择订单
+    void showSelectedCarton();                                                                      // 显示选中外箱
+    void selectCartonDatasStatus();                                                                 // 选择外箱数据状态
+    void toCartonEndBarcode();                                                                      // 获取外箱结束条码
+    void toTargetBarcode();                                                                         // 获取目标条码
+    void compareCarton();                                                                           // 比对外箱
+    void refreshCartonTab();                                                                        // 刷新外箱比对 Tab
+    void refreshCartonTable(const std::string &order_name, const int &status);                      // 刷新外箱表格
+    void refreshBoxCompareGroup(const int &cols, const std::string &selected_carton_start_barcode); // 刷新内盒比对组
 
-    /// @brief 设置标签数据动作触发
-    void setTagDataActionTriggered();
+    /// @brief 卡片比对 Tab
+    void cardSelectOrder();                                                                          // 卡片选择订单
+    void showSelectedCard();                                                                         // 显示选中卡片
+    void selectCardDatasStatus();                                                                    // 选择卡片数据状态
+    void toCardBarcode();                                                                            // 获取卡片条码
+    void toCardLabelBarcode();                                                                       // 获取标签条码
+    void compareCard();                                                                              // 比对卡片
+    void refreshCardTab();                                                                           // 刷新卡片比对 Tab
+    void refreshCardTable(const std::string &order_name, const int &status);                         // 刷新卡片表格
+    void refreshCardCompareGroup(const int &cols, const std::string &selected_carton_start_barcode); // 刷新卡片比对组
 
-    /// @brief 内盒选择订单
-    void boxSelectOrder();
+    /// @brief 订单管理 Tab
+    void selectBoxFileBtnClicked();    // 选择内盒文件按钮点击事件
+    void selectCartonFileBtnClicked(); // 选择外箱文件按钮点击事件
+    void selectCardFileBtnClicked();   // 选择单卡文件按钮点击事件
+    void addOrderBtnClicked();         // 添加订单按钮点击事件
+    void updateOrderBtnClicked();      // 修改订单按钮点击事件
+    void removeOrderBtnClicked();      // 删除订单按钮点击事件
+    void clearOrderBtnClicked();       // 清空订单按钮点击事件
+    void showSelectedOrder();          // 显示选中订单
+    void refreshOrderTab();            // 刷新订单管理 tab
 
-    /// @brief 选择内盒数据状态
-    void selectBoxDatasStatus();
-
-    /// @brief 获取内盒结束条码
-    void toBoxEndBarcode();
-
-    /// @brief 获取首卡条码
-    void toCardStartBarcode();
-
-    /// @brief 获取尾卡条码
-    void toCardEndBarcode();
-
-    /// @brief 比对内盒
-    void compareBox();
-
-    /// @brief 刷新内盒比对 Tab
-    void refreshBoxTab();
-
-    /// @brief 刷新内盒表格
-    void refreshBoxTable(const std::string &order_name, const int &status);
-
-    /// @brief 外箱选择订单
-    void cartonSelectOrder();
-
-    /// @brief 显示选中外箱
-    void showSelectedCarton();
-
-    /// @brief 选择外箱数据状态
-    void selectCartonDatasStatus();
-
-    /// @brief 获取外箱结束条码
-    void toCartonEndBarcode();
-
-    /// @brief 获取目标条码
-    void toTargetBarcode();
-
-    /// @brief 比对外箱
-    void compareCarton();
-
-    /// @brief 刷新外箱比对 Tab
-    void refreshCartonTab();
-
-    /// @brief 刷新外箱表格
-    void refreshCartonTable(const std::string &order_name, const int &status);
-
-    /// @brief 刷新内盒比对组
-    void refreshBoxCompareGroup(const int &cols, const std::string &selected_carton_start_barcode);
-
-    /// @brief 选择内盒文件按钮点击事件
-    void selectBoxFileBtnClicked();
-
-    /// @brief 选择外箱文件按钮点击事件
-    void selectCartonFileBtnClicked();
-
-    /// @brief 添加订单按钮点击事件
-    void addOrderBtnClicked();
-
-    /// @brief 修改订单按钮点击事件
-    void updateOrderBtnClicked();
-
-    /// @brief 删除订单按钮点击事件
-    void removeOrderBtnClicked();
-
-    /// @brief 清空订单按钮点击事件
-    void clearOrderBtnClicked();
-
-    /// @brief 显示选中订单
-    void showSelectedOrder();
-
-    /// @brief 刷新订单管理 tab
-    void refreshOrderTab();
-
-    /// @brief 添加用户按钮点击事件
-    void addUserBtnClicked();
-
-    /// @brief 修改用户按钮点击事件
-    void updateUserBtnClicked();
-
-    /// @brief 删除用户按钮点击事件
-    void removeUserBtnClicked();
-
-    /// @brief 清空用户按钮点击事件
-    void clearUserBtnClicked();
-
-    /// @brief 显示选中用户
-    void showSelectedUser();
-
-    ////  @brief 刷新用户管理 Tab
-    void refreshUserTab();
+    /// @brief 用户管理 Tab
+    void addUserBtnClicked();    // 添加用户按钮点击事件
+    void updateUserBtnClicked(); // 修改用户按钮点击事件
+    void removeUserBtnClicked(); // 删除用户按钮点击事件
+    void clearUserBtnClicked();  // 清空用户按钮点击事件
+    void showSelectedUser();     // 显示选中用户
+    void refreshUserTab();       // 刷新用户管理 Tab
 
   public slots:
     void addOrderSuccess();
@@ -146,6 +98,9 @@ class MainWindow : public QMainWindow {
 
     /// @brief 初始化外箱比对 Tab
     void init_carton_tab();
+
+    /// @brief 初始化卡片比对 Tab
+    void init_card_tab();
 
     /// @brief 初始化订单管理 Tab
     void init_order_tab();

@@ -1,5 +1,6 @@
 #include "order_sqlite_dao.h"
 #include "database/dao/box_data/box_data_dao_factory.h"
+#include "database/dao/card_data/card_data_dao_factory.h"
 #include "database/dao/carton_data/carton_data_dao_factory.h"
 #include "database/dao/format/format_dao_factory.h"
 #include "importer/importer_factory.hpp"
@@ -25,17 +26,19 @@ bool OrderSqliteDao::add(const std::shared_ptr<Order> &order) {
 
     // 根据不同类型文件选择不同的导入器
     if (file_extension == ".xlsx") {
-        importer = ImporterFactory::create(ImporterFactory::FileType::XLSX, order->box_file_path, order->carton_file_path);
+        importer = ImporterFactory::create(ImporterFactory::FileType::XLSX, order->box_file_path, order->carton_file_path, order->card_file_path);
     } else if (file_extension == ".csv") {
-        importer = ImporterFactory::create(ImporterFactory::FileType::CSV, order->box_file_path, order->carton_file_path);
+        importer = ImporterFactory::create(ImporterFactory::FileType::CSV, order->box_file_path, order->carton_file_path, order->card_file_path);
     } else {
         return false;
     }
 
     auto                                     box_headers    = importer->boxHeaders();
     auto                                     carton_headers = importer->cartonHeaders();
+    auto                                     card_headers   = importer->cardHeaders();
     std::vector<std::shared_ptr<BoxData>>    box_datas;
     std::vector<std::shared_ptr<CartonData>> carton_datas;
+    std::vector<std::shared_ptr<CardData>>   card_datas;
 
     auto format_dao = FormatDaoFactory::create(db_, nullptr);
     auto formats    = format_dao->all();
@@ -49,6 +52,10 @@ bool OrderSqliteDao::add(const std::shared_ptr<Order> &order) {
 
         case 2:
             if (hasRequiredValues(carton_headers, format)) carton_datas = importer->cartonDatas(format);
+            break;
+
+        case 3:
+            if (hasRequiredValues(card_headers, format)) card_datas = importer->cardDatas(format);
             break;
         }
     }
@@ -66,6 +73,13 @@ bool OrderSqliteDao::add(const std::shared_ptr<Order> &order) {
     auto carton_data_dao = CartonDataDaoFactory::create(db_, nullptr, order->name);
     if (!carton_data_dao->batchAdd(carton_datas)) {
         return false;
+    }
+
+    if (card_datas.size() > 0) {
+        auto card_data_dao = CardDataDaoFactory::create(db_, nullptr, order->name);
+        if (!card_data_dao->batchAdd(card_datas)) {
+            return false;
+        }
     }
 
     std::string       sql = "INSERT INTO orders (name, check_format, carton_start_check_num, carton_end_check_num, box_start_check_num, "
@@ -93,8 +107,10 @@ bool OrderSqliteDao::remove(const int &id) {
     std::shared_ptr<Order> order           = get(id);
     auto                   box_data_dao    = BoxDataDaoFactory::create(db_, nullptr, order->name);
     auto                   carton_data_dao = CartonDataDaoFactory::create(db_, nullptr, order->name);
+    auto                   card_data_dao   = CardDataDaoFactory::create(db_, nullptr, order->name);
     box_data_dao->clear();
     carton_data_dao->clear();
+    card_data_dao->clear();
 
     std::string       sql = "DELETE FROM orders WHERE id = ?";
     SQLite::Statement remove(*db_, sql);

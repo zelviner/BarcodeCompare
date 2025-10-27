@@ -38,6 +38,22 @@ std::vector<std::string> Csv::cartonHeaders() {
     return headers;
 }
 
+std::vector<std::string> Csv::cardHeaders() {
+    std::vector<std::string> headers;
+
+    QFile card_file(QString::fromStdString(card_file_path_));
+    if (!card_file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        return headers;
+    }
+
+    QTextStream in(&card_file);
+    auto        line = in.readLine().toStdString();
+
+    headers = split(line, ",");
+
+    return headers;
+}
+
 std::vector<std::shared_ptr<BoxData>> Csv::boxDatas(const std::shared_ptr<Format> &format) {
     std::vector<std::shared_ptr<BoxData>> box_datas;
 
@@ -126,6 +142,43 @@ std::vector<std::shared_ptr<CartonData>> Csv::cartonDatas(const std::shared_ptr<
     }
 
     return carton_datas;
+}
+
+std::vector<std::shared_ptr<CardData>> Csv::cardDatas(const std::shared_ptr<Format> &format) {
+    std::vector<std::shared_ptr<CardData>> card_datas;
+
+    QFile card_file(QString::fromStdString(card_file_path_));
+    if (!card_file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        return card_datas;
+    }
+
+    QTextStream in(&card_file);
+    auto        line      = in.readLine().toStdString();
+    auto        headers   = split(line, ",");
+    int         col_index = 0;
+    for (auto &header : headers) {
+        header_index_[header] = col_index++;
+    }
+
+    int id_counter = 1;
+    while (!in.atEnd()) {
+        auto line  = in.readLine().toStdString();
+        auto datas = split(line, ",");
+
+        auto card_data = std::make_shared<CardData>();
+        card_data->id  = id_counter++;
+
+        card_data->card_number   = get_str(datas, format->box_number);
+        card_data->iccid         = get_str(datas, format->start_number);
+        card_data->imsi          = get_str(datas, format->end_number);
+        card_data->iccid_barcode = get_str(datas, format->start_number);
+        card_data->imsi_barcode  = get_str(datas, format->end_number);
+        card_data->quantity      = get_int(datas, format->quantity);
+
+        card_datas.push_back(std::move(card_data));
+    }
+
+    return card_datas;
 }
 
 std::string Csv::get_str(const std::vector<std::string> &row, const std::string &header) {

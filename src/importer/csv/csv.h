@@ -18,11 +18,17 @@ class Csv : public Importer {
     /// @brief Get the header data of carton.
     std::vector<std::string> cartonHeaders() override;
 
+    /// @brief Get the header data of card.
+    std::vector<std::string> cardHeaders() override;
+
     /// @brief Get the box data from tag data file.
     std::vector<std::shared_ptr<BoxData>> boxDatas(const std::shared_ptr<Format> &format) override;
 
     /// @brief Get the carton data from tag data file.
     std::vector<std::shared_ptr<CartonData>> cartonDatas(const std::shared_ptr<Format> &format) override;
+
+    /// @brief Get the card data from tag data file.
+    std::vector<std::shared_ptr<CardData>> cardDatas(const std::shared_ptr<Format> &format) override;
 
   private:
     std::string get_str(const std::vector<std::string> &row, const std::string &header);

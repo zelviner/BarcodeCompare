@@ -17,5 +17,6 @@ struct Order {
     int         mode_id;                // 条码模式
     std::string box_file_path;          // 内盒文件路径
     std::string carton_file_path;       // 外箱文件路径
+    std::string card_file_path;         // 单卡文件路径
     std::string create_time;            // 创建时间
 };

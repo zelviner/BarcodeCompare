@@ -1,6 +1,7 @@
 #pragma once
 
 #include "database/dao/box_data/box_data.h"
+#include "database/dao/card_data/card_data.h"
 #include "database/dao/carton_data/carton_data.h"
 #include "database/dao/format/format.h"
 
@@ -12,9 +13,10 @@
 class Importer {
 
   public:
-    Importer(const std::string &box_file_path, const std::string &carton_file_path)
+    Importer(const std::string &box_file_path, const std::string &carton_file_path, const std::string &card_file_path)
         : box_file_path_(box_file_path)
-        , carton_file_path_(carton_file_path) {};
+        , carton_file_path_(carton_file_path)
+        , card_file_path_(card_file_path) {};
 
     ~Importer() = default;
 
@@ -24,11 +26,17 @@ class Importer {
     /// @brief Get the header data of carton.
     virtual std::vector<std::string> cartonHeaders() = 0;
 
+    /// @brief Get the header data of card.
+    virtual std::vector<std::string> cardHeaders() = 0;
+
     /// @brief Get the box data from tag data file.
     virtual std::vector<std::shared_ptr<BoxData>> boxDatas(const std::shared_ptr<Format> &format) = 0;
 
     /// @brief Get the carton data from tag data file.
     virtual std::vector<std::shared_ptr<CartonData>> cartonDatas(const std::shared_ptr<Format> &format) = 0;
+
+    /// @brief Get the card data from tag data file.
+    virtual std::vector<std::shared_ptr<CardData>> cardDatas(const std::shared_ptr<Format> &format) = 0;
 
   protected:
     static std::string remove_spaces(const std::string &s) {
@@ -59,4 +67,5 @@ class Importer {
   protected:
     std::string box_file_path_;    // tag file path of box data
     std::string carton_file_path_; // tag file path of carton data
+    std::string card_file_path_;   // tag file path of card data
 };

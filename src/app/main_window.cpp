@@ -641,6 +641,150 @@ void MainWindow::refreshBoxCompareGroup(const int &cols, const std::string &sele
     }
 }
 
+void MainWindow::cardSelectOrder() {
+    if (ui_->card_order_name_combo->currentText().isEmpty()) {
+        return;
+    }
+
+    ui_->card_check_format_label->clear();
+
+    // 获取订单信息
+    auto order = order_dao_->get(ui_->card_order_name_combo->currentText().toStdString());
+    if (!order_dao_->currentOrder(order->id)) {
+        return;
+    }
+
+    refreshCartonTable(order->name, ui_->carton_datas_status_comb_box->currentIndex() - 1);
+
+    // 显示订单信息
+    ui_->card_check_format_label->setText(QString::fromStdString(order->check_format));
+
+    // // 根据条码模式原则是否显示结条码束
+    // switch (order->mode_id) {
+    // // Start and End Barcode
+    // case 1: {
+    //     ui_->label_13->setHidden(false);
+    //     ui_->carton_end_line->setHidden(false);
+    //     break;
+    // }
+
+    // // Start Barcode Only
+    // case 2: {
+    //     ui_->label_13->setHidden(true);
+    //     ui_->carton_end_line->setHidden(true);
+    //     break;
+    // }
+
+    // // End Barcode Only
+    // case 3: {
+    //     break;
+    // }
+
+    // default: {
+    //     ui_->label_13->setHidden(true);
+    //     ui_->carton_end_line->setHidden(true);
+    //     break;
+    // }
+    // }
+
+    ui_->card_datas_status_comb_box->setEnabled(true);
+    ui_->card_box_start_line->setEnabled(true);
+    ui_->card_line->setEnabled(true);
+    ui_->card_label_line->setEnabled(true);
+
+    ui_->card_box_start_line->setFocus();
+}
+
+void MainWindow::showSelectedCard() {
+    // 获取当前选择模型
+    QItemSelectionModel *selectModel = ui_->card_table->selectionModel();
+    if (!selectModel || ui_->card_table->rowCount() == 0) {
+        return; // 没有数据，直接返回
+    }
+
+    // 获取选中的行
+    QModelIndexList indexes = selectModel->selectedRows();
+    if (indexes.isEmpty()) {
+        return; // 没有选中行
+    }
+
+    QStringList rowData;
+    for (const QModelIndex &index : indexes) {
+        int row = index.row();
+        if (row < 0 || row >= ui_->card_table->rowCount()) {
+            continue; // 避免越界访问
+        }
+
+        for (int col = 0; col < ui_->card_table->columnCount(); ++col) {
+            QModelIndex idx = ui_->card_table->model()->index(row, col);
+            if (idx.isValid()) {
+                rowData << ui_->card_table->model()->data(idx).toString();
+            }
+        }
+    }
+
+    if (!rowData.isEmpty()) {
+        refreshBoxCompareGroup(5, rowData[0].toStdString());
+    }
+}
+
+void MainWindow::selectCardDatasStatus() {
+    if (ui_->card_compare_group_box->layout()) {
+        clear_box_compare_group_layout(ui_->card_compare_group_box->layout());
+        delete ui_->card_compare_group_box->layout();
+    }
+
+    refreshCardTable(order_dao_->currentOrder()->name, ui_->card_datas_status_comb_box->currentIndex() - 1);
+}
+
+void MainWindow::toCardBarcode() {}
+
+void MainWindow::toCardLabelBarcode() {}
+
+void MainWindow::compareCard() {}
+
+void MainWindow::refreshCardTab() {
+    ui_->card_table->clearContents();
+    ui_->card_order_name_combo->clear();
+    ui_->card_check_format_label->clear();
+    ui_->card_box_start_line->clear();
+    ui_->card_line->clear();
+    ui_->card_table->setRowCount(0);
+    ui_->card_datas_status_comb_box->setCurrentIndex(0);
+
+    if (ui_->box_compare_group_box->layout()) {
+        clear_box_compare_group_layout(ui_->box_compare_group_box->layout());
+        delete ui_->box_compare_group_box->layout();
+    }
+
+    ui_->card_box_start_line->clearFocus();
+    ui_->card_order_name_combo->clearFocus();
+
+    ui_->card_datas_status_comb_box->setEnabled(false);
+    ui_->card_box_start_line->setEnabled(false);
+    ui_->card_line->setEnabled(false);
+    ui_->card_label_line->setEnabled(false);
+
+    // 设置订单号下拉框内容
+    for (auto &order : order_dao_->all()) {
+        ui_->card_order_name_combo->addItem(QString::fromStdString(order->name));
+    }
+
+    // 下框默认不选中
+    ui_->card_order_name_combo->setCurrentText("");
+
+    if (user_dao_->currentUser()->role_id == 1) {
+        ui_->card_order_name_combo->setEnabled(false);
+        ui_->card_box_start_line->setEnabled(false);
+        ui_->card_line->setEnabled(false);
+        ui_->card_label_line->setEnabled(false);
+    }
+}
+
+void MainWindow::refreshCardTable(const std::string &order_name, const int &status) {}
+
+void MainWindow::refreshCardCompareGroup(const int &cols, const std::string &selected_carton_start_barcode) {}
+
 void MainWindow::selectBoxFileBtnClicked() {
     QString file_path = QFileDialog::getOpenFileName(this, tr("选择内盒标签文件路径"), "templates", tr("Excel/CSV 文件 (*.xlsx *.csv)"));
 
@@ -657,6 +801,14 @@ void MainWindow::selectCartonFileBtnClicked() {
     ui_->carton_file_path_line->setText(file_path);
 }
 
+void MainWindow::selectCardFileBtnClicked() {
+    QString file_path = QFileDialog::getOpenFileName(this, tr("选择单卡标签文件路径"), "templates", tr("Excel/CSV 文件 (*.xlsx *.csv)"));
+
+    if (file_path.isEmpty()) return;
+
+    ui_->card_file_path_line->setText(file_path);
+}
+
 void MainWindow::addOrderBtnClicked() {
     // 获取订单信息
     std::string order_name             = ui_->order_name_line->text().toStdString();
@@ -669,6 +821,7 @@ void MainWindow::addOrderBtnClicked() {
     int         mode_id                = ui_->barcode_mode_combo_box->currentIndex() + 1;
     std::string box_file_path          = ui_->box_file_path_line->text().toStdString();
     std::string carton_file_path       = ui_->carton_file_path_line->text().toStdString();
+    std::string card_file_path         = ui_->card_file_path_line->text().toStdString();
     int         box_scanned_num        = 0;
     int         carton_scanned_num     = 0;
 
@@ -707,6 +860,7 @@ void MainWindow::addOrderBtnClicked() {
                     mode_id,
                     box_file_path,
                     carton_file_path,
+                    card_file_path,
                     create_time};
 
     if (order_dao_->exists(new_order.name)) {
@@ -1041,6 +1195,9 @@ void MainWindow::init_ui() {
     // 初始化外箱比对 tab
     init_carton_tab();
 
+    // 初始化卡片比对 tab
+    init_card_tab();
+
     // 初始化订单管理 tab
     init_order_tab();
 
@@ -1104,6 +1261,31 @@ void MainWindow::init_carton_tab() {
 
     QStringList carton_header = {tr("外箱起始条码"), tr("外箱结束条码"), tr("内盒起始或结束条码")};
     init_table(ui_->carton_table, carton_header, carton_header.size());
+}
+
+void MainWindow::init_card_tab() {
+    ui_->card_order_name_combo->setEditable(true);
+    ui_->card_order_name_combo->lineEdit()->setPlaceholderText(tr("请输入订单号"));
+    ui_->card_order_name_combo->lineEdit()->setAlignment(Qt::AlignCenter);
+
+    // 下拉框模糊匹配
+    QStringList order_name_list;
+    for (auto order : order_dao_->all()) {
+        order_name_list.append(QString::fromStdString(order->name));
+    }
+
+    QCompleter *completer = new QCompleter(order_name_list, this);
+    completer->setFilterMode(Qt::MatchContains);
+    ui_->card_order_name_combo->setCompleter(completer);
+
+    QStringList card_data_status = {tr("全部"), tr("未扫描"), tr("已扫描")};
+    ui_->card_datas_status_comb_box->addItems(card_data_status);
+    ui_->card_datas_status_comb_box->setEditable(true);
+    ui_->card_datas_status_comb_box->lineEdit()->setAlignment(Qt::AlignCenter);
+    ui_->card_datas_status_comb_box->lineEdit()->setReadOnly(true);
+
+    QStringList card_header = {tr("外箱起始条码"), tr("外箱结束条码"), tr("内盒起始或结束条码")};
+    init_table(ui_->card_table, card_header, card_header.size());
 }
 
 void MainWindow::init_order_tab() {
@@ -1196,13 +1378,18 @@ void MainWindow::init_signals_slots() {
             refreshCartonTab();
             break;
 
-        // 订单管理
+        // 卡片比对
         case 2:
+            refreshCardTab();
+            break;
+
+        // 订单管理
+        case 3:
             refreshOrderTab();
             break;
 
         // 用户管理
-        case 3:
+        case 4:
             refreshUserTab();
             break;
 
@@ -1227,9 +1414,18 @@ void MainWindow::init_signals_slots() {
     connect(ui_->carton_end_line, &QLineEdit::returnPressed, this, &MainWindow::toTargetBarcode);
     connect(ui_->target_line, &QLineEdit::returnPressed, this, &MainWindow::compareCarton);
 
+    // 卡片比对 Tab
+    connect(ui_->card_order_name_combo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &MainWindow::cardSelectOrder);
+    connect(ui_->card_table, &QTableWidget::itemSelectionChanged, this, &MainWindow::showSelectedCard);
+    connect(ui_->card_datas_status_comb_box, &QComboBox::currentTextChanged, this, &MainWindow::selectCardDatasStatus);
+    connect(ui_->card_box_start_line, &QLineEdit::returnPressed, this, &MainWindow::toCardBarcode);
+    connect(ui_->card_line, &QLineEdit::returnPressed, this, &MainWindow::toCardLabelBarcode);
+    connect(ui_->card_label_line, &QLineEdit::returnPressed, this, &MainWindow::compareCard);
+
     // 订单配置 tab
     connect(ui_->select_box_file_ptn, &QPushButton::clicked, this, &MainWindow::selectBoxFileBtnClicked);
     connect(ui_->select_carton_file_ptn, &QPushButton::clicked, this, &MainWindow::selectCartonFileBtnClicked);
+    connect(ui_->select_card_file_ptn, &QPushButton::clicked, this, &MainWindow::selectCardFileBtnClicked);
     connect(ui_->order_table, &QTableWidget::itemSelectionChanged, this, &MainWindow::showSelectedOrder);
     connect(ui_->add_order_btn, &QPushButton::clicked, this, &MainWindow::addOrderBtnClicked);
     connect(ui_->update_order_btn, &QPushButton::clicked, this, &MainWindow::updateOrderBtnClicked);

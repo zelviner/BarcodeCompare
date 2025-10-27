@@ -86,6 +86,9 @@ void FormatMysqlDao::init() {
         std::shared_ptr<Format> cq01_carton = std::make_shared<Format>(Format{0, "CQ01", 2, "", "箱号", "J", "K", "L", "二维码"});
         std::shared_ptr<Format> cq02_box    = std::make_shared<Format>(Format{0, "CQ02", 1, "", "盒号", "J", "K", "L", ""});
         std::shared_ptr<Format> cq02_carton = std::make_shared<Format>(Format{0, "CQ02", 2, "", "箱号", "J", "K", "L", ""});
+        std::shared_ptr<Format> cq02_card   = std::make_shared<Format>(Format{0, "CQ02", 3, "", "卡数量", "条形码ICCID", "条形码IMSI", "卡总数量", ""});
+        std::shared_ptr<Format> cq03_box    = std::make_shared<Format>(Format{0, "CQ03", 1, "", "盒号", "开始", "结束", "数量", ""});
+        std::shared_ptr<Format> cq03_carton = std::make_shared<Format>(Format{0, "CQ03", 2, "", "箱号", "开始", "结束", "数量", ""});
         std::shared_ptr<Format> surabaya_box =
             std::make_shared<Format>(Format{0, "Surabaya", 1, "No.WO/OF", "Inner Box No.", "First SN", "Last SN", "Quantity", "Barcode"});
         std::shared_ptr<Format> surabaya_carton =
@@ -95,6 +98,9 @@ void FormatMysqlDao::init() {
         add(cq01_carton);
         add(cq02_box);
         add(cq02_carton);
+        add(cq02_card);
+        add(cq03_box);
+        add(cq03_carton);
         add(surabaya_box);
         add(surabaya_carton);
     }

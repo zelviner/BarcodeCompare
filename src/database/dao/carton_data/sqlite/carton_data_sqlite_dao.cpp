@@ -123,7 +123,7 @@ bool CartonDataSqliteDao::update(const int &id, std::shared_ptr<CartonData> &car
 
         return update.exec();
     } catch (std::exception &e) {
-        std::cerr << "Update box data failed: " << e.what() << std::endl;
+        std::cerr << "Update carton data failed: " << e.what() << std::endl;
         return false;
     }
 
