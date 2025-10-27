@@ -1,8 +1,10 @@
 #pragma once
 
 #include "box_info.h"
+#include "card_info.h"
 #include "carton_info.h"
 #include "database/dao/box_data/box_data_dao.h"
+#include "database/dao/card_data/card_data_dao.h"
 #include "database/dao/carton_data/carton_data_dao.h"
 #include "database/dao/order/order.h"
 
@@ -12,7 +14,8 @@
 class Comparison {
 
   public:
-    Comparison(const std::shared_ptr<Order> &order, const std::shared_ptr<BoxDataDao> &box_data_dao, const std::shared_ptr<CartonDataDao> &carton_data_dao);
+    Comparison(const std::shared_ptr<Order> &order, const std::shared_ptr<BoxDataDao> &box_data_dao,
+               const std::shared_ptr<CartonDataDao> &carton_data_dao = nullptr, const std::shared_ptr<CardDataDao> &card_data_dao = nullptr);
     ~Comparison();
 
     /// @brief Compare box barcodes.
@@ -20,6 +23,9 @@ class Comparison {
 
     /// @brief Compare carton barcodes.
     int carton(const std::shared_ptr<CartonInfo> &carton_info, int &box_widget_id);
+
+    /// @brief Compare card barcodes.
+    int card(const std::shared_ptr<CardInfo> &card_info, int &card_widget_id);
 
   private:
     /// @brief Remove prefixes and suffixes from card barcodes.
@@ -38,4 +44,5 @@ class Comparison {
     std::shared_ptr<Order>         order_;
     std::shared_ptr<BoxDataDao>    box_data_dao_;
     std::shared_ptr<CartonDataDao> carton_data_dao_;
+    std::shared_ptr<CardDataDao>   card_data_dao_;
 };

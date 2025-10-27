@@ -1,9 +1,11 @@
 <!DOCTYPE RCC><RCC version="1.0">
  <qresource>
-     <file>../image/xh_logo.png</file>
      <file>../image/success.png</file>
-     <file>../image/box-unscanned.png</file>
-     <file>../image/box-pending.png</file>
-     <file>../image/box-scanned.png</file>
+     <file>../image/box_unscanned.png</file>
+     <file>../image/box_pending.png</file>
+     <file>../image/box_scanned.png</file>
+     <file>../image/card_unscanned.png</file>
+     <file>../image/card_pending.png</file>
+     <file>../image/card_scanned.png</file>
  </qresource>
  </RCC>

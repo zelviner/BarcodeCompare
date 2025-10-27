@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Login</string>
   </property>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -81,7 +81,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -162,7 +162,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -231,7 +231,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -308,6 +308,14 @@
    </layout>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>username_edit</tabstop>
+  <tabstop>password_edit</tabstop>
+  <tabstop>offline_radio_button</tabstop>
+  <tabstop>online_radio_button</tabstop>
+  <tabstop>login_btn</tabstop>
+  <tabstop>exit_btn</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

@@ -12,7 +12,8 @@ class CardDataDao {
     virtual bool batchAdd(const std::vector<std::shared_ptr<CardData>> &card_datas) = 0;
 
     /// @brief Get all card datas from the database.
-    virtual std::vector<std::shared_ptr<CardData>> all(const int &status = -1) = 0;
+    virtual std::vector<std::shared_ptr<CardData>> all(const int &status = -1)                                         = 0;
+    virtual std::vector<std::shared_ptr<CardData>> all(const std::string &start_number, const std::string &end_number) = 0;
 
     /// @brief Set the status of the card data to 1 when it is scanned.
     virtual bool scanned(const std::string &iccid_barcode) = 0;

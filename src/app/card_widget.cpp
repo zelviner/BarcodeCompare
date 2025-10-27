@@ -1,21 +1,21 @@
-#include "box_widget.h"
+#include "card_widget.h"
 #include <qboxlayout.h>
 #include <qpixmap.h>
 
-BoxWidget::BoxWidget(const int &id, const QString &box_number, QWidget *parent)
+CardWidget::CardWidget(const int &id, const QString &card_number, QWidget *parent)
     : QWidget(parent)
     , id_(id)
-    , box_number_(box_number) {
+    , card_number_(card_number) {
     // 图片 label
     label_ = new QLabel(this);
     label_->setAlignment(Qt::AlignCenter);
-    label_->setFixedSize(32, 32);
+    label_->setFixedSize(16, 16);
     label_->setScaledContents(true); // 自动缩放到固定大小
 
     // 文字 label
     text_label_ = new QLabel(this);
     text_label_->setAlignment(Qt::AlignCenter);
-    text_label_->setText(box_number);
+    text_label_->setText(card_number);
     text_label_->setStyleSheet("font-size:10px;"); // 字体大小可调整
 
     // 布局
@@ -30,14 +30,14 @@ BoxWidget::BoxWidget(const int &id, const QString &box_number, QWidget *parent)
     unscanned();
 }
 
-BoxWidget::~BoxWidget() {}
+CardWidget::~CardWidget() {}
 
-void BoxWidget::unscanned() { label_->setPixmap(QPixmap(":/image/box_unscanned.png")); }
+void CardWidget::unscanned() { label_->setPixmap(QPixmap(":/image/card_unscanned.png")); }
 
-void BoxWidget::pending() { label_->setPixmap(QPixmap(":/image/box_pending.png")); }
+void CardWidget::pending() { label_->setPixmap(QPixmap(":/image/card_pending.png")); }
 
-void BoxWidget::scanned() { label_->setPixmap(QPixmap(":/image/box_scanned.png")); }
+void CardWidget::scanned() { label_->setPixmap(QPixmap(":/image/card_scanned.png")); }
 
-int BoxWidget::id() { return id_; }
+int CardWidget::id() { return id_; }
 
-QString BoxWidget::boxNumber() { return box_number_; }
+QString CardWidget::cardNumber() { return card_number_; }

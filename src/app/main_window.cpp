@@ -1,9 +1,8 @@
 #include "main_window.h"
 
-#include "box_widget.h"
-#include "comparison/carton_info.h"
 #include "comparison/comparison.h"
 #include "database/dao/box_data/box_data_dao_factory.h"
+#include "database/dao/card_data/card_data_dao_factory.h"
 #include "database/dao/carton_data/carton_data_dao_factory.h"
 #include "database/dao/format/format_dao_factory.h"
 #include "database/dao/mode/mode_dao_factory.h"
@@ -162,7 +161,7 @@ void MainWindow::toCardEndBarcode() { ui_->card_end_line->setFocus(); }
 
 void MainWindow::compareBox() {
     auto       box_data_dao = BoxDataDaoFactory::create(sqlite_db_, mysql_db_, order_dao_->currentOrder()->name);
-    Comparison comparison(order_dao_->currentOrder(), box_data_dao, nullptr);
+    Comparison comparison(order_dao_->currentOrder(), box_data_dao);
 
     QString error, log_msg;
     auto    box_info             = std::make_shared<BoxInfo>();
@@ -436,7 +435,6 @@ void MainWindow::toTargetBarcode() {
 }
 
 void MainWindow::compareCarton() {
-
     std::shared_ptr<CartonInfo> carton_info = std::make_shared<CartonInfo>();
     carton_info->carton_start_barcode       = ui_->carton_start_line->text();
     carton_info->carton_end_barcode         = ui_->carton_end_line->text();
@@ -654,38 +652,10 @@ void MainWindow::cardSelectOrder() {
         return;
     }
 
-    refreshCartonTable(order->name, ui_->carton_datas_status_comb_box->currentIndex() - 1);
+    refreshCardTable(order->name, ui_->carton_datas_status_comb_box->currentIndex() - 1);
 
     // 显示订单信息
     ui_->card_check_format_label->setText(QString::fromStdString(order->check_format));
-
-    // // 根据条码模式原则是否显示结条码束
-    // switch (order->mode_id) {
-    // // Start and End Barcode
-    // case 1: {
-    //     ui_->label_13->setHidden(false);
-    //     ui_->carton_end_line->setHidden(false);
-    //     break;
-    // }
-
-    // // Start Barcode Only
-    // case 2: {
-    //     ui_->label_13->setHidden(true);
-    //     ui_->carton_end_line->setHidden(true);
-    //     break;
-    // }
-
-    // // End Barcode Only
-    // case 3: {
-    //     break;
-    // }
-
-    // default: {
-    //     ui_->label_13->setHidden(true);
-    //     ui_->carton_end_line->setHidden(true);
-    //     break;
-    // }
-    // }
 
     ui_->card_datas_status_comb_box->setEnabled(true);
     ui_->card_box_start_line->setEnabled(true);
@@ -724,7 +694,7 @@ void MainWindow::showSelectedCard() {
     }
 
     if (!rowData.isEmpty()) {
-        refreshBoxCompareGroup(5, rowData[0].toStdString());
+        refreshCardCompareGroup(20, rowData[0].toStdString());
     }
 }
 
@@ -737,11 +707,100 @@ void MainWindow::selectCardDatasStatus() {
     refreshCardTable(order_dao_->currentOrder()->name, ui_->card_datas_status_comb_box->currentIndex() - 1);
 }
 
-void MainWindow::toCardBarcode() {}
+void MainWindow::toCardBarcode() {
+    ui_->card_box_start_line->setEnabled(false);
+    ui_->card_line->setFocus();
 
-void MainWindow::toCardLabelBarcode() {}
+    scroll_to_value(ui_->card_table, ui_->card_box_start_line->text());
+}
 
-void MainWindow::compareCard() {}
+void MainWindow::toCardLabelBarcode() {
+    // ui_->card_line->setEnabled(false);
+    ui_->card_label_line->setFocus();
+}
+
+void MainWindow::compareCard() {
+    std::shared_ptr<CardInfo> card_info = std::make_shared<CardInfo>();
+    card_info->box_start_barcode        = ui_->card_box_start_line->text();
+    card_info->card_barcode             = ui_->card_line->text();
+    card_info->label_barcode            = ui_->card_label_line->text();
+
+    QString error, log_msg;
+    bool    is_end         = false;
+    auto    box_data_dao   = BoxDataDaoFactory::create(sqlite_db_, mysql_db_, order_dao_->currentOrder()->name);
+    auto    card_data_dao  = CardDataDaoFactory::create(sqlite_db_, mysql_db_, order_dao_->currentOrder()->name);
+    auto    comparison     = std::make_shared<Comparison>(order_dao_->currentOrder(), box_data_dao, nullptr, card_data_dao);
+    int     card_widget_id = 0;
+    int     result         = comparison->card(card_info, card_widget_id);
+
+    // Check if the card barcodes are sequence.
+    if (card_widgets_.front()->id() != card_widget_id) {
+        if (result == 0) {
+            result = 3;
+        }
+    }
+
+    if (result == 0) {
+        log_msg.sprintf("用户[%s] 内盒起始条码[%s] 卡片条码[%s] 标签条码[%s], 扫描成功", user_dao_->currentUser()->name.c_str(),
+                        card_info->box_start_barcode.toStdString().c_str(), card_info->card_barcode.toStdString().c_str(),
+                        card_info->label_barcode.toStdString().c_str());
+        card_data_dao->scanned(card_info->card_barcode.toStdString());
+        box_widgets_.front()->scanned();
+
+        box_widgets_.pop();
+        if (box_widgets_.empty()) {
+            is_end = true;
+        } else {
+            box_widgets_.front()->pending();
+        }
+    } else {
+        switch (result) {
+
+        case 1: {
+            error = tr("内盒起始条码不在该订单范围内, 请核对!");
+            break;
+        }
+
+        case 2: {
+            error = tr("卡片条码不在该内盒范围内, 请核对!");
+            break;
+        }
+
+        case 3: {
+            error = tr("卡片顺序错误, 请核对!");
+            break;
+        }
+        }
+
+        log_msg.sprintf("用户[%s] 内盒起始条码[%s] 卡片条码[%s] 标签条码[%s], 扫描失败，失败原因[%s]", user_dao_->currentUser()->name.c_str(),
+                        card_info->box_start_barcode.toStdString().c_str(), card_info->card_barcode.toStdString().c_str(),
+                        card_info->label_barcode.toStdString().c_str(), error.toStdString().c_str());
+
+        QMessageBox::warning(this, tr("提示"), tr("比对失败: ") + error);
+    }
+
+    if (!log("卡片/" + QString::fromStdString(order_dao_->currentOrder()->name), log_msg)) {
+        printf("log write error\n");
+    }
+
+    if (is_end) {
+        box_data_dao->scanned(card_info->box_start_barcode.toStdString());
+        refreshCardTable(order_dao_->currentOrder()->name, ui_->card_datas_status_comb_box->currentIndex() - 1);
+        scroll_to_value(ui_->card_table, ui_->card_box_start_line->text(), false);
+
+        ui_->card_box_start_line->clear();
+        ui_->card_line->clear();
+        ui_->card_label_line->clear();
+
+        ui_->card_box_start_line->setEnabled(true);
+        ui_->card_line->setEnabled(true);
+
+        ui_->card_box_start_line->setFocus();
+    } else {
+        ui_->card_label_line->clear();
+        ui_->card_label_line->setFocus();
+    }
+}
 
 void MainWindow::refreshCardTab() {
     ui_->card_table->clearContents();
@@ -752,9 +811,9 @@ void MainWindow::refreshCardTab() {
     ui_->card_table->setRowCount(0);
     ui_->card_datas_status_comb_box->setCurrentIndex(0);
 
-    if (ui_->box_compare_group_box->layout()) {
-        clear_box_compare_group_layout(ui_->box_compare_group_box->layout());
-        delete ui_->box_compare_group_box->layout();
+    if (ui_->card_compare_group_box->layout()) {
+        clear_box_compare_group_layout(ui_->card_compare_group_box->layout());
+        delete ui_->card_compare_group_box->layout();
     }
 
     ui_->card_box_start_line->clearFocus();
@@ -781,9 +840,80 @@ void MainWindow::refreshCardTab() {
     }
 }
 
-void MainWindow::refreshCardTable(const std::string &order_name, const int &status) {}
+void MainWindow::refreshCardTable(const std::string &order_name, const int &status) {
+    auto                                  box_data_dao = BoxDataDaoFactory::create(sqlite_db_, mysql_db_, order_name);
+    std::vector<std::shared_ptr<BoxData>> box_datas;
 
-void MainWindow::refreshCardCompareGroup(const int &cols, const std::string &selected_carton_start_barcode) {}
+    if (status == -1) {
+        box_datas = box_data_dao->all();
+    } else {
+        box_datas = box_data_dao->all(status);
+    }
+
+    ui_->card_table->setRowCount(box_datas.size());
+    for (int i = 0; i < int(box_datas.size()); i++) {
+        // 创建 item
+        auto item0 = new QTableWidgetItem(QString::fromStdString(box_datas[i]->start_barcode));
+        auto item1 = new QTableWidgetItem(QString::fromStdString(box_datas[i]->end_barcode));
+
+        if (status == -1) {
+            if (box_datas[i]->status == 1) {
+                QBrush greenBrush(QColor(144, 238, 144)); // 淡绿色
+                item0->setBackground(greenBrush);
+                item1->setBackground(greenBrush);
+            } else {
+                QBrush greenBrush(QColor(233, 231, 227)); // 灰色
+                item0->setBackground(greenBrush);
+                item1->setBackground(greenBrush);
+            }
+        }
+
+        // 放到表格里
+        ui_->card_table->setItem(i, 0, item0);
+        ui_->card_table->setItem(i, 1, item1);
+
+        // 设置内容居中
+        item0->setTextAlignment(Qt::AlignCenter);
+        item1->setTextAlignment(Qt::AlignCenter);
+    }
+}
+
+void MainWindow::refreshCardCompareGroup(const int &cols, const std::string &selected_box_start_barcode) {
+    card_widgets_ = std::queue<CardWidget *>();
+
+    if (ui_->card_compare_group_box->layout()) {
+        clear_box_compare_group_layout(ui_->card_compare_group_box->layout());
+        delete ui_->card_compare_group_box->layout();
+    }
+
+    QGridLayout *layout = new QGridLayout(ui_->card_compare_group_box);
+    layout->setSpacing(10);
+    layout->setContentsMargins(10, 10, 10, 10);
+    layout->setAlignment(Qt::AlignCenter);
+
+    auto card_data_dao = CardDataDaoFactory::create(sqlite_db_, mysql_db_, order_dao_->currentOrder()->name);
+    auto box_data_dao  = BoxDataDaoFactory::create(sqlite_db_, mysql_db_, order_dao_->currentOrder()->name);
+    auto box_data      = box_data_dao->get(selected_box_start_barcode);
+
+    auto card_datas = card_data_dao->all(box_data->start_number, box_data->end_number);
+    for (int i = 0; i < int(card_datas.size()); ++i) {
+        CardWidget *card = new CardWidget(card_datas[i]->id, QString::fromStdString(card_datas[i]->card_number));
+
+        int row = i / cols;
+        int col = i % cols;
+        layout->addWidget(card, row, col, Qt::AlignCenter);
+
+        if (i == 0) {
+            card->pending();
+        }
+
+        if (box_data->status) {
+            card->scanned();
+        }
+
+        card_widgets_.push(card);
+    }
+}
 
 void MainWindow::selectBoxFileBtnClicked() {
     QString file_path = QFileDialog::getOpenFileName(this, tr("选择内盒标签文件路径"), "templates", tr("Excel/CSV 文件 (*.xlsx *.csv)"));
@@ -1007,6 +1137,7 @@ void MainWindow::refreshOrderTab() {
     ui_->barcode_mode_combo_box->setCurrentIndex(-1);
     ui_->box_file_path_line->clear();
     ui_->carton_file_path_line->clear();
+    ui_->card_file_path_line->clear();
 
     if (user_dao_->currentUser()->role_id == 2) {
         ui_->clear_order_btn->setEnabled(false);
@@ -1023,6 +1154,7 @@ void MainWindow::refreshOrderTab() {
         ui_->carton_file_path_line->setEnabled(false);
         ui_->select_box_file_ptn->setEnabled(false);
         ui_->select_carton_file_ptn->setEnabled(false);
+        ui_->select_card_file_ptn->setEnabled(false);
 
         ui_->add_order_btn->setEnabled(false);
         ui_->remove_order_btn->setEnabled(false);
@@ -1284,7 +1416,7 @@ void MainWindow::init_card_tab() {
     ui_->card_datas_status_comb_box->lineEdit()->setAlignment(Qt::AlignCenter);
     ui_->card_datas_status_comb_box->lineEdit()->setReadOnly(true);
 
-    QStringList card_header = {tr("外箱起始条码"), tr("外箱结束条码"), tr("内盒起始或结束条码")};
+    QStringList card_header = {tr("内盒起始条码"), tr("内盒结束条码")};
     init_table(ui_->card_table, card_header, card_header.size());
 }
 

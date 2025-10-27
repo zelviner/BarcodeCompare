@@ -58,6 +58,28 @@ std::vector<std::shared_ptr<CardData>> CardDataMysqlDao::all(const int &status) 
     return card_datas;
 }
 
+std::vector<std::shared_ptr<CardData>> CardDataMysqlDao::all(const std::string &start_number, const std::string &end_number) {
+    std::vector<std::shared_ptr<CardData>> card_datas;
+
+    std::vector<CardTables> card_tables_all =
+        CardTables(*db_, order_name_, "id").where("start_number", ">=", start_number).where("end_number", "<=", end_number).all();
+    for (auto one : card_tables_all) {
+        auto card_data           = std::make_shared<CardData>();
+        card_data->id            = one("id").asInt();
+        card_data->card_number   = one("card_number").asString();
+        card_data->iccid         = one("iccid").asString();
+        card_data->imsi          = one("imsi").asString();
+        card_data->quantity      = one("quantity").asInt();
+        card_data->iccid_barcode = one("iccid_barcode").asString();
+        card_data->imsi_barcode  = one("imsi_barcode").asString();
+        card_data->status        = one("status").asInt();
+
+        card_datas.push_back(card_data);
+    }
+
+    return card_datas;
+}
+
 bool CardDataMysqlDao::scanned(const std::string &start_barcode) {
     auto card_data    = get(start_barcode);
     card_data->status = 1;

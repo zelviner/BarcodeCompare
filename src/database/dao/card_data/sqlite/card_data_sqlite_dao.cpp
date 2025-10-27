@@ -73,6 +73,30 @@ std::vector<std::shared_ptr<CardData>> CardDataSqliteDao::all(const int &status)
     return card_datas;
 }
 
+std::vector<std::shared_ptr<CardData>> CardDataSqliteDao::all(const std::string &start_number, const std::string &end_number) {
+    std::string       sql = "SELECT * FROM card_data.[" + order_name_ + "] WHERE iccid_barcode >= ? AND iccid_barcode <= ?";
+    SQLite::Statement all(*db_, sql);
+    all.bind(1, start_number);
+    all.bind(2, end_number);
+
+    std::vector<std::shared_ptr<CardData>> card_datas;
+    while (all.executeStep()) {
+        std::shared_ptr<CardData> card_data = std::make_shared<CardData>();
+        card_data->id                       = all.getColumn("id");
+        card_data->card_number              = all.getColumn("card_number").getString();
+        card_data->iccid                    = all.getColumn("iccid").getString();
+        card_data->imsi                     = all.getColumn("imsi").getString();
+        card_data->quantity                 = all.getColumn("quantity").getInt();
+        card_data->iccid_barcode            = all.getColumn("iccid_barcode").getString();
+        card_data->imsi_barcode             = all.getColumn("imsi_barcode").getString();
+        card_data->status                   = all.getColumn("status");
+
+        card_datas.push_back(card_data);
+    }
+
+    return card_datas;
+}
+
 bool CardDataSqliteDao::scanned(const std::string &start_barcode) {
     auto card_data    = get(start_barcode);
     card_data->status = 1;

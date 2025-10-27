@@ -1,6 +1,7 @@
 #pragma once
 
 #include "box_widget.h"
+#include "card_widget.h"
 #include "database/dao/format/format_dao.h"
 #include "database/dao/mode/mode_dao.h"
 #include "database/dao/order/order_dao.h"
@@ -50,15 +51,15 @@ class MainWindow : public QMainWindow {
     void refreshBoxCompareGroup(const int &cols, const std::string &selected_carton_start_barcode); // 刷新内盒比对组
 
     /// @brief 卡片比对 Tab
-    void cardSelectOrder();                                                                          // 卡片选择订单
-    void showSelectedCard();                                                                         // 显示选中卡片
-    void selectCardDatasStatus();                                                                    // 选择卡片数据状态
-    void toCardBarcode();                                                                            // 获取卡片条码
-    void toCardLabelBarcode();                                                                       // 获取标签条码
-    void compareCard();                                                                              // 比对卡片
-    void refreshCardTab();                                                                           // 刷新卡片比对 Tab
-    void refreshCardTable(const std::string &order_name, const int &status);                         // 刷新卡片表格
-    void refreshCardCompareGroup(const int &cols, const std::string &selected_carton_start_barcode); // 刷新卡片比对组
+    void cardSelectOrder();                                                                       // 卡片选择订单
+    void showSelectedCard();                                                                      // 显示选中卡片
+    void selectCardDatasStatus();                                                                 // 选择卡片数据状态
+    void toCardBarcode();                                                                         // 获取卡片条码
+    void toCardLabelBarcode();                                                                    // 获取标签条码
+    void compareCard();                                                                           // 比对卡片
+    void refreshCardTab();                                                                        // 刷新卡片比对 Tab
+    void refreshCardTable(const std::string &order_name, const int &status);                      // 刷新卡片表格
+    void refreshCardCompareGroup(const int &cols, const std::string &selected_box_start_barcode); // 刷新卡片比对组
 
     /// @brief 订单管理 Tab
     void selectBoxFileBtnClicked();    // 选择内盒文件按钮点击事件
@@ -129,6 +130,7 @@ class MainWindow : public QMainWindow {
     QTranslator              translator_;
     std::shared_ptr<Loading> loading_;
     std::queue<BoxWidget *>  box_widgets_;
+    std::queue<CardWidget *> card_widgets_;
 
     std::shared_ptr<SQLite::Database>     sqlite_db_;
     std::shared_ptr<zel::myorm::Database> mysql_db_;

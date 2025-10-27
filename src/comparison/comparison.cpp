@@ -5,10 +5,11 @@
 #include <zel/utility/logger.h>
 
 Comparison::Comparison(const std::shared_ptr<Order> &order, const std::shared_ptr<BoxDataDao> &box_data_dao,
-                       const std::shared_ptr<CartonDataDao> &carton_data_dao)
+                       const std::shared_ptr<CartonDataDao> &carton_data_dao, const std::shared_ptr<CardDataDao> &card_data_dao)
     : order_(order)
     , box_data_dao_(box_data_dao)
-    , carton_data_dao_(carton_data_dao) {}
+    , carton_data_dao_(carton_data_dao)
+    , card_data_dao_(card_data_dao) {}
 
 Comparison::~Comparison() {}
 
@@ -51,8 +52,6 @@ int Comparison::carton(const std::shared_ptr<CartonInfo> &carton_info, int &box_
         return 1; // 外箱起始条码不在该订单范围内
     }
 
-    auto box_datas = box_data_dao_->all(carton_data->start_number, carton_data->end_number);
-
     QString carton_start_barcode = trim_carton_barcode(carton_info->carton_start_barcode);
     QString carton_end_barcode   = trim_carton_barcode(carton_info->carton_end_barcode);
     QString target_barcode       = trim_box_barcode(carton_info->target_barcode);
@@ -63,17 +62,48 @@ int Comparison::carton(const std::shared_ptr<CartonInfo> &carton_info, int &box_
     }
 
     // 判断目标条码是否在该外箱范围内
-    bool not_found = true;
+    bool found     = false;
+    auto box_datas = box_data_dao_->all(carton_data->start_number, carton_data->end_number);
     for (auto box_data : box_datas) {
         if (QString::fromStdString(box_data->start_number) == target_barcode || QString::fromStdString(box_data->end_number) == target_barcode) {
-            not_found     = false;
+            found         = true;
             box_widget_id = box_data->id;
             break;
         }
     }
-    if (not_found) {
+    if (!found) {
         log_error("Target barcode not in carton %s: %s", carton_data->carton_number.c_str(), target_barcode.toStdString().c_str());
         return 3; // 目标条码不在该外箱范围内
+    }
+
+    return 0;
+}
+
+int Comparison::card(const std::shared_ptr<CardInfo> &card_info, int &card_widget_id) {
+    std::shared_ptr<BoxData> box_data = box_data_dao_->get(card_info->box_start_barcode.toStdString());
+    if (box_data == nullptr) {
+        log_error("Box start barcode not in order: %s", card_info->box_start_barcode.toStdString().c_str());
+        return 1; // 内盒起始条码不在该订单范围内
+    }
+
+    QString box_start_barcode = trim_box_barcode(card_info->box_start_barcode);
+    QString card_barcode      = trim_card_barcode(card_info->card_barcode);
+    QString label_barcode     = trim_card_barcode(card_info->label_barcode);
+
+    // 判断卡片条码和标签条码是否在该内盒范围内
+    bool found      = false;
+    auto card_datas = card_data_dao_->all(box_data->start_number, box_data->end_number);
+    for (auto card_data : card_datas) {
+        if (QString::fromStdString(card_data->iccid_barcode) == card_barcode && QString::fromStdString(card_data->iccid_barcode) == label_barcode) {
+            found          = true;
+            card_widget_id = card_data->id;
+            break;
+        }
+    }
+
+    if (!found) {
+        log_error("Card barcode not in box %s: %s", box_data->box_number.c_str(), label_barcode.toStdString().c_str());
+        return 2; // 卡片条码不在该内盒范围内
     }
 
     return 0;
