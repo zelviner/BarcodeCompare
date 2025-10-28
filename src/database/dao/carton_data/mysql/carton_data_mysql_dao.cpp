@@ -12,8 +12,10 @@ CartonDataMysqlDao::CartonDataMysqlDao(const std::string &order_name)
 
 CartonDataMysqlDao::~CartonDataMysqlDao() {}
 
-bool CartonDataMysqlDao::batchAdd(const std::vector<std::shared_ptr<CartonData>> &carton_datas) {
+bool CartonDataMysqlDao::batchAdd(const std::vector<std::shared_ptr<CartonData>> &carton_datas, const size_t batch_size) {
     std::vector<CartonTables> rows;
+    rows.reserve(carton_datas.size());
+
     for (auto carton_data : carton_datas) {
         CartonTables row;
         row["filename"]      = carton_data->filename;
@@ -23,12 +25,20 @@ bool CartonDataMysqlDao::batchAdd(const std::vector<std::shared_ptr<CartonData>>
         row["quantity"]      = carton_data->quantity;
         row["start_barcode"] = carton_data->start_barcode;
         row["end_barcode"]   = carton_data->end_barcode;
-        row["status"]        = carton_data->status;
 
-        rows.push_back(row);
+        rows.emplace_back(std::move(row));
+
+        // 及时释放内存，防止内存泄漏
+        if (rows.size() == batch_size) {
+            CartonTables(*db_, order_name_, "id").insert(rows);
+            rows.clear();
+        }
     }
 
-    CartonTables(*db_, order_name_, "id").insert(rows);
+    if (!rows.empty()) {
+        CartonTables(*db_, order_name_, "id").insert(rows);
+    }
+
     return true;
 }
 

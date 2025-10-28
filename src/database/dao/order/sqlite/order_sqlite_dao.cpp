@@ -9,7 +9,6 @@
 #include <SQLiteCpp/Statement.h>
 #include <cstddef>
 #include <memory>
-#include <unordered_set>
 #include <vector>
 
 OrderSqliteDao::OrderSqliteDao(const std::shared_ptr<SQLite::Database> &db)
@@ -57,6 +56,27 @@ bool OrderSqliteDao::add(const std::shared_ptr<Order> &order) {
         case 3:
             if (hasRequiredValues(card_headers, format)) card_datas = importer->cardDatas(format);
             break;
+        }
+    }
+
+    // 兼容没有条码的文件格式
+    if (box_datas.size() == 0 || carton_datas.size() == 0) {
+        for (auto format : formats) {
+            format->barcode = "";
+
+            switch (format->type) {
+            case 1:
+                if (hasRequiredValues(box_headers, format, false)) box_datas = importer->boxDatas(format);
+                break;
+
+            case 2:
+                if (hasRequiredValues(carton_headers, format, false)) carton_datas = importer->cartonDatas(format);
+                break;
+
+            case 3:
+                if (hasRequiredValues(card_headers, format, false)) card_datas = importer->cardDatas(format);
+                break;
+            }
         }
     }
 
@@ -282,18 +302,5 @@ void OrderSqliteDao::init() {
               "mode_id integer NOT NULL,"
               "create_time TEXT NOT NULL);";
         db_->exec(sql);
-    }
-}
-
-bool OrderSqliteDao::hasRequiredValues(const std::vector<std::string> &headers, const std::shared_ptr<Format> &format) {
-    std::unordered_set<std::string> headerSet(headers.begin(), headers.end());
-
-    bool result = headerSet.count(format->box_number) && headerSet.count(format->start_number) && headerSet.count(format->end_number) &&
-        headerSet.count(format->quantity);
-
-    if (format->barcode != "") {
-        return result && headerSet.count(format->barcode);
-    } else {
-        return true;
     }
 }

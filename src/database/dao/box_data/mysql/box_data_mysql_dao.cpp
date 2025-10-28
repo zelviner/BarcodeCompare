@@ -10,9 +10,10 @@ BoxDataMysqlDao::BoxDataMysqlDao(const std::string &order_name)
 }
 BoxDataMysqlDao::~BoxDataMysqlDao() {}
 
-bool BoxDataMysqlDao::batchAdd(const std::vector<std::shared_ptr<BoxData>> &box_datas) {
-
+bool BoxDataMysqlDao::batchAdd(const std::vector<std::shared_ptr<BoxData>> &box_datas, const size_t batch_size) {
     std::vector<BoxTables> rows;
+    rows.reserve(box_datas.size());
+
     for (auto box_data : box_datas) {
         BoxTables row;
         row["filename"]      = box_data->filename;
@@ -22,15 +23,19 @@ bool BoxDataMysqlDao::batchAdd(const std::vector<std::shared_ptr<BoxData>> &box_
         row["quantity"]      = box_data->quantity;
         row["start_barcode"] = box_data->start_barcode;
         row["end_barcode"]   = box_data->end_barcode;
-        row["status"]        = box_data->status;
-        row["card_status"]   = box_data->card_status;
-        row["carton_status"] = box_data->carton_status;
 
-        rows.push_back(row);
+        rows.emplace_back(std::move(row));
+
+        // 及时释放内存，防止内存泄漏
+        if (rows.size() == batch_size) {
+            BoxTables(*db_, order_name_, "id").insert(rows);
+            rows.clear();
+        }
     }
 
-    auto box_tables = BoxTables(*db_, order_name_, "id");
-    box_tables.insert(rows);
+    if (!rows.empty()) {
+        BoxTables(*db_, order_name_, "id").insert(rows);
+    }
 
     return true;
 }

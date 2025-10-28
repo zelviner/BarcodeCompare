@@ -12,7 +12,7 @@ class CardDataSqliteDao : public CardDataDao {
     ~CardDataSqliteDao();
 
     /// @brief Batch insert new card datas into the database.
-    bool batchAdd(const std::vector<std::shared_ptr<CardData>> &card_datas) override;
+    bool batchAdd(const std::vector<std::shared_ptr<CardData>> &card_datas, const size_t batch_size = 20000) override;
 
     /// @brief Get all card datas from the database.
     std::vector<std::shared_ptr<CardData>> all(const int &status = -1) override;

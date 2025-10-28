@@ -45,8 +45,6 @@ class OrderSqliteDao : public OrderDao {
     /// @brief Initialize the data and create tables.
     void init();
 
-    bool hasRequiredValues(const std::vector<std::string> &headers, const std::shared_ptr<Format> &format);
-
   private:
     std::shared_ptr<SQLite::Database> db_;
     int                               current_order_id_;

@@ -5,6 +5,7 @@
 #include <exception>
 #include <iostream>
 #include <memory>
+#include <zel/utility/logger.h>
 
 BoxDataSqliteDao::BoxDataSqliteDao(const std::shared_ptr<SQLite::Database> &db, const std::string &order_name)
     : db_(db)
@@ -13,12 +14,12 @@ BoxDataSqliteDao::BoxDataSqliteDao(const std::shared_ptr<SQLite::Database> &db, 
 }
 BoxDataSqliteDao::~BoxDataSqliteDao() {}
 
-bool BoxDataSqliteDao::batchAdd(const std::vector<std::shared_ptr<BoxData>> &box_datas) {
+bool BoxDataSqliteDao::batchAdd(const std::vector<std::shared_ptr<BoxData>> &box_datas, const size_t batch_size) {
     try {
         SQLite::Transaction transaction(*db_);
         SQLite::Statement   query(*db_,
                                   "INSERT INTO box_data.[" + order_name_ +
-                                      "] (filename,box_number, start_number, end_number, quantity, start_barcode, end_barcode) VALUES (?,?,?,?,?,?,?)");
+                                      "] (filename, box_number, start_number, end_number, quantity, start_barcode, end_barcode) VALUES (?,?,?,?,?,?,?)");
         for (const std::shared_ptr<BoxData> &box_data : box_datas) {
             query.bind(1, box_data->filename);
             query.bind(2, box_data->box_number);
@@ -34,8 +35,7 @@ bool BoxDataSqliteDao::batchAdd(const std::vector<std::shared_ptr<BoxData>> &box
 
         transaction.commit();
     } catch (std::exception &e) {
-        std::cerr << "Batch insert failed: " << e.what() << std::endl;
-        throw;
+        log_error("Batch insert failed: %s", e.what());
         return false;
     }
 

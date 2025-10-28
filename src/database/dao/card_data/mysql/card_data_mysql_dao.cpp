@@ -12,8 +12,10 @@ CardDataMysqlDao::CardDataMysqlDao(const std::string &order_name)
 
 CardDataMysqlDao::~CardDataMysqlDao() {}
 
-bool CardDataMysqlDao::batchAdd(const std::vector<std::shared_ptr<CardData>> &card_datas) {
+bool CardDataMysqlDao::batchAdd(const std::vector<std::shared_ptr<CardData>> &card_datas, const size_t batch_size) {
     std::vector<CardTables> rows;
+    rows.reserve(card_datas.size());
+
     for (auto card_data : card_datas) {
         CardTables row;
         row["card_number"]   = card_data->card_number;
@@ -22,12 +24,20 @@ bool CardDataMysqlDao::batchAdd(const std::vector<std::shared_ptr<CardData>> &ca
         row["quantity"]      = card_data->quantity;
         row["iccid_barcode"] = card_data->iccid_barcode;
         row["imsi_barcode"]  = card_data->imsi_barcode;
-        row["status"]        = card_data->status;
 
-        rows.push_back(row);
+        rows.emplace_back(std::move(row));
+
+        // 及时释放内存，防止内存泄漏
+        if (rows.size() == batch_size) {
+            CardTables(*db_, order_name_, "id").insert(rows);
+            rows.clear();
+        }
     }
 
-    CardTables(*db_, order_name_, "id").insert(rows);
+    if (!rows.empty()) {
+        CardTables(*db_, order_name_, "id").insert(rows);
+    }
+
     return true;
 }
 

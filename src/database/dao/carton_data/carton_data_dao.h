@@ -9,7 +9,7 @@
 class CartonDataDao {
   public:
     /// @brief Batch insert new box datas into the database.
-    virtual bool batchAdd(const std::vector<std::shared_ptr<CartonData>> &carton_datas) = 0;
+    virtual bool batchAdd(const std::vector<std::shared_ptr<CartonData>> &carton_datas, const size_t batch_size = 20000) = 0;
 
     /// @brief Get all carton datas from the database.
     virtual std::vector<std::shared_ptr<CartonData>> all(const int &status = -1) = 0;

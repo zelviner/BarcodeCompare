@@ -16,7 +16,7 @@ class BoxDataDao {
 
   public:
     /// @brief Batch insert new box datas into the database.
-    virtual bool batchAdd(const std::vector<std::shared_ptr<BoxData>> &box_datas) = 0;
+    virtual bool batchAdd(const std::vector<std::shared_ptr<BoxData>> &box_datas, const size_t batch_size = 20000) = 0;
 
     /// @brief Get all box datas from the database.
     virtual std::vector<std::shared_ptr<BoxData>> all(Type type = BOX, const int &status = -1)                        = 0;

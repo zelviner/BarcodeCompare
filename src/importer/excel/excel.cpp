@@ -48,6 +48,10 @@ std::vector<std::string> Excel::cartonHeaders() {
 std::vector<std::string> Excel::cardHeaders() {
     std::vector<std::string> headers;
 
+    if (card_file_path_ == "") {
+        return headers;
+    }
+
     xlnt::workbook wb;
     wb.load(card_file_path_);
     auto ws = wb.active_sheet();
@@ -66,6 +70,10 @@ std::vector<std::string> Excel::cardHeaders() {
 }
 
 std::vector<std::shared_ptr<BoxData>> Excel::boxDatas(const std::shared_ptr<Format> &format) {
+
+    printf(" format->box_number: %s\n format->start_number: %s\n format->end_number: %s\n format->quantity: %s\n format->barcode: %s\n",
+           format->box_number.c_str(), format->start_number.c_str(), format->end_number.c_str(), format->quantity.c_str(), format->barcode.c_str());
+
     std::vector<std::shared_ptr<BoxData>> box_datas;
     header_index_.clear();
 

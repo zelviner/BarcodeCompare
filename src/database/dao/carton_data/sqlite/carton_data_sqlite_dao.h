@@ -12,7 +12,7 @@ class CartonDataSqliteDao : public CartonDataDao {
     ~CartonDataSqliteDao();
 
     /// @brief Batch insert new box datas into the database.
-    bool batchAdd(const std::vector<std::shared_ptr<CartonData>> &carton_datas) override;
+    bool batchAdd(const std::vector<std::shared_ptr<CartonData>> &carton_datas, const size_t batch_size = 20000) override;
 
     /// @brief Get all carton datas from the database.
     std::vector<std::shared_ptr<CartonData>> all(const int &status = -1) override;

@@ -1,9 +1,11 @@
 #pragma once
 
+#include "database/dao/format/format.h"
 #include "order.h"
 
 #include <SQLiteCpp/Database.h>
 #include <memory>
+#include <unordered_set>
 #include <vector>
 
 class OrderDao {
@@ -35,4 +37,21 @@ class OrderDao {
 
     /// @brief Get the current order.
     virtual std::shared_ptr<Order> currentOrder() = 0;
+
+  protected:
+    bool hasRequiredValues(const std::vector<std::string> &headers, const std::shared_ptr<Format> &format, bool with_barcode = true) {
+        if (headers.empty()) {
+            return false;
+        }
+
+        std::unordered_set<std::string> headerSet(headers.begin(), headers.end());
+
+        if (with_barcode) {
+            return headerSet.count(format->box_number) && headerSet.count(format->start_number) && headerSet.count(format->end_number) &&
+                headerSet.count(format->quantity) && headerSet.count(format->barcode);
+        } else {
+            return headerSet.count(format->box_number) && headerSet.count(format->start_number) && headerSet.count(format->end_number) &&
+                headerSet.count(format->quantity);
+        }
+    }
 };

@@ -15,7 +15,7 @@ CartonDataSqliteDao::CartonDataSqliteDao(const std::shared_ptr<SQLite::Database>
 
 CartonDataSqliteDao::~CartonDataSqliteDao() {}
 
-bool CartonDataSqliteDao::batchAdd(const std::vector<std::shared_ptr<CartonData>> &carton_datas) {
+bool CartonDataSqliteDao::batchAdd(const std::vector<std::shared_ptr<CartonData>> &carton_datas, const size_t batch_size) {
     try {
         SQLite::Transaction transaction(*db_);
         SQLite::Statement   query(*db_,

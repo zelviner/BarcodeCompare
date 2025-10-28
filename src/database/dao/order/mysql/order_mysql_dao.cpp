@@ -59,6 +59,27 @@ bool OrderMysqlDao::add(const std::shared_ptr<Order> &order) {
         }
     }
 
+    // 兼容没有条码的文件格式
+    if (box_datas.size() == 0 || carton_datas.size() == 0) {
+        for (auto format : formats) {
+            format->barcode = "";
+
+            switch (format->type) {
+            case 1:
+                if (hasRequiredValues(box_headers, format, false)) box_datas = importer->boxDatas(format);
+                break;
+
+            case 2:
+                if (hasRequiredValues(carton_headers, format, false)) carton_datas = importer->cartonDatas(format);
+                break;
+
+            case 3:
+                if (hasRequiredValues(card_headers, format, false)) card_datas = importer->cardDatas(format);
+                break;
+            }
+        }
+    }
+
     // 找不到预设文件头信息
     if (box_datas.size() == 0 || carton_datas.size() == 0) {
         return false;
@@ -253,18 +274,5 @@ void OrderMysqlDao::init() {
                           "create_time VARCHAR(255) NOT NULL"
                           ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
         db_->execute(sql);
-    }
-}
-
-bool OrderMysqlDao::hasRequiredValues(const std::vector<std::string> &headers, const std::shared_ptr<Format> &format) {
-    std::unordered_set<std::string> headerSet(headers.begin(), headers.end());
-
-    bool result = headerSet.count(format->box_number) && headerSet.count(format->start_number) && headerSet.count(format->end_number) &&
-        headerSet.count(format->quantity);
-
-    if (format->barcode != "") {
-        return result && headerSet.count(format->barcode);
-    } else {
-        return true;
     }
 }

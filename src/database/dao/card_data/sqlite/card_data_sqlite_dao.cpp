@@ -16,11 +16,11 @@ CardDataSqliteDao::CardDataSqliteDao(const std::shared_ptr<SQLite::Database> &db
 
 CardDataSqliteDao::~CardDataSqliteDao() {}
 
-bool CardDataSqliteDao::batchAdd(const std::vector<std::shared_ptr<CardData>> &card_datas) {
+bool CardDataSqliteDao::batchAdd(const std::vector<std::shared_ptr<CardData>> &card_datas, const size_t batch_size) {
     try {
         SQLite::Transaction transaction(*db_);
         SQLite::Statement   query(
-            *db_, "INSERT INTO card_data.[" + order_name_ + "] (card_number,iccid, imsi, quantity, iccid_barcode, imsi_barcode) VALUES (?,?,?,?,?,?)");
+            *db_, "INSERT INTO card_data.[" + order_name_ + "] (card_number, iccid, imsi, quantity, iccid_barcode, imsi_barcode) VALUES (?,?,?,?,?,?)");
         for (const std::shared_ptr<CardData> &card_data : card_datas) {
             query.bind(1, card_data->card_number);
             query.bind(2, card_data->iccid);

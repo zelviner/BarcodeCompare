@@ -13,7 +13,7 @@ class BoxDataSqliteDao : public BoxDataDao {
     ~BoxDataSqliteDao();
 
     /// @brief Batch insert new box datas into the database.
-    bool batchAdd(const std::vector<std::shared_ptr<BoxData>> &box_datas) override;
+    bool batchAdd(const std::vector<std::shared_ptr<BoxData>> &box_datas, const size_t batch_size = 20000) override;
 
     /// @brief Get all box datas from the database.
     std::vector<std::shared_ptr<BoxData>> all(Type type = BOX, const int &status = -1) override;
