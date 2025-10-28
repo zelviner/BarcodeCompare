@@ -23,6 +23,8 @@ bool BoxDataMysqlDao::batchAdd(const std::vector<std::shared_ptr<BoxData>> &box_
         row["start_barcode"] = box_data->start_barcode;
         row["end_barcode"]   = box_data->end_barcode;
         row["status"]        = box_data->status;
+        row["card_status"]   = box_data->card_status;
+        row["carton_status"] = box_data->carton_status;
 
         rows.push_back(row);
     }
@@ -33,14 +35,26 @@ bool BoxDataMysqlDao::batchAdd(const std::vector<std::shared_ptr<BoxData>> &box_
     return true;
 }
 
-std::vector<std::shared_ptr<BoxData>> BoxDataMysqlDao::all(const int &status) {
+std::vector<std::shared_ptr<BoxData>> BoxDataMysqlDao::all(Type type, const int &status) {
     std::vector<std::shared_ptr<BoxData>> box_datas;
 
     std::vector<BoxTables> box_tables_all;
     if (status == -1) {
         box_tables_all = BoxTables(*db_, order_name_, "id").all();
     } else {
-        box_tables_all = BoxTables(*db_, order_name_, "id").where("status", status).all();
+        switch (type) {
+        case Type::CARD:
+            box_tables_all = BoxTables(*db_, order_name_, "id").where("card_status", status).all();
+            break;
+
+        case Type::BOX:
+            box_tables_all = BoxTables(*db_, order_name_, "id").where("status", status).all();
+            break;
+
+        case Type::CARTON:
+            box_tables_all = BoxTables(*db_, order_name_, "id").where("carton_status", status).all();
+            break;
+        }
     }
 
     for (auto one : box_tables_all) {
@@ -54,6 +68,8 @@ std::vector<std::shared_ptr<BoxData>> BoxDataMysqlDao::all(const int &status) {
         box_data->start_barcode = one("start_barcode").asString();
         box_data->end_barcode   = one("end_barcode").asString();
         box_data->status        = one("status").asInt();
+        box_data->card_status   = one("card_status").asInt();
+        box_data->carton_status = one("carton_status").asInt();
 
         box_datas.push_back(box_data);
     }
@@ -77,6 +93,8 @@ std::vector<std::shared_ptr<BoxData>> BoxDataMysqlDao::all(const std::string &st
         box_data->start_barcode = one("start_barcode").asString();
         box_data->end_barcode   = one("end_barcode").asString();
         box_data->status        = one("status").asInt();
+        box_data->card_status   = one("card_status").asInt();
+        box_data->carton_status = one("carton_status").asInt();
 
         box_datas.push_back(box_data);
     }
@@ -84,9 +102,22 @@ std::vector<std::shared_ptr<BoxData>> BoxDataMysqlDao::all(const std::string &st
     return box_datas;
 }
 
-bool BoxDataMysqlDao::scanned(const std::string &start_barcode) {
-    auto box_data    = get(start_barcode);
-    box_data->status = 1;
+bool BoxDataMysqlDao::scanned(Type type, const std::string &start_barcode) {
+    auto box_data = get(start_barcode);
+    switch (type) {
+    case Type::CARD:
+        box_data->card_status = 1;
+        break;
+
+    case Type::BOX:
+        box_data->status = 1;
+        break;
+
+    case Type::CARTON:
+        box_data->carton_status = 1;
+        break;
+    }
+
     return update(box_data->id, box_data);
 }
 
@@ -102,6 +133,8 @@ std::shared_ptr<BoxData> BoxDataMysqlDao::get(const std::string &start_barcode) 
     box_data->start_barcode = box_table("start_barcode").asString();
     box_data->end_barcode   = box_table("end_barcode").asString();
     box_data->status        = box_table("status").asInt();
+    box_data->card_status   = box_table("card_status").asInt();
+    box_data->carton_status = box_table("carton_status").asInt();
 
     if (box_data->id == 0) {
         return nullptr;
@@ -113,14 +146,18 @@ std::shared_ptr<BoxData> BoxDataMysqlDao::get(const std::string &start_barcode) 
 bool BoxDataMysqlDao::update(const int &id, std::shared_ptr<BoxData> &box_data) {
     BoxTables(*db_, order_name_, "id")
         .where("id", id)
-        .update({{"filename", box_data->filename},
-                 {"box_number", box_data->box_number},
-                 {"start_number", box_data->start_number},
-                 {"end_number", box_data->end_number},
-                 {"quantity", box_data->quantity},
-                 {"start_barcode", box_data->start_barcode},
-                 {"end_barcode", box_data->end_barcode},
-                 {"status", box_data->status}});
+        .update({
+            {"filename", box_data->filename},
+            {"box_number", box_data->box_number},
+            {"start_number", box_data->start_number},
+            {"end_number", box_data->end_number},
+            {"quantity", box_data->quantity},
+            {"start_barcode", box_data->start_barcode},
+            {"end_barcode", box_data->end_barcode},
+            {"status", box_data->status},
+            {"card_status", box_data->card_status},
+            {"carton_status", box_data->carton_status},
+        });
 
     return true;
 }
@@ -161,7 +198,9 @@ void BoxDataMysqlDao::init() {
             "quantity INT NOT NULL,"
             "start_barcode VARCHAR(255) NOT NULL,"
             "end_barcode VARCHAR(255) NOT NULL,"
-            "status INT NOT NULL DEFAULT 0"
+            "status INT NOT NULL DEFAULT 0,"
+            "card_status INT NOT NULL DEFAULT 0,"
+            "carton_status INT NOT NULL DEFAULT 0"
             ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
 
         db_->execute(sql);

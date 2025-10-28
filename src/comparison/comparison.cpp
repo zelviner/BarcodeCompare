@@ -94,7 +94,8 @@ int Comparison::card(const std::shared_ptr<CardInfo> &card_info, int &card_widge
     bool found      = false;
     auto card_datas = card_data_dao_->all(box_data->start_number, box_data->end_number);
     for (auto card_data : card_datas) {
-        if (QString::fromStdString(card_data->iccid_barcode) == card_barcode && QString::fromStdString(card_data->iccid_barcode) == label_barcode) {
+        auto iccid_barcode = trim_card_barcode(QString::fromStdString(card_data->iccid_barcode));
+        if (iccid_barcode == card_barcode && iccid_barcode == label_barcode) {
             found          = true;
             card_widget_id = card_data->id;
             break;

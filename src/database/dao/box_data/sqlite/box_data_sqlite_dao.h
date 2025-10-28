@@ -16,11 +16,11 @@ class BoxDataSqliteDao : public BoxDataDao {
     bool batchAdd(const std::vector<std::shared_ptr<BoxData>> &box_datas) override;
 
     /// @brief Get all box datas from the database.
-    std::vector<std::shared_ptr<BoxData>> all(const int &status = -1) override;
+    std::vector<std::shared_ptr<BoxData>> all(Type type = BOX, const int &status = -1) override;
     std::vector<std::shared_ptr<BoxData>> all(const std::string &start_number, const std::string &end_number) override;
 
     /// @brief Set the status of the box data to 1 when it is scanned.
-    bool scanned(const std::string &start_barcode) override;
+    bool scanned(Type type, const std::string &start_barcode) override;
 
     /// @brief Get box data from the database by start barcode.
     std::shared_ptr<BoxData> get(const std::string &start_barcode) override;

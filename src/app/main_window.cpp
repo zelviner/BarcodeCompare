@@ -176,7 +176,7 @@ void MainWindow::compareBox() {
         log_msg.sprintf("用户[%s] 内盒起始条码[%s] 内盒结束条码[%s] 首卡条码[%s] 尾卡条码[%s], 扫描成功", user_dao_->currentUser()->name.c_str(),
                         box_info->box_start_barcode.toStdString().c_str(), box_info->box_end_barcode.toStdString().c_str(),
                         box_info->card_start_barcode.toStdString().c_str(), box_info->card_end_barcode.toStdString().c_str());
-        box_data_dao->scanned(box_info->box_start_barcode.toStdString());
+        box_data_dao->scanned(BoxDataDao::Type::BOX, box_info->box_start_barcode.toStdString());
 
         refreshBoxTable(order_dao_->currentOrder()->name, ui_->box_datas_status_comb_box->currentIndex() - 1);
         scroll_to_value(ui_->box_table, ui_->box_start_line->text(), false);
@@ -267,7 +267,7 @@ void MainWindow::refreshBoxTable(const std::string &order_name, const int &statu
     if (status == -1) {
         box_datas = box_data_dao->all();
     } else {
-        box_datas = box_data_dao->all(status);
+        box_datas = box_data_dao->all(BoxDataDao::Type::BOX, status);
     }
 
     ui_->box_table->setRowCount(box_datas.size());
@@ -726,7 +726,6 @@ void MainWindow::compareCard() {
     card_info->label_barcode            = ui_->card_label_line->text();
 
     QString error, log_msg;
-    bool    is_end         = false;
     auto    box_data_dao   = BoxDataDaoFactory::create(sqlite_db_, mysql_db_, order_dao_->currentOrder()->name);
     auto    card_data_dao  = CardDataDaoFactory::create(sqlite_db_, mysql_db_, order_dao_->currentOrder()->name);
     auto    comparison     = std::make_shared<Comparison>(order_dao_->currentOrder(), box_data_dao, nullptr, card_data_dao);
@@ -740,18 +739,19 @@ void MainWindow::compareCard() {
         }
     }
 
+    bool is_end = false;
     if (result == 0) {
         log_msg.sprintf("用户[%s] 内盒起始条码[%s] 卡片条码[%s] 标签条码[%s], 扫描成功", user_dao_->currentUser()->name.c_str(),
                         card_info->box_start_barcode.toStdString().c_str(), card_info->card_barcode.toStdString().c_str(),
                         card_info->label_barcode.toStdString().c_str());
         card_data_dao->scanned(card_info->card_barcode.toStdString());
-        box_widgets_.front()->scanned();
+        card_widgets_.front()->scanned();
 
-        box_widgets_.pop();
-        if (box_widgets_.empty()) {
+        card_widgets_.pop();
+        if (card_widgets_.empty()) {
             is_end = true;
         } else {
-            box_widgets_.front()->pending();
+            card_widgets_.front()->pending();
         }
     } else {
         switch (result) {
@@ -784,7 +784,7 @@ void MainWindow::compareCard() {
     }
 
     if (is_end) {
-        box_data_dao->scanned(card_info->box_start_barcode.toStdString());
+        box_data_dao->scanned(BoxDataDao::Type::CARD, card_info->box_start_barcode.toStdString());
         refreshCardTable(order_dao_->currentOrder()->name, ui_->card_datas_status_comb_box->currentIndex() - 1);
         scroll_to_value(ui_->card_table, ui_->card_box_start_line->text(), false);
 
@@ -793,12 +793,12 @@ void MainWindow::compareCard() {
         ui_->card_label_line->clear();
 
         ui_->card_box_start_line->setEnabled(true);
-        ui_->card_line->setEnabled(true);
 
         ui_->card_box_start_line->setFocus();
     } else {
+        ui_->card_line->clear();
         ui_->card_label_line->clear();
-        ui_->card_label_line->setFocus();
+        ui_->card_line->setFocus();
     }
 }
 
@@ -847,7 +847,7 @@ void MainWindow::refreshCardTable(const std::string &order_name, const int &stat
     if (status == -1) {
         box_datas = box_data_dao->all();
     } else {
-        box_datas = box_data_dao->all(status);
+        box_datas = box_data_dao->all(BoxDataDao::Type::CARD, status);
     }
 
     ui_->card_table->setRowCount(box_datas.size());
@@ -857,7 +857,7 @@ void MainWindow::refreshCardTable(const std::string &order_name, const int &stat
         auto item1 = new QTableWidgetItem(QString::fromStdString(box_datas[i]->end_barcode));
 
         if (status == -1) {
-            if (box_datas[i]->status == 1) {
+            if (box_datas[i]->card_status == 1) {
                 QBrush greenBrush(QColor(144, 238, 144)); // 淡绿色
                 item0->setBackground(greenBrush);
                 item1->setBackground(greenBrush);
@@ -903,15 +903,15 @@ void MainWindow::refreshCardCompareGroup(const int &cols, const std::string &sel
         int col = i % cols;
         layout->addWidget(card, row, col, Qt::AlignCenter);
 
-        if (i == 0) {
-            card->pending();
-        }
-
-        if (box_data->status) {
+        if (card_datas[i]->status) {
             card->scanned();
+        } else {
+            card_widgets_.push(card);
         }
+    }
 
-        card_widgets_.push(card);
+    if (!card_widgets_.empty()) {
+        card_widgets_.front()->pending();
     }
 }
 

@@ -6,6 +6,7 @@
 #include <iostream>
 #include <memory>
 #include <vector>
+#include <zel/utility/logger.h>
 
 CardDataSqliteDao::CardDataSqliteDao(const std::shared_ptr<SQLite::Database> &db, const std::string &order_name)
     : db_(db)
@@ -104,7 +105,7 @@ bool CardDataSqliteDao::scanned(const std::string &start_barcode) {
 }
 
 std::shared_ptr<CardData> CardDataSqliteDao::get(const std::string &start_barcode) {
-    std::string       sql = "SELECT * FROM card_data.[" + order_name_ + "] WHERE start_barcode = ?";
+    std::string       sql = "SELECT * FROM card_data.[" + order_name_ + "] WHERE iccid_barcode = ?";
     SQLite::Statement get(*db_, sql);
     get.bind(1, start_barcode);
 
@@ -128,8 +129,7 @@ std::shared_ptr<CardData> CardDataSqliteDao::get(const std::string &start_barcod
 bool CardDataSqliteDao::update(const int &id, std::shared_ptr<CardData> &card_data) {
     try {
         std::string sql = "UPDATE card_data.[" + order_name_ +
-            "] SET iccid = ?, imsi = ?,  quantity = ?, iccid_barcode = ?, imsi_barcode = ?, status = ? WHERE id = "
-            "?";
+            "] SET card_number = ?, iccid = ?, imsi = ?,  quantity = ?, iccid_barcode = ?, imsi_barcode = ?, status = ? WHERE id = ?";
         SQLite::Statement update(*db_, sql);
         update.bind(1, card_data->card_number);
         update.bind(2, card_data->iccid);
@@ -142,7 +142,7 @@ bool CardDataSqliteDao::update(const int &id, std::shared_ptr<CardData> &card_da
 
         return update.exec();
     } catch (std::exception &e) {
-        std::cerr << "Update card data failed: " << e.what() << std::endl;
+        log_error("Update card data failed: %s", e.what());
         return false;
     }
 

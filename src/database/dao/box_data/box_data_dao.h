@@ -7,17 +7,23 @@
 #include <vector>
 
 class BoxDataDao {
+  public:
+    enum Type {
+        CARD = 0,
+        BOX,
+        CARTON,
+    };
 
   public:
     /// @brief Batch insert new box datas into the database.
     virtual bool batchAdd(const std::vector<std::shared_ptr<BoxData>> &box_datas) = 0;
 
     /// @brief Get all box datas from the database.
-    virtual std::vector<std::shared_ptr<BoxData>> all(const int &status = -1)                                         = 0;
+    virtual std::vector<std::shared_ptr<BoxData>> all(Type type = BOX, const int &status = -1)                        = 0;
     virtual std::vector<std::shared_ptr<BoxData>> all(const std::string &start_number, const std::string &end_number) = 0;
 
     /// @brief Set the status of the box data to 1 when it is scanned.
-    virtual bool scanned(const std::string &start_barcode) = 0;
+    virtual bool scanned(Type type, const std::string &start_barcode) = 0;
 
     /// @brief Get box data from the database by start barcode.
     virtual std::shared_ptr<BoxData> get(const std::string &start_barcode) = 0;

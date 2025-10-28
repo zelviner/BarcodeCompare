@@ -1,7 +1,7 @@
 .cache
 .svn
+.vscode
 build
 bin
 lib
 cgear.json
-.vscode
