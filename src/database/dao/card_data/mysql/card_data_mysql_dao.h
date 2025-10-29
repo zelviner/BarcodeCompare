@@ -21,6 +21,9 @@ class CardDataMysqlDao : public CardDataDao {
     /// @brief Set the status of the card data to 1 when it is scanned.
     bool scanned(const std::string &iccid_barcode) override;
 
+    /// @brief Set the status of the card data to 0 when it is rescanned.
+    bool rescanned(const std::string &start_barcode, const std::string &end_barcode) override;
+
     /// @brief Get card data from the database by iccid barcode.
     std::shared_ptr<CardData> get(const std::string &iccid_barcode) override;
 

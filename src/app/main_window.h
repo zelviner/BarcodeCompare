@@ -52,6 +52,7 @@ class MainWindow : public QMainWindow {
 
     /// @brief 卡片比对 Tab
     void cardSelectOrder();                                                                       // 卡片选择订单
+    void cardResccenedBtnClicked();                                                               // 重新扫描按钮点击
     void showSelectedCard();                                                                      // 显示选中卡片
     void selectCardDatasStatus();                                                                 // 选择卡片数据状态
     void toCardBarcode();                                                                         // 获取卡片条码

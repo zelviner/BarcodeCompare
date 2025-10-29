@@ -661,6 +661,38 @@ void MainWindow::cardSelectOrder() {
     ui_->card_box_start_line->setEnabled(true);
     ui_->card_line->setEnabled(true);
     ui_->card_label_line->setEnabled(true);
+    ui_->card_rescanned_btn->setEnabled(true);
+
+    ui_->card_box_start_line->setFocus();
+}
+
+void MainWindow::cardResccenedBtnClicked() {
+    std::string box_barcode = ui_->card_box_start_line->text().toStdString();
+    if (box_barcode.empty()) {
+        QMessageBox::warning(this, tr("提示"), tr("请输入内盒起始条码!"));
+        return;
+    }
+
+    auto box_data_dao = BoxDataDaoFactory::create(sqlite_db_, mysql_db_, order_dao_->currentOrder()->name);
+    auto box_data     = box_data_dao->get(box_barcode);
+    if (!box_data) {
+        QMessageBox::warning(this, tr("提示"), tr("内盒起始条码不在该订单范围内, 请核对!"));
+        return;
+    }
+    box_data_dao->rescanned(BoxDataDao::CARD, box_barcode);
+
+    auto card_data_dao = CardDataDaoFactory::create(sqlite_db_, mysql_db_, order_dao_->currentOrder()->name);
+    card_data_dao->rescanned(box_data->start_barcode, box_data->end_barcode);
+
+    refreshCardTable(order_dao_->currentOrder()->name, ui_->card_datas_status_comb_box->currentIndex() - 1);
+    scroll_to_value(ui_->card_table, ui_->card_box_start_line->text(), true);
+    refreshCardCompareGroup(20, box_barcode);
+
+    ui_->card_box_start_line->clear();
+    ui_->card_line->clear();
+    ui_->card_label_line->clear();
+
+    ui_->card_box_start_line->setEnabled(true);
 
     ui_->card_box_start_line->setFocus();
 }
@@ -823,6 +855,7 @@ void MainWindow::refreshCardTab() {
     ui_->card_box_start_line->setEnabled(false);
     ui_->card_line->setEnabled(false);
     ui_->card_label_line->setEnabled(false);
+    ui_->card_rescanned_btn->setEnabled(false);
 
     // 设置订单号下拉框内容
     for (auto &order : order_dao_->all()) {
@@ -854,7 +887,7 @@ void MainWindow::refreshCardTable(const std::string &order_name, const int &stat
     for (int i = 0; i < int(box_datas.size()); i++) {
         // 创建 item
         auto item0 = new QTableWidgetItem(QString::fromStdString(box_datas[i]->start_barcode));
-        auto item1 = new QTableWidgetItem(QString::fromStdString(box_datas[i]->end_barcode));
+        auto item1 = new QTableWidgetItem(QString::number(box_datas[i]->quantity));
 
         if (status == -1) {
             if (box_datas[i]->card_status == 1) {
@@ -1416,7 +1449,7 @@ void MainWindow::init_card_tab() {
     ui_->card_datas_status_comb_box->lineEdit()->setAlignment(Qt::AlignCenter);
     ui_->card_datas_status_comb_box->lineEdit()->setReadOnly(true);
 
-    QStringList card_header = {tr("内盒起始条码"), tr("内盒结束条码")};
+    QStringList card_header = {tr("内盒起始条码"), tr("卡片数量")};
     init_table(ui_->card_table, card_header, card_header.size());
 }
 
@@ -1548,6 +1581,7 @@ void MainWindow::init_signals_slots() {
 
     // 卡片比对 Tab
     connect(ui_->card_order_name_combo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &MainWindow::cardSelectOrder);
+    connect(ui_->card_rescanned_btn, &QPushButton::clicked, this, &MainWindow::cardResccenedBtnClicked);
     connect(ui_->card_table, &QTableWidget::itemSelectionChanged, this, &MainWindow::showSelectedCard);
     connect(ui_->card_datas_status_comb_box, &QComboBox::currentTextChanged, this, &MainWindow::selectCardDatasStatus);
     connect(ui_->card_box_start_line, &QLineEdit::returnPressed, this, &MainWindow::toCardBarcode);

@@ -94,6 +94,17 @@ bool CardDataMysqlDao::scanned(const std::string &start_barcode) {
     return update(card_data->id, card_data);
 }
 
+bool CardDataMysqlDao::rescanned(const std::string &start_barcode, const std::string &end_barcode) {
+    CardTables(*db_, order_name_, "id")
+        .where("iccid_barcode", ">=", start_barcode)
+        .where("iccid_barcode", "<=", end_barcode)
+        .update({
+            {"status", 0},
+        });
+
+    return true;
+}
+
 std::shared_ptr<CardData> CardDataMysqlDao::get(const std::string &start_barcode) {
     CardTables card_table    = CardTables(*db_, order_name_, "id").where("iccid_barcode", start_barcode).one();
     auto       card_data     = std::make_shared<CardData>();

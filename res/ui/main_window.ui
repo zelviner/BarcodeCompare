@@ -757,9 +757,9 @@
           <attribute name="title">
            <string>卡片比对</string>
           </attribute>
-          <layout class="QVBoxLayout" name="verticalLayout_22">
+          <layout class="QVBoxLayout" name="verticalLayout_11">
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_62" stretch="2,3">
+            <layout class="QHBoxLayout" name="horizontalLayout_39" stretch="2,3">
              <item>
               <widget class="QGroupBox" name="groupBox_21">
                <property name="font">
@@ -921,9 +921,9 @@
                <property name="title">
                 <string>比对</string>
                </property>
-               <layout class="QVBoxLayout" name="verticalLayout_21">
+               <layout class="QVBoxLayout" name="verticalLayout_10">
                 <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_66" stretch="0,2,3">
+                 <layout class="QHBoxLayout" name="horizontalLayout_36" stretch="0,10,0">
                   <item>
                    <spacer name="horizontalSpacer_31">
                     <property name="orientation">
@@ -938,37 +938,57 @@
                    </spacer>
                   </item>
                   <item>
-                   <widget class="QLabel" name="label_50">
+                   <layout class="QHBoxLayout" name="horizontalLayout_33" stretch="3,7">
+                    <item>
+                     <widget class="QLabel" name="label_50">
+                      <property name="font">
+                       <font>
+                        <family>微软雅黑</family>
+                        <pointsize>16</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>内盒起始条码：</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QLineEdit" name="card_box_start_line">
+                      <property name="font">
+                       <font>
+                        <family>微软雅黑</family>
+                        <pointsize>12</pointsize>
+                        <weight>50</weight>
+                        <bold>false</bold>
+                       </font>
+                      </property>
+                      <property name="readOnly">
+                       <bool>false</bool>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="card_rescanned_btn">
+                    <property name="enabled">
+                     <bool>true</bool>
+                    </property>
                     <property name="font">
                      <font>
                       <family>微软雅黑</family>
-                      <pointsize>16</pointsize>
+                      <pointsize>10</pointsize>
                      </font>
                     </property>
                     <property name="text">
-                     <string>内盒起始条码：</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QLineEdit" name="card_box_start_line">
-                    <property name="font">
-                     <font>
-                      <family>微软雅黑</family>
-                      <pointsize>12</pointsize>
-                      <weight>50</weight>
-                      <bold>false</bold>
-                     </font>
-                    </property>
-                    <property name="readOnly">
-                     <bool>false</bool>
+                     <string>重扫</string>
                     </property>
                    </widget>
                   </item>
                  </layout>
                 </item>
                 <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_67" stretch="0,2,3">
+                 <layout class="QHBoxLayout" name="horizontalLayout_37" stretch="0,7,1">
                   <item>
                    <spacer name="horizontalSpacer_32">
                     <property name="orientation">
@@ -983,37 +1003,54 @@
                    </spacer>
                   </item>
                   <item>
-                   <widget class="QLabel" name="label_51">
-                    <property name="font">
-                     <font>
-                      <family>微软雅黑</family>
-                      <pointsize>16</pointsize>
-                     </font>
-                    </property>
-                    <property name="text">
-                     <string>卡片条码：</string>
-                    </property>
-                   </widget>
+                   <layout class="QHBoxLayout" name="horizontalLayout_34" stretch="3,7">
+                    <item>
+                     <widget class="QLabel" name="label_51">
+                      <property name="font">
+                       <font>
+                        <family>微软雅黑</family>
+                        <pointsize>16</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>卡片条码：</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QLineEdit" name="card_line">
+                      <property name="font">
+                       <font>
+                        <family>微软雅黑</family>
+                        <pointsize>12</pointsize>
+                        <weight>50</weight>
+                        <bold>false</bold>
+                       </font>
+                      </property>
+                      <property name="readOnly">
+                       <bool>false</bool>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
                   </item>
                   <item>
-                   <widget class="QLineEdit" name="card_line">
-                    <property name="font">
-                     <font>
-                      <family>微软雅黑</family>
-                      <pointsize>12</pointsize>
-                      <weight>50</weight>
-                      <bold>false</bold>
-                     </font>
+                   <spacer name="horizontalSpacer">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
                     </property>
-                    <property name="readOnly">
-                     <bool>false</bool>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
                     </property>
-                   </widget>
+                   </spacer>
                   </item>
                  </layout>
                 </item>
                 <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_68" stretch="0,2,3">
+                 <layout class="QHBoxLayout" name="horizontalLayout_38" stretch="0,7,1">
                   <item>
                    <spacer name="horizontalSpacer_33">
                     <property name="orientation">
@@ -1028,32 +1065,49 @@
                    </spacer>
                   </item>
                   <item>
-                   <widget class="QLabel" name="label_52">
-                    <property name="font">
-                     <font>
-                      <family>微软雅黑</family>
-                      <pointsize>16</pointsize>
-                     </font>
-                    </property>
-                    <property name="text">
-                     <string>标签条码：</string>
-                    </property>
-                   </widget>
+                   <layout class="QHBoxLayout" name="horizontalLayout_35" stretch="3,7">
+                    <item>
+                     <widget class="QLabel" name="label_52">
+                      <property name="font">
+                       <font>
+                        <family>微软雅黑</family>
+                        <pointsize>16</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>标签条码：</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QLineEdit" name="card_label_line">
+                      <property name="font">
+                       <font>
+                        <family>微软雅黑</family>
+                        <pointsize>12</pointsize>
+                        <weight>50</weight>
+                        <bold>false</bold>
+                       </font>
+                      </property>
+                      <property name="readOnly">
+                       <bool>false</bool>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
                   </item>
                   <item>
-                   <widget class="QLineEdit" name="card_label_line">
-                    <property name="font">
-                     <font>
-                      <family>微软雅黑</family>
-                      <pointsize>12</pointsize>
-                      <weight>50</weight>
-                      <bold>false</bold>
-                     </font>
+                   <spacer name="horizontalSpacer_9">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
                     </property>
-                    <property name="readOnly">
-                     <bool>false</bool>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
                     </property>
-                   </widget>
+                   </spacer>
                   </item>
                  </layout>
                 </item>
@@ -1063,7 +1117,7 @@
             </layout>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_69" stretch="5,5">
+            <layout class="QHBoxLayout" name="horizontalLayout_69" stretch="5,7">
              <item>
               <widget class="QGroupBox" name="groupBox_23">
                <property name="title">
@@ -1490,7 +1544,7 @@
                      </font>
                     </property>
                     <property name="placeholderText">
-                     <string>可选项：手工包装</string>
+                     <string>可选项</string>
                     </property>
                    </widget>
                   </item>

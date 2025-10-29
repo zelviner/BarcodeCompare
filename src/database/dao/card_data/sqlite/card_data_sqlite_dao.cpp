@@ -102,6 +102,15 @@ bool CardDataSqliteDao::scanned(const std::string &start_barcode) {
     return update(card_data->id, card_data);
 }
 
+bool CardDataSqliteDao::rescanned(const std::string &start_barcode, const std::string &end_barcode) {
+    std::string       sql = "UPDATE card_data.[" + order_name_ + "] SET status = 0 WHERE iccid_barcode >= ? AND iccid_barcode <= ?";
+    SQLite::Statement update(*db_, sql);
+    update.bind(1, start_barcode);
+    update.bind(2, end_barcode);
+
+    return update.exec();
+}
+
 std::shared_ptr<CardData> CardDataSqliteDao::get(const std::string &start_barcode) {
     std::string       sql = "SELECT * FROM card_data.[" + order_name_ + "] WHERE iccid_barcode = ?";
     SQLite::Statement get(*db_, sql);

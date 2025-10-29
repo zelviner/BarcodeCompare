@@ -22,6 +22,9 @@ class BoxDataMysqlDao : public BoxDataDao {
     /// @brief Set the status of the box data to 1 when it is scanned.
     bool scanned(Type type, const std::string &start_barcode) override;
 
+    /// @brief Set the status of the box data to 0 when it is rescanned.
+    bool rescanned(Type type, const std::string &start_barcode) override;
+
     /// @brief Get box data from the database by start barcode.
     std::shared_ptr<BoxData> get(const std::string &start_barcode) override;
 

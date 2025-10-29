@@ -25,6 +25,9 @@ class BoxDataDao {
     /// @brief Set the status of the box data to 1 when it is scanned.
     virtual bool scanned(Type type, const std::string &start_barcode) = 0;
 
+    /// @brief Set the status of the box data to 0 when it is rescanned.
+    virtual bool rescanned(Type type, const std::string &start_barcode) = 0;
+
     /// @brief Get box data from the database by start barcode.
     virtual std::shared_ptr<BoxData> get(const std::string &start_barcode) = 0;
 
