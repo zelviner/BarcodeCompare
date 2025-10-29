@@ -148,5 +148,5 @@ QString Comparison::trim_barcode(const QString &barcode, int start, int end) {
         return QString();
     }
 
-    return barcode.mid(start, end - start);
+    return barcode.mid(start, end - start).toUpper();
 }
