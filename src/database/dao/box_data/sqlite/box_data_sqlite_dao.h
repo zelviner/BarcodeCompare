@@ -10,7 +10,7 @@ class BoxDataSqliteDao : public BoxDataDao {
 
   public:
     BoxDataSqliteDao(const std::shared_ptr<SQLite::Database> &db, const std::string &order_name);
-    ~BoxDataSqliteDao();
+    virtual ~BoxDataSqliteDao() = default;
 
     /// @brief Batch insert new box datas into the database.
     bool batchAdd(const std::vector<std::shared_ptr<BoxData>> &box_datas, const size_t batch_size = 20000) override;

@@ -11,6 +11,7 @@ class Csv : public Importer {
   public:
     // 继承父类构造函数
     using Importer::Importer;
+    virtual ~Csv() = default;
 
     /// @brief Get the header data of box.
     std::vector<std::string> boxHeaders() override;

@@ -10,7 +10,7 @@ class FormatSqliteDao : public FormatDao {
 
   public:
     FormatSqliteDao(const std::shared_ptr<SQLite::Database> &db);
-    ~FormatSqliteDao();
+    virtual ~FormatSqliteDao() = default;
 
     /// @brief Add a new role to the database
     bool add(const std::shared_ptr<Format> &role) override;

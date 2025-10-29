@@ -10,7 +10,7 @@ class RoleMysqlDao : public RoleDao {
 
   public:
     RoleMysqlDao(const std::shared_ptr<zel::myorm::Database> &db);
-    ~RoleMysqlDao();
+    virtual ~RoleMysqlDao() = default;
 
     /// @brief Add a new role to the database
     bool add(const std::shared_ptr<Role> &role) override;

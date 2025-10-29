@@ -9,8 +9,6 @@ FormatMysqlDao::FormatMysqlDao(const std::shared_ptr<zel::myorm::Database> &db)
     init();
 }
 
-FormatMysqlDao::~FormatMysqlDao() {}
-
 bool FormatMysqlDao::add(const std::shared_ptr<Format> &format) {
     auto formats            = Formats(*db_);
     formats["name"]         = format->name;

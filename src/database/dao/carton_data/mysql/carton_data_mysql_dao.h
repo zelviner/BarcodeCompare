@@ -9,7 +9,7 @@
 class CartonDataMysqlDao : public CartonDataDao {
   public:
     CartonDataMysqlDao(const std::string &order_name);
-    ~CartonDataMysqlDao();
+    virtual ~CartonDataMysqlDao() = default;
 
     /// @brief Batch insert new box datas into the database.
     bool batchAdd(const std::vector<std::shared_ptr<CartonData>> &carton_datas, const size_t batch_size = 20000) override;

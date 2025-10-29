@@ -9,7 +9,7 @@
 class ModeSqliteDao : public ModeDao {
   public:
     ModeSqliteDao(const std::shared_ptr<SQLite::Database> &db);
-    ~ModeSqliteDao();
+    virtual ~ModeSqliteDao() = default;
 
     /// @brief Add a new mode to the database.
     bool add(const std::shared_ptr<Mode> &mode);

@@ -16,8 +16,6 @@ OrderSqliteDao::OrderSqliteDao(const std::shared_ptr<SQLite::Database> &db)
     init();
 }
 
-OrderSqliteDao::~OrderSqliteDao() {}
-
 bool OrderSqliteDao::add(const std::shared_ptr<Order> &order) {
     size_t                    index          = order->box_file_path.rfind(".");
     std::string               file_extension = order->box_file_path.substr(index, order->box_file_path.size() - index);

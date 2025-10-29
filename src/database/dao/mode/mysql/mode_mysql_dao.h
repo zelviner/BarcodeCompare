@@ -9,7 +9,7 @@
 class ModeMysqlDao : public ModeDao {
   public:
     ModeMysqlDao(const std::shared_ptr<zel::myorm::Database> &db);
-    ~ModeMysqlDao();
+    virtual ~ModeMysqlDao() = default;
 
     /// @brief Add a new mode to the database.
     bool add(const std::shared_ptr<Mode> &mode);

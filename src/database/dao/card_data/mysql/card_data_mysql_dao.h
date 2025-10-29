@@ -9,7 +9,7 @@
 class CardDataMysqlDao : public CardDataDao {
   public:
     CardDataMysqlDao(const std::string &order_name);
-    ~CardDataMysqlDao();
+    virtual ~CardDataMysqlDao() = default;
 
     /// @brief Batch insert new box datas into the database.
     bool batchAdd(const std::vector<std::shared_ptr<CardData>> &card_datas, const size_t batch_size = 20000) override;

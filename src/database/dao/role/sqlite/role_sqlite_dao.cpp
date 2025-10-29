@@ -10,8 +10,6 @@ RoleSqliteDao::RoleSqliteDao(const std::shared_ptr<SQLite::Database> &db)
     init();
 }
 
-RoleSqliteDao::~RoleSqliteDao() {}
-
 bool RoleSqliteDao::add(const std::shared_ptr<Role> &role) {
     SQLite::Statement insert(*db_, "INSERT INTO roles (name, description) VALUES (?,?)");
     insert.bind(1, role->name);

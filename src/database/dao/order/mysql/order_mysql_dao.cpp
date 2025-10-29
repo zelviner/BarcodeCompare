@@ -8,15 +8,12 @@
 
 #include <cstddef>
 #include <memory>
-#include <unordered_set>
 #include <vector>
 
 OrderMysqlDao::OrderMysqlDao(const std::shared_ptr<zel::myorm::Database> &db)
     : db_(db) {
     init();
 }
-
-OrderMysqlDao::~OrderMysqlDao() {}
 
 bool OrderMysqlDao::add(const std::shared_ptr<Order> &order) {
     size_t                    index          = order->box_file_path.rfind(".");

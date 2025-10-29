@@ -9,8 +9,6 @@ ModeSqliteDao::ModeSqliteDao(const std::shared_ptr<SQLite::Database> &db)
     init();
 }
 
-ModeSqliteDao::~ModeSqliteDao() {}
-
 bool ModeSqliteDao::add(const std::shared_ptr<Mode> &mode) {
     std::string       sql = "INSERT INTO modes (name, description) VALUES (?,?)";
     SQLite::Statement add(*db_, sql);

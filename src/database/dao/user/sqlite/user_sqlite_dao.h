@@ -10,7 +10,7 @@ class UserSqliteDao : public UserDao {
 
   public:
     UserSqliteDao(const std::shared_ptr<SQLite::Database> &db);
-    ~UserSqliteDao();
+    virtual ~UserSqliteDao() = default;
 
     /// @brief Login with the entered name and password
     bool login(const std::string &entered_name, const std::string &entered_password) override;

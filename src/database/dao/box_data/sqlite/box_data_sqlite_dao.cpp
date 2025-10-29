@@ -12,7 +12,6 @@ BoxDataSqliteDao::BoxDataSqliteDao(const std::shared_ptr<SQLite::Database> &db, 
     , order_name_(order_name) {
     init();
 }
-BoxDataSqliteDao::~BoxDataSqliteDao() {}
 
 bool BoxDataSqliteDao::batchAdd(const std::vector<std::shared_ptr<BoxData>> &box_datas, const size_t batch_size) {
     try {

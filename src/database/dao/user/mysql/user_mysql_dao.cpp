@@ -9,8 +9,6 @@ UserMysqlDao::UserMysqlDao(const std::shared_ptr<zel::myorm::Database> &db)
     init();
 }
 
-UserMysqlDao::~UserMysqlDao() {}
-
 bool UserMysqlDao::login(const std::string &entered_name, const std::string &entered_password) {
     for (auto &user : all()) {
         if (user->name == entered_name && user->password == entered_password) {

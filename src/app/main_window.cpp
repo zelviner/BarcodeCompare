@@ -173,9 +173,9 @@ void MainWindow::compareBox() {
     int result = comparison.box(box_info);
 
     if (result == 0) {
-        log_msg.sprintf("用户[%s] 内盒起始条码[%s] 内盒结束条码[%s] 首卡条码[%s] 尾卡条码[%s], 扫描成功", user_dao_->currentUser()->name.c_str(),
-                        box_info->box_start_barcode.toStdString().c_str(), box_info->box_end_barcode.toStdString().c_str(),
-                        box_info->card_start_barcode.toStdString().c_str(), box_info->card_end_barcode.toStdString().c_str());
+        log_msg.asprintf("用户[%s] 内盒起始条码[%s] 内盒结束条码[%s] 首卡条码[%s] 尾卡条码[%s], 扫描成功", user_dao_->currentUser()->name.c_str(),
+                         box_info->box_start_barcode.toStdString().c_str(), box_info->box_end_barcode.toStdString().c_str(),
+                         box_info->card_start_barcode.toStdString().c_str(), box_info->card_end_barcode.toStdString().c_str());
         box_data_dao->scanned(BoxDataDao::Type::BOX, box_info->box_start_barcode.toStdString());
 
         refreshBoxTable(order_dao_->currentOrder()->name, ui_->box_datas_status_comb_box->currentIndex() - 1);
@@ -204,9 +204,9 @@ void MainWindow::compareBox() {
         }
         }
 
-        log_msg.sprintf("用户[%s] 内盒起始条码[%s] 内盒结束条码[%s] 首卡条码[%s] 尾卡条码[%s], 扫描失败，失败原因[%s]", user_dao_->currentUser()->name.c_str(),
-                        box_info->box_start_barcode.toStdString().c_str(), box_info->box_end_barcode.toStdString().c_str(),
-                        box_info->card_start_barcode.toStdString().c_str(), box_info->card_end_barcode.toStdString().c_str(), error.toStdString().c_str());
+        log_msg.asprintf("用户[%s] 内盒起始条码[%s] 内盒结束条码[%s] 首卡条码[%s] 尾卡条码[%s], 扫描失败，失败原因[%s]", user_dao_->currentUser()->name.c_str(),
+                         box_info->box_start_barcode.toStdString().c_str(), box_info->box_end_barcode.toStdString().c_str(),
+                         box_info->card_start_barcode.toStdString().c_str(), box_info->card_end_barcode.toStdString().c_str(), error.toStdString().c_str());
 
         QMessageBox::warning(this, tr("提示"), tr("比对失败: ") + error);
     }
@@ -456,9 +456,9 @@ void MainWindow::compareCarton() {
     }
 
     if (result == 0) {
-        log_msg.sprintf("用户[%s] 外箱起始条码[%s] 外箱结束条码[%s] 内盒起始或结束条码[%s], 扫描成功", user_dao_->currentUser()->name.c_str(),
-                        carton_info->carton_start_barcode.toStdString().c_str(), carton_info->carton_end_barcode.toStdString().c_str(),
-                        carton_info->target_barcode.toStdString().c_str());
+        log_msg.asprintf("用户[%s] 外箱起始条码[%s] 外箱结束条码[%s] 内盒起始或结束条码[%s], 扫描成功", user_dao_->currentUser()->name.c_str(),
+                         carton_info->carton_start_barcode.toStdString().c_str(), carton_info->carton_end_barcode.toStdString().c_str(),
+                         carton_info->target_barcode.toStdString().c_str());
         box_widgets_.front()->scanned();
 
         box_widgets_.pop();
@@ -491,9 +491,9 @@ void MainWindow::compareCarton() {
         }
         }
 
-        log_msg.sprintf("用户[%s] 外箱起始条码[%s] 外箱结束条码[%s] 内盒起始或结束条码[%s], 扫描失败，失败原因[%s]", user_dao_->currentUser()->name.c_str(),
-                        carton_info->carton_start_barcode.toStdString().c_str(), carton_info->carton_end_barcode.toStdString().c_str(),
-                        carton_info->target_barcode.toStdString().c_str(), error.toStdString().c_str());
+        log_msg.asprintf("用户[%s] 外箱起始条码[%s] 外箱结束条码[%s] 内盒起始或结束条码[%s], 扫描失败，失败原因[%s]", user_dao_->currentUser()->name.c_str(),
+                         carton_info->carton_start_barcode.toStdString().c_str(), carton_info->carton_end_barcode.toStdString().c_str(),
+                         carton_info->target_barcode.toStdString().c_str(), error.toStdString().c_str());
 
         QMessageBox::warning(this, tr("提示"), tr("比对失败: ") + error);
     }
@@ -741,9 +741,9 @@ void MainWindow::compareCard() {
 
     bool is_end = false;
     if (result == 0) {
-        log_msg.sprintf("用户[%s] 内盒起始条码[%s] 卡片条码[%s] 标签条码[%s], 扫描成功", user_dao_->currentUser()->name.c_str(),
-                        card_info->box_start_barcode.toStdString().c_str(), card_info->card_barcode.toStdString().c_str(),
-                        card_info->label_barcode.toStdString().c_str());
+        log_msg.asprintf("用户[%s] 内盒起始条码[%s] 卡片条码[%s] 标签条码[%s], 扫描成功", user_dao_->currentUser()->name.c_str(),
+                         card_info->box_start_barcode.toStdString().c_str(), card_info->card_barcode.toStdString().c_str(),
+                         card_info->label_barcode.toStdString().c_str());
         card_data_dao->scanned(card_info->card_barcode.toStdString());
         card_widgets_.front()->scanned();
 
@@ -772,9 +772,9 @@ void MainWindow::compareCard() {
         }
         }
 
-        log_msg.sprintf("用户[%s] 内盒起始条码[%s] 卡片条码[%s] 标签条码[%s], 扫描失败，失败原因[%s]", user_dao_->currentUser()->name.c_str(),
-                        card_info->box_start_barcode.toStdString().c_str(), card_info->card_barcode.toStdString().c_str(),
-                        card_info->label_barcode.toStdString().c_str(), error.toStdString().c_str());
+        log_msg.asprintf("用户[%s] 内盒起始条码[%s] 卡片条码[%s] 标签条码[%s], 扫描失败，失败原因[%s]", user_dao_->currentUser()->name.c_str(),
+                         card_info->box_start_barcode.toStdString().c_str(), card_info->card_barcode.toStdString().c_str(),
+                         card_info->label_barcode.toStdString().c_str(), error.toStdString().c_str());
 
         QMessageBox::warning(this, tr("提示"), tr("比对失败: ") + error);
     }
@@ -956,8 +956,8 @@ void MainWindow::addOrderBtnClicked() {
     int         carton_scanned_num     = 0;
 
     QString check_format;
-    check_format.sprintf("卡片：%d 位 - %d 位\n内盒：%d 位 - %d 位\n外箱：%d 位 - %d 位", card_start_check_num, card_end_check_num, box_start_check_num,
-                         box_end_check_num, carton_start_check_num, carton_end_check_num);
+    check_format.asprintf("卡片：%d 位 - %d 位\n内盒：%d 位 - %d 位\n外箱：%d 位 - %d 位", card_start_check_num, card_end_check_num, box_start_check_num,
+                          box_end_check_num, carton_start_check_num, carton_end_check_num);
 
     std::string create_time = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss").toStdString();
 
@@ -1026,12 +1026,12 @@ void MainWindow::updateOrderBtnClicked() {
     int         carton_scanned_num     = 0;
 
     QString check_format;
-    check_format.sprintf("卡片：%d 位 - %d 位\n内盒：%d 位 - %d 位\n外箱：%d 位 - %d 位", card_start_check_num, card_end_check_num, box_start_check_num,
-                         box_end_check_num, carton_start_check_num, carton_end_check_num);
+    check_format.asprintf("卡片：%d 位 - %d 位\n内盒：%d 位 - %d 位\n外箱：%d 位 - %d 位", card_start_check_num, card_end_check_num, box_start_check_num,
+                          box_end_check_num, carton_start_check_num, carton_end_check_num);
     std::string            create_time = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss").toStdString();
     std::shared_ptr<Order> new_order   = std::make_shared<Order>(Order{0, order_name, check_format.toStdString(), carton_start_check_num, carton_end_check_num,
                                                                      box_start_check_num, box_end_check_num, card_start_check_num, card_end_check_num,
-                                                                     box_scanned_num, carton_scanned_num, mode_id, "", "", create_time});
+                                                                     box_scanned_num, carton_scanned_num, mode_id, "", "", "", create_time});
 
     if (order_name == "" || box_end_check_num == 0 || index == -1) {
         QMessageBox::warning(this, tr("修改失败"), tr("订单号或校验位数不能为空"));

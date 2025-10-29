@@ -8,8 +8,6 @@ UserSqliteDao::UserSqliteDao(const std::shared_ptr<SQLite::Database> &db)
     init();
 }
 
-UserSqliteDao::~UserSqliteDao() {}
-
 bool UserSqliteDao::login(const std::string &entered_name, const std::string &entered_password) {
     for (auto &user : all()) {
         if (user->name == entered_name && user->password == entered_password) {

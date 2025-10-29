@@ -9,8 +9,6 @@ ModeMysqlDao::ModeMysqlDao(const std::shared_ptr<zel::myorm::Database> &db)
     init();
 }
 
-ModeMysqlDao::~ModeMysqlDao() {}
-
 bool ModeMysqlDao::add(const std::shared_ptr<Mode> &mode) {
     auto modes           = Modes(*db_);
     modes["name"]        = mode->name;

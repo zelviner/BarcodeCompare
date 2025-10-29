@@ -10,7 +10,7 @@ class FormatMysqlDao : public FormatDao {
 
   public:
     FormatMysqlDao(const std::shared_ptr<zel::myorm::Database> &db);
-    ~FormatMysqlDao();
+    virtual ~FormatMysqlDao() = default;
 
     /// @brief Add a new role to the database
     bool add(const std::shared_ptr<Format> &role) override;

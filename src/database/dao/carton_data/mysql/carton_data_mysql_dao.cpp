@@ -10,8 +10,6 @@ CartonDataMysqlDao::CartonDataMysqlDao(const std::string &order_name)
     init();
 }
 
-CartonDataMysqlDao::~CartonDataMysqlDao() {}
-
 bool CartonDataMysqlDao::batchAdd(const std::vector<std::shared_ptr<CartonData>> &carton_datas, const size_t batch_size) {
     std::vector<CartonTables> rows;
     rows.reserve(carton_datas.size());

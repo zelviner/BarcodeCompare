@@ -10,7 +10,7 @@ class RoleSqliteDao : public RoleDao {
 
   public:
     RoleSqliteDao(const std::shared_ptr<SQLite::Database> &db);
-    ~RoleSqliteDao();
+    virtual ~RoleSqliteDao() = default;
 
     /// @brief Add a new role to the database
     bool add(const std::shared_ptr<Role> &role) override;

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "database/dao/format/format.h"
 #include "database/dao/order/order_dao.h"
 #include "database/myorm/database.h"
 
@@ -11,7 +10,7 @@ class OrderMysqlDao : public OrderDao {
 
   public:
     OrderMysqlDao(const std::shared_ptr<zel::myorm::Database> &db);
-    ~OrderMysqlDao();
+    virtual ~OrderMysqlDao() = default;
 
     /// @brief Add a new order to the database.
     bool add(const std::shared_ptr<Order> &order) override;

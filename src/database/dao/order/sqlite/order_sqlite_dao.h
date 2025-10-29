@@ -1,6 +1,5 @@
 #pragma once
 
-#include "database/dao/format/format.h"
 #include "database/dao/order/order_dao.h"
 
 #include <SQLiteCpp/Database.h>
@@ -11,7 +10,7 @@ class OrderSqliteDao : public OrderDao {
 
   public:
     OrderSqliteDao(const std::shared_ptr<SQLite::Database> &db);
-    ~OrderSqliteDao();
+    virtual ~OrderSqliteDao() = default;
 
     /// @brief Add a new order to the database.
     bool add(const std::shared_ptr<Order> &order) override;

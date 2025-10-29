@@ -9,7 +9,7 @@
 class CardDataSqliteDao : public CardDataDao {
   public:
     CardDataSqliteDao(const std::shared_ptr<SQLite::Database> &db, const std::string &order_name);
-    ~CardDataSqliteDao();
+    virtual ~CardDataSqliteDao() = default;
 
     /// @brief Batch insert new card datas into the database.
     bool batchAdd(const std::vector<std::shared_ptr<CardData>> &card_datas, const size_t batch_size = 20000) override;

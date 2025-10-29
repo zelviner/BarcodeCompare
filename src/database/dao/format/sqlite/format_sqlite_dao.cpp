@@ -7,8 +7,6 @@ FormatSqliteDao::FormatSqliteDao(const std::shared_ptr<SQLite::Database> &db)
     init();
 }
 
-FormatSqliteDao::~FormatSqliteDao() {}
-
 bool FormatSqliteDao::add(const std::shared_ptr<Format> &format) {
     SQLite::Statement insert(*db_,
                              "INSERT INTO formats (name, type, filename, box_number, start_number, end_number, quantity, barcode) VALUES (?,?,?,?,?,?,?,?)");

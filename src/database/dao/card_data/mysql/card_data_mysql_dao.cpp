@@ -10,8 +10,6 @@ CardDataMysqlDao::CardDataMysqlDao(const std::string &order_name)
     init();
 }
 
-CardDataMysqlDao::~CardDataMysqlDao() {}
-
 bool CardDataMysqlDao::batchAdd(const std::vector<std::shared_ptr<CardData>> &card_datas, const size_t batch_size) {
     std::vector<CardTables> rows;
     rows.reserve(card_datas.size());

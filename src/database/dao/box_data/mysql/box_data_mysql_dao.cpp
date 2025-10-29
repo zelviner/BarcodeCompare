@@ -8,7 +8,6 @@ BoxDataMysqlDao::BoxDataMysqlDao(const std::string &order_name)
     : order_name_(order_name) {
     init();
 }
-BoxDataMysqlDao::~BoxDataMysqlDao() {}
 
 bool BoxDataMysqlDao::batchAdd(const std::vector<std::shared_ptr<BoxData>> &box_datas, const size_t batch_size) {
     std::vector<BoxTables> rows;

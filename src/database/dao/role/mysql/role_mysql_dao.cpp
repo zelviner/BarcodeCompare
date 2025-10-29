@@ -10,8 +10,6 @@ RoleMysqlDao::RoleMysqlDao(const std::shared_ptr<zel::myorm::Database> &db)
     init();
 }
 
-RoleMysqlDao::~RoleMysqlDao() {}
-
 bool RoleMysqlDao::add(const std::shared_ptr<Role> &role) {
     auto roles           = Roles(*db_);
     roles["name"]        = role->name;

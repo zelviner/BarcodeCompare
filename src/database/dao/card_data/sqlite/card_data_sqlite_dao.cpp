@@ -14,8 +14,6 @@ CardDataSqliteDao::CardDataSqliteDao(const std::shared_ptr<SQLite::Database> &db
     init();
 }
 
-CardDataSqliteDao::~CardDataSqliteDao() {}
-
 bool CardDataSqliteDao::batchAdd(const std::vector<std::shared_ptr<CardData>> &card_datas, const size_t batch_size) {
     try {
         SQLite::Transaction transaction(*db_);

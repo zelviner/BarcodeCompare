@@ -10,7 +10,7 @@ class BoxDataMysqlDao : public BoxDataDao {
 
   public:
     BoxDataMysqlDao(const std::string &order_name);
-    ~BoxDataMysqlDao();
+    virtual ~BoxDataMysqlDao() = default;
 
     /// @brief Batch insert new box datas into the database.
     bool batchAdd(const std::vector<std::shared_ptr<BoxData>> &box_datas, const size_t batch_size = 20000) override;
