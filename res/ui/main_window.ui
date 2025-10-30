@@ -1013,12 +1013,12 @@
                        </font>
                       </property>
                       <property name="text">
-                       <string>卡片条码：</string>
+                       <string>标签条码：</string>
                       </property>
                      </widget>
                     </item>
                     <item>
-                     <widget class="QLineEdit" name="card_line">
+                     <widget class="QLineEdit" name="card_label_line">
                       <property name="font">
                        <font>
                         <family>微软雅黑</family>
@@ -1035,17 +1035,20 @@
                    </layout>
                   </item>
                   <item>
-                   <spacer name="horizontalSpacer">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
+                   <widget class="QPushButton" name="card_stop_label_btn">
+                    <property name="enabled">
+                     <bool>true</bool>
                     </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
+                    <property name="font">
+                     <font>
+                      <family>微软雅黑</family>
+                      <pointsize>10</pointsize>
+                     </font>
                     </property>
-                   </spacer>
+                    <property name="text">
+                     <string>结束</string>
+                    </property>
+                   </widget>
                   </item>
                  </layout>
                 </item>
@@ -1075,12 +1078,12 @@
                        </font>
                       </property>
                       <property name="text">
-                       <string>标签条码：</string>
+                       <string>卡片条码：</string>
                       </property>
                      </widget>
                     </item>
                     <item>
-                     <widget class="QLineEdit" name="card_label_line">
+                     <widget class="QLineEdit" name="card_line">
                       <property name="font">
                        <font>
                         <family>微软雅黑</family>

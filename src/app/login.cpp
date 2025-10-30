@@ -21,7 +21,7 @@ Login::Login(QMainWindow *parent)
 
     init_window();
 
-    init_dir();
+    // init_dir();
 
     init_config();
 

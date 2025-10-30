@@ -1,5 +1,7 @@
 #pragma once
 
+#include "database/dao/card_data/card_data.h"
+
 #include <qlabel.h>
 #include <qlabel>
 #include <qwidget>
@@ -8,7 +10,7 @@
 class CardWidget : public QWidget {
     Q_OBJECT
   public:
-    CardWidget(const int &id, const QString &card_number, QWidget *parent = nullptr);
+    CardWidget(const std::shared_ptr<CardData> &card_data, QWidget *parent = nullptr);
     ~CardWidget();
 
     void unscanned();
@@ -17,13 +19,10 @@ class CardWidget : public QWidget {
 
     void scanned();
 
-    int id();
-
-    QString cardNumber();
+    const std::shared_ptr<CardData> &cardData();
 
   private:
-    int     id_;
-    QString card_number_;
-    QLabel *label_;
-    QLabel *text_label_;
+    std::shared_ptr<CardData> card_data_;
+    QLabel                   *label_;
+    QLabel                   *text_label_;
 };

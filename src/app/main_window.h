@@ -52,11 +52,12 @@ class MainWindow : public QMainWindow {
 
     /// @brief 卡片比对 Tab
     void cardSelectOrder();                                                                       // 卡片选择订单
-    void cardResccenedBtnClicked();                                                               // 重新扫描按钮点击
     void showSelectedCard();                                                                      // 显示选中卡片
     void selectCardDatasStatus();                                                                 // 选择卡片数据状态
-    void toCardBarcode();                                                                         // 获取卡片条码
+    void cardResccenedBtnClicked();                                                               // 重新扫描按钮点击
     void toCardLabelBarcode();                                                                    // 获取标签条码
+    void compareCardLabel();                                                                      // 比对标签
+    void toCardBarcode();                                                                         // 获取卡片条码
     void compareCard();                                                                           // 比对卡片
     void refreshCardTab();                                                                        // 刷新卡片比对 Tab
     void refreshCardTable(const std::string &order_name, const int &status);                      // 刷新卡片表格
@@ -122,9 +123,13 @@ class MainWindow : public QMainWindow {
     /// @brief 记录日志
     bool log(const QString &filename, const QString &msg);
 
-    void scroll_to_value(QTableWidget *table, const QString &value, bool selected = true);
+    int scroll_to_value(QTableWidget *table, const QString &value, bool selected = true);
 
     void clear_box_compare_group_layout(QLayout *layout);
+
+    /// @brief 创建文件夹
+    /// @param folder_path  文件夹路径
+    QString create_folder(const QString &folder_path);
 
   private:
     Ui_MainWindow           *ui_;
@@ -132,6 +137,9 @@ class MainWindow : public QMainWindow {
     std::shared_ptr<Loading> loading_;
     std::queue<BoxWidget *>  box_widgets_;
     std::queue<CardWidget *> card_widgets_;
+    std::queue<CardWidget *> card_label_widgets_;
+    std::queue<QString>      card_label_barcodes_;
+    int                      current_box_number_;
 
     std::shared_ptr<SQLite::Database>     sqlite_db_;
     std::shared_ptr<zel::myorm::Database> mysql_db_;

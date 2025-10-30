@@ -79,7 +79,7 @@ int Comparison::carton(const std::shared_ptr<CartonInfo> &carton_info, int &box_
     return 0;
 }
 
-int Comparison::card(const std::shared_ptr<CardInfo> &card_info, int &card_widget_id) {
+int Comparison::card(std::shared_ptr<CardInfo> &card_info, int &card_widget_id) {
     std::shared_ptr<BoxData> box_data = box_data_dao_->get(card_info->box_start_barcode.toStdString());
     if (box_data == nullptr) {
         log_error("Box start barcode not in order: %s", card_info->box_start_barcode.toStdString().c_str());
@@ -87,7 +87,6 @@ int Comparison::card(const std::shared_ptr<CardInfo> &card_info, int &card_widge
     }
 
     QString box_start_barcode = trim_box_barcode(card_info->box_start_barcode);
-    QString card_barcode      = trim_card_barcode(card_info->card_barcode);
     QString label_barcode     = trim_card_barcode(card_info->label_barcode);
 
     // 判断卡片条码和标签条码是否在该内盒范围内
@@ -95,9 +94,11 @@ int Comparison::card(const std::shared_ptr<CardInfo> &card_info, int &card_widge
     auto card_datas = card_data_dao_->all(box_data->start_number, box_data->end_number);
     for (auto card_data : card_datas) {
         auto iccid_barcode = trim_card_barcode(QString::fromStdString(card_data->iccid_barcode));
-        if (iccid_barcode == card_barcode && iccid_barcode == label_barcode) {
-            found          = true;
-            card_widget_id = card_data->id;
+        auto imsi_barcode  = trim_card_barcode(QString::fromStdString(card_data->imsi_barcode));
+        if (label_barcode == iccid_barcode || label_barcode == imsi_barcode) {
+            found                    = true;
+            card_widget_id           = card_data->id;
+            card_info->label_barcode = QString::fromStdString(card_data->iccid_barcode);
             break;
         }
     }

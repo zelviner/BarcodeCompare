@@ -39,6 +39,7 @@ MainWindow::MainWindow(const std::shared_ptr<SQLite::Database> &sqlite_db, const
     : QMainWindow(parent)
     , ui_(new Ui_MainWindow)
     , loading_(std::make_shared<Loading>())
+    , current_box_number_(-1)
     , sqlite_db_(sqlite_db)
     , mysql_db_(mysql_db)
     , user_dao_(user_dao) {
@@ -173,9 +174,9 @@ void MainWindow::compareBox() {
     int result = comparison.box(box_info);
 
     if (result == 0) {
-        log_msg.asprintf("用户[%s] 内盒起始条码[%s] 内盒结束条码[%s] 首卡条码[%s] 尾卡条码[%s], 扫描成功", user_dao_->currentUser()->name.c_str(),
-                         box_info->box_start_barcode.toStdString().c_str(), box_info->box_end_barcode.toStdString().c_str(),
-                         box_info->card_start_barcode.toStdString().c_str(), box_info->card_end_barcode.toStdString().c_str());
+        log_msg = QString::asprintf("用户[%s] 内盒起始条码[%s] 内盒结束条码[%s] 首卡条码[%s] 尾卡条码[%s], 扫描成功", user_dao_->currentUser()->name.c_str(),
+                                    box_info->box_start_barcode.toStdString().c_str(), box_info->box_end_barcode.toStdString().c_str(),
+                                    box_info->card_start_barcode.toStdString().c_str(), box_info->card_end_barcode.toStdString().c_str());
         box_data_dao->scanned(BoxDataDao::Type::BOX, box_info->box_start_barcode.toStdString());
 
         refreshBoxTable(order_dao_->currentOrder()->name, ui_->box_datas_status_comb_box->currentIndex() - 1);
@@ -204,14 +205,15 @@ void MainWindow::compareBox() {
         }
         }
 
-        log_msg.asprintf("用户[%s] 内盒起始条码[%s] 内盒结束条码[%s] 首卡条码[%s] 尾卡条码[%s], 扫描失败，失败原因[%s]", user_dao_->currentUser()->name.c_str(),
-                         box_info->box_start_barcode.toStdString().c_str(), box_info->box_end_barcode.toStdString().c_str(),
-                         box_info->card_start_barcode.toStdString().c_str(), box_info->card_end_barcode.toStdString().c_str(), error.toStdString().c_str());
+        log_msg = QString::asprintf("用户[%s] 内盒起始条码[%s] 内盒结束条码[%s] 首卡条码[%s] 尾卡条码[%s], 扫描失败，失败原因[%s]",
+                                    user_dao_->currentUser()->name.c_str(), box_info->box_start_barcode.toStdString().c_str(),
+                                    box_info->box_end_barcode.toStdString().c_str(), box_info->card_start_barcode.toStdString().c_str(),
+                                    box_info->card_end_barcode.toStdString().c_str(), error.toStdString().c_str());
 
         QMessageBox::warning(this, tr("提示"), tr("比对失败: ") + error);
     }
 
-    if (!log("内盒/" + QString::fromStdString(order_dao_->currentOrder()->name), log_msg)) {
+    if (!log("log/内盒/" + QString::fromStdString(order_dao_->currentOrder()->name) + ".log", log_msg)) {
         printf("log write error\n");
     }
 
@@ -456,9 +458,9 @@ void MainWindow::compareCarton() {
     }
 
     if (result == 0) {
-        log_msg.asprintf("用户[%s] 外箱起始条码[%s] 外箱结束条码[%s] 内盒起始或结束条码[%s], 扫描成功", user_dao_->currentUser()->name.c_str(),
-                         carton_info->carton_start_barcode.toStdString().c_str(), carton_info->carton_end_barcode.toStdString().c_str(),
-                         carton_info->target_barcode.toStdString().c_str());
+        log_msg = QString::asprintf("用户[%s] 外箱起始条码[%s] 外箱结束条码[%s] 内盒起始或结束条码[%s], 扫描成功", user_dao_->currentUser()->name.c_str(),
+                                    carton_info->carton_start_barcode.toStdString().c_str(), carton_info->carton_end_barcode.toStdString().c_str(),
+                                    carton_info->target_barcode.toStdString().c_str());
         box_widgets_.front()->scanned();
 
         box_widgets_.pop();
@@ -491,14 +493,15 @@ void MainWindow::compareCarton() {
         }
         }
 
-        log_msg.asprintf("用户[%s] 外箱起始条码[%s] 外箱结束条码[%s] 内盒起始或结束条码[%s], 扫描失败，失败原因[%s]", user_dao_->currentUser()->name.c_str(),
-                         carton_info->carton_start_barcode.toStdString().c_str(), carton_info->carton_end_barcode.toStdString().c_str(),
-                         carton_info->target_barcode.toStdString().c_str(), error.toStdString().c_str());
+        log_msg = QString::asprintf("用户[%s] 外箱起始条码[%s] 外箱结束条码[%s] 内盒起始或结束条码[%s], 扫描失败，失败原因[%s]",
+                                    user_dao_->currentUser()->name.c_str(), carton_info->carton_start_barcode.toStdString().c_str(),
+                                    carton_info->carton_end_barcode.toStdString().c_str(), carton_info->target_barcode.toStdString().c_str(),
+                                    error.toStdString().c_str());
 
         QMessageBox::warning(this, tr("提示"), tr("比对失败: ") + error);
     }
 
-    if (!log("外箱/" + QString::fromStdString(order_dao_->currentOrder()->name), log_msg)) {
+    if (!log("log/外箱/" + QString::fromStdString(order_dao_->currentOrder()->name) + ".log", log_msg)) {
         printf("log write error\n");
     }
 
@@ -659,8 +662,6 @@ void MainWindow::cardSelectOrder() {
 
     ui_->card_datas_status_comb_box->setEnabled(true);
     ui_->card_box_start_line->setEnabled(true);
-    ui_->card_line->setEnabled(true);
-    ui_->card_label_line->setEnabled(true);
     ui_->card_rescanned_btn->setEnabled(true);
 
     ui_->card_box_start_line->setFocus();
@@ -739,25 +740,24 @@ void MainWindow::selectCardDatasStatus() {
     refreshCardTable(order_dao_->currentOrder()->name, ui_->card_datas_status_comb_box->currentIndex() - 1);
 }
 
-void MainWindow::toCardBarcode() {
-    ui_->card_box_start_line->setEnabled(false);
-    ui_->card_line->setFocus();
-
-    scroll_to_value(ui_->card_table, ui_->card_box_start_line->text());
-}
-
 void MainWindow::toCardLabelBarcode() {
+    ui_->card_label_line->setEnabled(true);
     // ui_->card_line->setEnabled(false);
+    ui_->card_stop_label_btn->setEnabled(true);
+
+    ui_->card_box_start_line->setEnabled(false);
     ui_->card_label_line->setFocus();
+
+    current_box_number_ = scroll_to_value(ui_->card_table, ui_->card_box_start_line->text());
 }
 
-void MainWindow::compareCard() {
+void MainWindow::compareCardLabel() {
     std::shared_ptr<CardInfo> card_info = std::make_shared<CardInfo>();
     card_info->box_start_barcode        = ui_->card_box_start_line->text();
-    card_info->card_barcode             = ui_->card_line->text();
     card_info->label_barcode            = ui_->card_label_line->text();
 
     QString error, log_msg;
+    bool    is_end         = false;
     auto    box_data_dao   = BoxDataDaoFactory::create(sqlite_db_, mysql_db_, order_dao_->currentOrder()->name);
     auto    card_data_dao  = CardDataDaoFactory::create(sqlite_db_, mysql_db_, order_dao_->currentOrder()->name);
     auto    comparison     = std::make_shared<Comparison>(order_dao_->currentOrder(), box_data_dao, nullptr, card_data_dao);
@@ -765,26 +765,23 @@ void MainWindow::compareCard() {
     int     result         = comparison->card(card_info, card_widget_id);
 
     // Check if the card barcodes are sequence.
-    if (card_widgets_.front()->id() != card_widget_id) {
+    if (card_label_widgets_.front()->cardData()->id != card_widget_id) {
         if (result == 0) {
             result = 3;
         }
     }
 
-    bool is_end = false;
     if (result == 0) {
-        log_msg.asprintf("用户[%s] 内盒起始条码[%s] 卡片条码[%s] 标签条码[%s], 扫描成功", user_dao_->currentUser()->name.c_str(),
-                         card_info->box_start_barcode.toStdString().c_str(), card_info->card_barcode.toStdString().c_str(),
-                         card_info->label_barcode.toStdString().c_str());
-        card_data_dao->scanned(card_info->card_barcode.toStdString());
-        card_widgets_.front()->scanned();
+        log_msg = QString::asprintf("用户[%s] 内盒起始条码[%s] 标签条码[%s], 扫描成功", user_dao_->currentUser()->name.c_str(),
+                                    card_info->box_start_barcode.toStdString().c_str(), card_info->label_barcode.toStdString().c_str());
+        card_label_widgets_.front()->pending();
 
-        card_widgets_.pop();
-        if (card_widgets_.empty()) {
+        card_label_widgets_.pop();
+        if (card_label_widgets_.empty()) {
             is_end = true;
-        } else {
-            card_widgets_.front()->pending();
         }
+
+        card_label_barcodes_.push(card_info->label_barcode);
     } else {
         switch (result) {
 
@@ -794,29 +791,95 @@ void MainWindow::compareCard() {
         }
 
         case 2: {
-            error = tr("卡片条码不在该内盒范围内, 请核对!");
+            error = tr("标签条码不在该内盒范围内, 请核对!");
             break;
         }
 
         case 3: {
-            error = tr("卡片顺序错误, 请核对!");
+            error = tr("标签顺序错误, 请核对!");
             break;
         }
         }
 
-        log_msg.asprintf("用户[%s] 内盒起始条码[%s] 卡片条码[%s] 标签条码[%s], 扫描失败，失败原因[%s]", user_dao_->currentUser()->name.c_str(),
-                         card_info->box_start_barcode.toStdString().c_str(), card_info->card_barcode.toStdString().c_str(),
-                         card_info->label_barcode.toStdString().c_str(), error.toStdString().c_str());
+        log_msg =
+            QString::asprintf("用户[%s] 内盒起始条码[%s] 标签条码[%s], 扫描失败，失败原因[%s]", user_dao_->currentUser()->name.c_str(),
+                              card_info->box_start_barcode.toStdString().c_str(), card_info->label_barcode.toStdString().c_str(), error.toStdString().c_str());
 
         QMessageBox::warning(this, tr("提示"), tr("比对失败: ") + error);
     }
 
-    if (!log("卡片/" + QString::fromStdString(order_dao_->currentOrder()->name), log_msg)) {
+    QString log_file =
+        QString("log/卡片/%1/内盒%2.log").arg(QString::fromStdString(order_dao_->currentOrder()->name)).arg(current_box_number_, 4, 10, QLatin1Char('0'));
+    if (!log(log_file, log_msg)) {
         printf("log write error\n");
     }
 
     if (is_end) {
-        box_data_dao->scanned(BoxDataDao::Type::CARD, card_info->box_start_barcode.toStdString());
+        toCardBarcode();
+    } else {
+        ui_->card_label_line->clear();
+        toCardLabelBarcode();
+    }
+}
+
+void MainWindow::toCardBarcode() {
+    ui_->card_line->setEnabled(true);
+    ui_->card_label_line->clear();
+    ui_->card_label_line->setEnabled(false);
+    ui_->card_line->setFocus();
+}
+
+void MainWindow::compareCard() {
+    if (card_label_barcodes_.empty()) {
+        QMessageBox::warning(this, tr("提示"), tr("请先扫描标签条码!"));
+        return;
+    }
+
+    std::shared_ptr<CardInfo> card_info = std::make_shared<CardInfo>();
+    card_info->box_start_barcode        = ui_->card_box_start_line->text();
+    card_info->label_barcode            = card_label_barcodes_.front();
+    card_info->card_barcode             = ui_->card_line->text();
+
+    QString error, log_msg;
+    auto    box_data_dao  = BoxDataDaoFactory::create(sqlite_db_, mysql_db_, order_dao_->currentOrder()->name);
+    auto    card_data_dao = CardDataDaoFactory::create(sqlite_db_, mysql_db_, order_dao_->currentOrder()->name);
+
+    bool is_success = card_info->label_barcode == card_info->card_barcode;
+
+    bool is_end = false;
+    if (is_success) {
+        log_msg = QString::asprintf("用户[%s] 内盒起始条码[%s] 标签条码[%s] 卡片条码[%s], 扫描成功", user_dao_->currentUser()->name.c_str(),
+                                    card_info->box_start_barcode.toStdString().c_str(), card_info->label_barcode.toStdString().c_str(),
+                                    card_info->card_barcode.toStdString().c_str());
+        card_data_dao->scanned(card_info->card_barcode.toStdString());
+        card_widgets_.front()->scanned();
+
+        card_widgets_.pop();
+        card_label_barcodes_.pop();
+        if (card_widgets_.empty()) {
+            is_end = true;
+        }
+    } else {
+        error = tr("卡片条码与标签条码不匹配, 请核对!");
+
+        log_msg = QString::asprintf("用户[%s] 内盒起始条码[%s] 卡片条码[%s] 标签条码[%s], 扫描失败，失败原因[%s]", user_dao_->currentUser()->name.c_str(),
+                                    card_info->box_start_barcode.toUtf8().constData(), card_info->card_barcode.toUtf8().constData(),
+                                    card_info->label_barcode.toUtf8().constData(), error.toUtf8().constData()
+
+        );
+
+        QMessageBox::warning(this, tr("提示"), tr("比对失败: ") + error);
+    }
+
+    QString log_file =
+        QString("log/卡片/%1/内盒%2.log").arg(QString::fromStdString(order_dao_->currentOrder()->name)).arg(current_box_number_, 4, 10, QLatin1Char('0'));
+    if (!log(log_file, log_msg)) {
+        printf("log write error\n");
+    }
+
+    if (card_label_barcodes_.empty()) {
+        if (is_end) box_data_dao->scanned(BoxDataDao::Type::CARD, card_info->box_start_barcode.toStdString());
+
         refreshCardTable(order_dao_->currentOrder()->name, ui_->card_datas_status_comb_box->currentIndex() - 1);
         scroll_to_value(ui_->card_table, ui_->card_box_start_line->text(), false);
 
@@ -825,6 +888,8 @@ void MainWindow::compareCard() {
         ui_->card_label_line->clear();
 
         ui_->card_box_start_line->setEnabled(true);
+        ui_->card_label_line->setEnabled(false);
+        ui_->card_line->setEnabled(false);
 
         ui_->card_box_start_line->setFocus();
     } else {
@@ -839,6 +904,7 @@ void MainWindow::refreshCardTab() {
     ui_->card_order_name_combo->clear();
     ui_->card_check_format_label->clear();
     ui_->card_box_start_line->clear();
+    ui_->card_label_line->clear();
     ui_->card_line->clear();
     ui_->card_table->setRowCount(0);
     ui_->card_datas_status_comb_box->setCurrentIndex(0);
@@ -856,6 +922,7 @@ void MainWindow::refreshCardTab() {
     ui_->card_line->setEnabled(false);
     ui_->card_label_line->setEnabled(false);
     ui_->card_rescanned_btn->setEnabled(false);
+    ui_->card_stop_label_btn->setEnabled(false);
 
     // 设置订单号下拉框内容
     for (auto &order : order_dao_->all()) {
@@ -887,7 +954,7 @@ void MainWindow::refreshCardTable(const std::string &order_name, const int &stat
     for (int i = 0; i < int(box_datas.size()); i++) {
         // 创建 item
         auto item0 = new QTableWidgetItem(QString::fromStdString(box_datas[i]->start_barcode));
-        auto item1 = new QTableWidgetItem(QString::number(box_datas[i]->quantity));
+        auto item1 = new QTableWidgetItem(QString::fromStdString(box_datas[i]->end_barcode));
 
         if (status == -1) {
             if (box_datas[i]->card_status == 1) {
@@ -930,7 +997,7 @@ void MainWindow::refreshCardCompareGroup(const int &cols, const std::string &sel
 
     auto card_datas = card_data_dao->all(box_data->start_number, box_data->end_number);
     for (int i = 0; i < int(card_datas.size()); ++i) {
-        CardWidget *card = new CardWidget(card_datas[i]->id, QString::fromStdString(card_datas[i]->card_number));
+        CardWidget *card = new CardWidget(card_datas[i]);
 
         int row = i / cols;
         int col = i % cols;
@@ -943,9 +1010,11 @@ void MainWindow::refreshCardCompareGroup(const int &cols, const std::string &sel
         }
     }
 
-    if (!card_widgets_.empty()) {
-        card_widgets_.front()->pending();
-    }
+    // if (!card_widgets_.empty()) {
+    //     card_widgets_.front()->pending();
+    // }
+
+    card_label_widgets_ = card_widgets_;
 }
 
 void MainWindow::selectBoxFileBtnClicked() {
@@ -989,8 +1058,8 @@ void MainWindow::addOrderBtnClicked() {
     int         carton_scanned_num     = 0;
 
     QString check_format;
-    check_format.asprintf("卡片：%d 位 - %d 位\n内盒：%d 位 - %d 位\n外箱：%d 位 - %d 位", card_start_check_num, card_end_check_num, box_start_check_num,
-                          box_end_check_num, carton_start_check_num, carton_end_check_num);
+    check_format = QString::asprintf("卡片：%d 位 - %d 位\n内盒：%d 位 - %d 位\n外箱：%d 位 - %d 位", card_start_check_num, card_end_check_num,
+                                     box_start_check_num, box_end_check_num, carton_start_check_num, carton_end_check_num);
 
     std::string create_time = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss").toStdString();
 
@@ -1059,8 +1128,8 @@ void MainWindow::updateOrderBtnClicked() {
     int         carton_scanned_num     = 0;
 
     QString check_format;
-    check_format.asprintf("卡片：%d 位 - %d 位\n内盒：%d 位 - %d 位\n外箱：%d 位 - %d 位", card_start_check_num, card_end_check_num, box_start_check_num,
-                          box_end_check_num, carton_start_check_num, carton_end_check_num);
+    check_format = QString::asprintf("卡片：%d 位 - %d 位\n内盒：%d 位 - %d 位\n外箱：%d 位 - %d 位", card_start_check_num, card_end_check_num,
+                                     box_start_check_num, box_end_check_num, carton_start_check_num, carton_end_check_num);
     std::string            create_time = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss").toStdString();
     std::shared_ptr<Order> new_order   = std::make_shared<Order>(Order{0, order_name, check_format.toStdString(), carton_start_check_num, carton_end_check_num,
                                                                      box_start_check_num, box_end_check_num, card_start_check_num, card_end_check_num,
@@ -1449,7 +1518,7 @@ void MainWindow::init_card_tab() {
     ui_->card_datas_status_comb_box->lineEdit()->setAlignment(Qt::AlignCenter);
     ui_->card_datas_status_comb_box->lineEdit()->setReadOnly(true);
 
-    QStringList card_header = {tr("内盒起始条码"), tr("卡片数量")};
+    QStringList card_header = {tr("内盒起始条码"), tr("内盒结束条码")};
     init_table(ui_->card_table, card_header, card_header.size());
 }
 
@@ -1584,9 +1653,10 @@ void MainWindow::init_signals_slots() {
     connect(ui_->card_rescanned_btn, &QPushButton::clicked, this, &MainWindow::cardResccenedBtnClicked);
     connect(ui_->card_table, &QTableWidget::itemSelectionChanged, this, &MainWindow::showSelectedCard);
     connect(ui_->card_datas_status_comb_box, &QComboBox::currentTextChanged, this, &MainWindow::selectCardDatasStatus);
-    connect(ui_->card_box_start_line, &QLineEdit::returnPressed, this, &MainWindow::toCardBarcode);
-    connect(ui_->card_line, &QLineEdit::returnPressed, this, &MainWindow::toCardLabelBarcode);
-    connect(ui_->card_label_line, &QLineEdit::returnPressed, this, &MainWindow::compareCard);
+    connect(ui_->card_box_start_line, &QLineEdit::returnPressed, this, &MainWindow::toCardLabelBarcode);
+    connect(ui_->card_label_line, &QLineEdit::returnPressed, this, &MainWindow::compareCardLabel);
+    connect(ui_->card_stop_label_btn, &QPushButton::clicked, this, &MainWindow::toCardBarcode);
+    connect(ui_->card_line, &QLineEdit::returnPressed, this, &MainWindow::compareCard);
 
     // 订单配置 tab
     connect(ui_->select_box_file_ptn, &QPushButton::clicked, this, &MainWindow::selectBoxFileBtnClicked);
@@ -1626,7 +1696,8 @@ bool MainWindow::log(const QString &filename, const QString &msg) {
     QString current_path = QCoreApplication::applicationDirPath();
 
     // 获取日志文件路径
-    QString log_path = current_path + "/log/" + filename + ".log";
+    QString log_path = current_path + "/" + filename;
+    create_folder(log_path.mid(0, log_path.lastIndexOf('/')));
 
     // 打开日志文件
     QFile file(log_path);
@@ -1643,7 +1714,7 @@ bool MainWindow::log(const QString &filename, const QString &msg) {
     return true;
 }
 
-void MainWindow::scroll_to_value(QTableWidget *table, const QString &value, bool selected) {
+int MainWindow::scroll_to_value(QTableWidget *table, const QString &value, bool selected) {
 
     for (int row = 0; row < table->rowCount(); ++row) {
         for (int col = 0; col < table->columnCount(); ++col) {
@@ -1656,10 +1727,12 @@ void MainWindow::scroll_to_value(QTableWidget *table, const QString &value, bool
                     table->clearSelection(); // 清除选择
 
                 table->scrollToItem(item, QAbstractItemView::PositionAtCenter); // 滚动到目标
-                return;
+                return row + 1;
             }
         }
     }
+
+    return -1;
 }
 
 void MainWindow::clear_box_compare_group_layout(QLayout *layout) {
@@ -1673,4 +1746,20 @@ void MainWindow::clear_box_compare_group_layout(QLayout *layout) {
         }
         delete item; // 删除 layoutItem
     }
+}
+
+QString MainWindow::create_folder(const QString &folder_path) {
+    QDir dir(folder_path);
+    if (dir.exists(folder_path)) {
+        return folder_path;
+    }
+
+    QString parentDir = create_folder(folder_path.mid(0, folder_path.lastIndexOf('/')));
+    QString dirName   = folder_path.mid(folder_path.lastIndexOf('/') + 1);
+
+    QDir parentPath(parentDir);
+    if (!dirName.isEmpty()) {
+        parentPath.mkpath(dirName);
+    }
+    return parentDir + "/" + dirName;
 }

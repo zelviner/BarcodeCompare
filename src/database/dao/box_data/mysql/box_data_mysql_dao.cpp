@@ -144,24 +144,27 @@ bool BoxDataMysqlDao::rescanned(Type type, const std::string &start_barcode) {
     return update(box_data->id, box_data);
 }
 
-std::shared_ptr<BoxData> BoxDataMysqlDao::get(const std::string &start_barcode) {
-    BoxTables box_table     = BoxTables(*db_, order_name_, "id").where("start_barcode", start_barcode).one();
-    auto      box_data      = std::make_shared<BoxData>();
-    box_data->id            = box_table("id").asInt();
-    box_data->filename      = box_table("filename").asString();
-    box_data->box_number    = box_table("box_number").asString();
-    box_data->start_number  = box_table("start_number").asString();
-    box_data->end_number    = box_table("end_number").asString();
-    box_data->quantity      = box_table("quantity").asInt();
-    box_data->start_barcode = box_table("start_barcode").asString();
-    box_data->end_barcode   = box_table("end_barcode").asString();
-    box_data->status        = box_table("status").asInt();
-    box_data->card_status   = box_table("card_status").asInt();
-    box_data->carton_status = box_table("carton_status").asInt();
-
-    if (box_data->id == 0) {
-        return nullptr;
+std::shared_ptr<BoxData> BoxDataMysqlDao::get(const std::string &start_or_end_barcode) {
+    auto box_tables = BoxTables(*db_, order_name_, "id").where("start_barcode", start_or_end_barcode).all();
+    if (box_tables.size() == 0) {
+        box_tables = BoxTables(*db_, order_name_, "id").where("end_barcode", start_or_end_barcode).all();
+        if (box_tables.size() == 0) {
+            return nullptr;
+        }
     }
+
+    auto box_data           = std::make_shared<BoxData>();
+    box_data->id            = box_tables[0]("id").asInt();
+    box_data->filename      = box_tables[0]("filename").asString();
+    box_data->box_number    = box_tables[0]("box_number").asString();
+    box_data->start_number  = box_tables[0]("start_number").asString();
+    box_data->end_number    = box_tables[0]("end_number").asString();
+    box_data->quantity      = box_tables[0]("quantity").asInt();
+    box_data->start_barcode = box_tables[0]("start_barcode").asString();
+    box_data->end_barcode   = box_tables[0]("end_barcode").asString();
+    box_data->status        = box_tables[0]("status").asInt();
+    box_data->card_status   = box_tables[0]("card_status").asInt();
+    box_data->carton_status = box_tables[0]("carton_status").asInt();
 
     return box_data;
 }

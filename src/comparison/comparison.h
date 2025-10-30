@@ -25,7 +25,7 @@ class Comparison {
     int carton(const std::shared_ptr<CartonInfo> &carton_info, int &box_widget_id);
 
     /// @brief Compare card barcodes.
-    int card(const std::shared_ptr<CardInfo> &card_info, int &card_widget_id);
+    int card(std::shared_ptr<CardInfo> &card_info, int &card_widget_id);
 
   private:
     /// @brief Remove prefixes and suffixes from card barcodes.
