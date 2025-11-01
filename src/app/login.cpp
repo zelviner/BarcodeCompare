@@ -21,7 +21,7 @@ Login::Login(QMainWindow *parent)
 
     init_window();
 
-    // init_dir();
+    init_dir();
 
     init_config();
 
@@ -40,17 +40,10 @@ void Login::init_window() {
 }
 
 void Login::init_dir() {
-    QString current_path       = QCoreApplication::applicationDirPath();
-    QString data_path          = current_path + "/data";
-    QString inner_box_log_path = current_path + "/log/内盒";
-    QString outer_box_log_path = current_path + "/log/外箱";
-    QString card_log_path      = current_path + "/log/卡片";
+    QString data_path = QCoreApplication::applicationDirPath() + "/data";
 
-    // 创建 data 和 log 目录
+    // 创建 data 目录
     create_folder(data_path);
-    create_folder(inner_box_log_path);
-    create_folder(outer_box_log_path);
-    create_folder(card_log_path);
 }
 
 void Login::init_config() {

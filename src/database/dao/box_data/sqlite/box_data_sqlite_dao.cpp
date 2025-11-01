@@ -153,10 +153,11 @@ bool BoxDataSqliteDao::rescanned(Type type, const std::string &start_barcode) {
     return update(box_data->id, box_data);
 }
 
-std::shared_ptr<BoxData> BoxDataSqliteDao::get(const std::string &start_barcode) {
-    std::string       sql = "SELECT * FROM box_data.[" + order_name_ + "] WHERE start_barcode = ?";
+std::shared_ptr<BoxData> BoxDataSqliteDao::get(const std::string &start_or_end_barcode) {
+    std::string       sql = "SELECT * FROM box_data.[" + order_name_ + "] WHERE start_barcode = ? OR end_barcode = ?";
     SQLite::Statement get(*db_, sql);
-    get.bind(1, start_barcode);
+    get.bind(1, start_or_end_barcode);
+    get.bind(2, start_or_end_barcode);
 
     if (get.executeStep()) {
         std::shared_ptr<BoxData> box_data = std::make_shared<BoxData>();

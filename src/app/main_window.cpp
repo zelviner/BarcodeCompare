@@ -213,7 +213,8 @@ void MainWindow::compareBox() {
         QMessageBox::warning(this, tr("提示"), tr("比对失败: ") + error);
     }
 
-    if (!log("log/内盒/" + QString::fromStdString(order_dao_->currentOrder()->name) + ".log", log_msg)) {
+    QString log_file = QString("log/内盒/%1.log").arg(QString::fromStdString(order_dao_->currentOrder()->name));
+    if (!log(log_file, log_msg)) {
         printf("log write error\n");
     }
 
@@ -501,7 +502,8 @@ void MainWindow::compareCarton() {
         QMessageBox::warning(this, tr("提示"), tr("比对失败: ") + error);
     }
 
-    if (!log("log/外箱/" + QString::fromStdString(order_dao_->currentOrder()->name) + ".log", log_msg)) {
+    QString log_file = QString("log/外箱/%1.log").arg(QString::fromStdString(order_dao_->currentOrder()->name));
+    if (!log(log_file, log_msg)) {
         printf("log write error\n");
     }
 
@@ -900,6 +902,7 @@ void MainWindow::compareCard() {
 }
 
 void MainWindow::refreshCardTab() {
+    card_label_barcodes_ = std::queue<QString>();
     ui_->card_table->clearContents();
     ui_->card_order_name_combo->clear();
     ui_->card_check_format_label->clear();

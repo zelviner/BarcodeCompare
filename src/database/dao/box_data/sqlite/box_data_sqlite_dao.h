@@ -25,8 +25,8 @@ class BoxDataSqliteDao : public BoxDataDao {
     /// @brief Set the status of the box data to 0 when it is rescanned.
     bool rescanned(Type type, const std::string &start_barcode) override;
 
-    /// @brief Get box data from the database by start barcode.
-    std::shared_ptr<BoxData> get(const std::string &start_barcode) override;
+    /// @brief Get box data from the database by start or end barcode.
+    std::shared_ptr<BoxData> get(const std::string &start_or_end_barcode) override;
 
     /// @brief Update box data in the database.
     bool update(const int &id, std::shared_ptr<BoxData> &box_data) override;
