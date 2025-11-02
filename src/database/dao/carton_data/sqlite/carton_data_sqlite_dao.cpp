@@ -80,10 +80,11 @@ bool CartonDataSqliteDao::scanned(const std::string &start_barcode) {
     return update(carton_data->id, carton_data);
 }
 
-std::shared_ptr<CartonData> CartonDataSqliteDao::get(const std::string &start_barcode) {
-    std::string       sql = "SELECT * FROM carton_data.[" + order_name_ + "] WHERE start_barcode = ?";
+std::shared_ptr<CartonData> CartonDataSqliteDao::get(const std::string &start_or_end_barcode) {
+    std::string       sql = "SELECT * FROM carton_data.[" + order_name_ + "] WHERE start_barcode = ? OR end_barcode = ?";
     SQLite::Statement get(*db_, sql);
-    get.bind(1, start_barcode);
+    get.bind(1, start_or_end_barcode);
+    get.bind(2, start_or_end_barcode);
 
     if (get.executeStep()) {
         std::shared_ptr<CartonData> carton_data = std::make_shared<CartonData>();

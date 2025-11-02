@@ -20,8 +20,8 @@ class CartonDataSqliteDao : public CartonDataDao {
     /// @brief Set the status of the carton data to 1 when it is scanned.
     bool scanned(const std::string &start_barcode) override;
 
-    /// @brief Get carton data from the database by start barcode.
-    std::shared_ptr<CartonData> get(const std::string &start_barcode) override;
+    /// @brief Get carton data from the database by start or end barcode.
+    std::shared_ptr<CartonData> get(const std::string &start_or_end_barcode) override;
 
     /// @brief Update carton data in the database.
     bool update(const int &id, std::shared_ptr<CartonData> &carton_data) override;

@@ -1,4 +1,4 @@
-#include "app/login.h"
+#include "app/view/login.h"
 
 #include <QApplication>
 #pragma comment(lib, "user32.lib")

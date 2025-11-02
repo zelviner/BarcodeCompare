@@ -33,7 +33,7 @@
           <attribute name="title">
            <string>内盒比对</string>
           </attribute>
-          <layout class="QVBoxLayout" name="verticalLayout_2">
+          <layout class="QVBoxLayout" name="verticalLayout_4">
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_15" stretch="2,3">
              <item>
@@ -200,7 +200,7 @@
                <property name="title">
                 <string>比对</string>
                </property>
-               <layout class="QVBoxLayout" name="verticalLayout_4">
+               <layout class="QVBoxLayout" name="verticalLayout_2">
                 <item>
                  <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="0,2,3">
                   <item>
@@ -225,57 +225,12 @@
                      </font>
                     </property>
                     <property name="text">
-                     <string>内盒起始条码：</string>
+                     <string>内盒起始或结束条码：</string>
                     </property>
                    </widget>
                   </item>
                   <item>
-                   <widget class="QLineEdit" name="box_start_line">
-                    <property name="font">
-                     <font>
-                      <family>微软雅黑</family>
-                      <pointsize>12</pointsize>
-                      <weight>50</weight>
-                      <bold>false</bold>
-                     </font>
-                    </property>
-                    <property name="readOnly">
-                     <bool>false</bool>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </item>
-                <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="0,2,3">
-                  <item>
-                   <spacer name="horizontalSpacer_6">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item>
-                   <widget class="QLabel" name="label_6">
-                    <property name="font">
-                     <font>
-                      <family>微软雅黑</family>
-                      <pointsize>16</pointsize>
-                     </font>
-                    </property>
-                    <property name="text">
-                     <string>内盒结束条码：</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QLineEdit" name="box_end_line">
+                   <widget class="QLineEdit" name="box_start_or_end_line">
                     <property name="font">
                      <font>
                       <family>微软雅黑</family>
@@ -408,7 +363,7 @@
           <attribute name="title">
            <string>外箱比对</string>
           </attribute>
-          <layout class="QVBoxLayout" name="verticalLayout_3">
+          <layout class="QVBoxLayout" name="verticalLayout_12">
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_19" stretch="2,3">
              <item>
@@ -572,7 +527,7 @@
                <property name="title">
                 <string>比对</string>
                </property>
-               <layout class="QVBoxLayout" name="verticalLayout_12">
+               <layout class="QVBoxLayout" name="verticalLayout_3">
                 <item>
                  <layout class="QHBoxLayout" name="horizontalLayout_21" stretch="0,2,3">
                   <item>
@@ -597,57 +552,12 @@
                      </font>
                     </property>
                     <property name="text">
-                     <string>外箱起始条码：</string>
+                     <string>外箱起始或结束条码：</string>
                     </property>
                    </widget>
                   </item>
                   <item>
-                   <widget class="QLineEdit" name="carton_start_line">
-                    <property name="font">
-                     <font>
-                      <family>微软雅黑</family>
-                      <pointsize>12</pointsize>
-                      <weight>50</weight>
-                      <bold>false</bold>
-                     </font>
-                    </property>
-                    <property name="readOnly">
-                     <bool>false</bool>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </item>
-                <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_22" stretch="0,2,3">
-                  <item>
-                   <spacer name="horizontalSpacer_14">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item>
-                   <widget class="QLabel" name="label_13">
-                    <property name="font">
-                     <font>
-                      <family>微软雅黑</family>
-                      <pointsize>16</pointsize>
-                     </font>
-                    </property>
-                    <property name="text">
-                     <string>外箱结束条码：</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QLineEdit" name="carton_end_line">
+                   <widget class="QLineEdit" name="carton_start_or_end_line">
                     <property name="font">
                      <font>
                       <family>微软雅黑</family>
@@ -948,12 +858,12 @@
                        </font>
                       </property>
                       <property name="text">
-                       <string>内盒起始条码：</string>
+                       <string>内盒起始或结束条码：</string>
                       </property>
                      </widget>
                     </item>
                     <item>
-                     <widget class="QLineEdit" name="card_box_start_line">
+                     <widget class="QLineEdit" name="card_box_start_or_end_line">
                       <property name="font">
                        <font>
                         <family>微软雅黑</family>
@@ -1003,7 +913,7 @@
                    </spacer>
                   </item>
                   <item>
-                   <layout class="QHBoxLayout" name="horizontalLayout_34" stretch="3,7">
+                   <layout class="QHBoxLayout" name="horizontalLayout_34" stretch="6,9">
                     <item>
                      <widget class="QLabel" name="label_51">
                       <property name="font">
@@ -1068,7 +978,7 @@
                    </spacer>
                   </item>
                   <item>
-                   <layout class="QHBoxLayout" name="horizontalLayout_35" stretch="3,7">
+                   <layout class="QHBoxLayout" name="horizontalLayout_35" stretch="6,9">
                     <item>
                      <widget class="QLabel" name="label_52">
                       <property name="font">
@@ -1185,7 +1095,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QGroupBox" name="groupBox_4">
+              <widget class="OrderGroupBox" name="order_group_box">
                <property name="font">
                 <font>
                  <family>微软雅黑</family>
@@ -1408,36 +1318,6 @@
                     </property>
                     <property name="value">
                      <number>19</number>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </item>
-                <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_26" stretch="3,7">
-                  <item>
-                   <widget class="QLabel" name="label_9">
-                    <property name="font">
-                     <font>
-                      <family>微软雅黑</family>
-                      <pointsize>12</pointsize>
-                     </font>
-                    </property>
-                    <property name="text">
-                     <string>条码模式：</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QComboBox" name="barcode_mode_combo_box">
-                    <property name="font">
-                     <font>
-                      <family>微软雅黑</family>
-                      <pointsize>12</pointsize>
-                     </font>
-                    </property>
-                    <property name="placeholderText">
-                     <string>请选择</string>
                     </property>
                    </widget>
                   </item>
@@ -1850,6 +1730,14 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>OrderGroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>app/component/order_group_box.hpp</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

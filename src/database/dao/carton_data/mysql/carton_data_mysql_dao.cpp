@@ -74,22 +74,25 @@ bool CartonDataMysqlDao::scanned(const std::string &start_barcode) {
     return update(carton_data->id, carton_data);
 }
 
-std::shared_ptr<CartonData> CartonDataMysqlDao::get(const std::string &start_barcode) {
-    CartonTables carton_table  = CartonTables(*db_, order_name_, "id").where("start_barcode", start_barcode).one();
-    auto         carton_data   = std::make_shared<CartonData>();
-    carton_data->id            = carton_table("id").asInt();
-    carton_data->filename      = carton_table("filename").asString();
-    carton_data->carton_number = carton_table("carton_number").asString();
-    carton_data->start_number  = carton_table("start_number").asString();
-    carton_data->end_number    = carton_table("end_number").asString();
-    carton_data->quantity      = carton_table("quantity").asInt();
-    carton_data->start_barcode = carton_table("start_barcode").asString();
-    carton_data->end_barcode   = carton_table("end_barcode").asString();
-    carton_data->status        = carton_table("status").asInt();
-
-    if (carton_data->id == 0) {
-        return nullptr;
+std::shared_ptr<CartonData> CartonDataMysqlDao::get(const std::string &start_or_end_barcode) {
+    auto carton_tables = CartonTables(*db_, order_name_, "id").where("start_barcode", start_or_end_barcode).all();
+    if (carton_tables.size() == 0) {
+        carton_tables = CartonTables(*db_, order_name_, "id").where("end_barcode", start_or_end_barcode).all();
+        if (carton_tables.size() == 0) {
+            return nullptr;
+        }
     }
+
+    auto carton_data           = std::make_shared<CartonData>();
+    carton_data->id            = carton_tables[0]("id").asInt();
+    carton_data->filename      = carton_tables[0]("filename").asString();
+    carton_data->carton_number = carton_tables[0]("carton_number").asString();
+    carton_data->start_number  = carton_tables[0]("start_number").asString();
+    carton_data->end_number    = carton_tables[0]("end_number").asString();
+    carton_data->quantity      = carton_tables[0]("quantity").asInt();
+    carton_data->start_barcode = carton_tables[0]("start_barcode").asString();
+    carton_data->end_barcode   = carton_tables[0]("end_barcode").asString();
+    carton_data->status        = carton_tables[0]("status").asInt();
 
     return carton_data;
 }

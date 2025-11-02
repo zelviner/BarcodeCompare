@@ -17,8 +17,8 @@ class CartonDataDao {
     /// @brief Set the status of the carton data to 1 when it is scanned.
     virtual bool scanned(const std::string &start_barcode) = 0;
 
-    /// @brief Get carton data from the database by start barcode.
-    virtual std::shared_ptr<CartonData> get(const std::string &start_barcode) = 0;
+    /// @brief Get carton data from the database by start or end barcode.
+    virtual std::shared_ptr<CartonData> get(const std::string &start_or_end_barcode) = 0;
 
     /// @brief Update carton data in the database.
     virtual bool update(const int &id, std::shared_ptr<CartonData> &carton_data) = 0;
