@@ -20,7 +20,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
 find_package(SQLiteCpp CONFIG REQUIRED)
 find_package(xlnt CONFIG REQUIRED)
-find_package(zel REQUIRED COMPONENTS core myorm)
+find_package(zel COMPONENTS myorm REQUIRED)
 find_package(unofficial-libmariadb CONFIG REQUIRED)
 
 # [5] UI 搜索路径 -----------------------------------------------------
@@ -43,9 +43,6 @@ include_directories(${Qt5Gui_PRIVATE_INCLUDE_DIRS})
 
 # [9] 添加宏定义 -------------------------------------------------------
 target_compile_definitions(${APP_NAME} PUBLIC
-    NOLFS
-    _CRT_SECURE_NO_WARNINGS
-    _WINSOCK_DEPRECATED_NO_WARNINGS
 )
 
 # [10] 链接 Qt 库 ------------------------------------------------------
