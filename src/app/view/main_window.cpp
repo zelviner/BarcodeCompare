@@ -2,13 +2,13 @@
 
 #include "app/component/order_group_box.hpp"
 #include "comparison/comparison.h"
-#include "database/dao/box_data/box_data_dao_factory.h"
-#include "database/dao/card_data/card_data_dao_factory.h"
-#include "database/dao/carton_data/carton_data_dao_factory.h"
-#include "database/dao/format/format_dao_factory.h"
-#include "database/dao/mode/mode_dao_factory.h"
-#include "database/dao/order/order_dao_factory.h"
-#include "database/dao/role/role_dao_factory.h"
+#include "database/box_data/box_data_dao_factory.h"
+#include "database/card_data/card_data_dao_factory.h"
+#include "database/carton_data/carton_data_dao_factory.h"
+#include "database/format/format_dao_factory.h"
+#include "database/mode/mode_dao_factory.h"
+#include "database/order/order_dao_factory.h"
+#include "database/role/role_dao_factory.h"
 #include "login.h"
 #include "setting.h"
 #include "task/handle_order.hpp"
@@ -34,8 +34,7 @@
 #include <qtimer>
 #include <queue>
 #include <vector>
-#include <zel/file_system/directory.h>
-#include <zel/utility/string.h>
+#include <zel/core.h>
 
 using namespace zel::file_system;
 using namespace zel::utility;

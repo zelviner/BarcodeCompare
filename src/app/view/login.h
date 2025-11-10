@@ -1,11 +1,11 @@
 #pragma once
 
-#include "database/dao/user/user_dao.h"
-#include "database/myorm/database.h"
+#include "database/user/user_dao.h"
+#include "ui_login.h"
 
 #include <memory>
 #include <qmainwindow>
-#include <ui_login.h>
+#include <zel/myorm.h>
 
 class Login : public QMainWindow {
     Q_OBJECT

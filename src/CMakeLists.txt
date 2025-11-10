@@ -20,7 +20,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
 find_package(SQLiteCpp CONFIG REQUIRED)
 find_package(xlnt CONFIG REQUIRED)
-find_package(zel CONFIG REQUIRED)
+find_package(zel REQUIRED COMPONENTS core myorm)
 find_package(unofficial-libmariadb CONFIG REQUIRED)
 
 # [5] UI 搜索路径 -----------------------------------------------------
@@ -35,8 +35,8 @@ file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
 file(GLOB RESOURCES CONFIGURE_DEPENDS ${CMAKE_SOURCE_DIR}/res/rc/*)
 
 # [7] 添加可执行文件 ---------------------------------------------------
-add_executable(${APP_NAME} ${SOURCES} ${RESOURCES}) #debug
-# add_executable(${APP_NAME} WIN32 ${SOURCES} ${RESOURCES} ${MY_VERSIONINFO_RC}) # release
+# add_executable(${APP_NAME} ${SOURCES} ${RESOURCES}) #debug
+add_executable(${APP_NAME} WIN32 ${SOURCES} ${RESOURCES} ${MY_VERSIONINFO_RC}) # release
 
 # [8] 包含 Qt 的私有头（如果有需要，比如自定义窗口样式）--------------
 include_directories(${Qt5Gui_PRIVATE_INCLUDE_DIRS})
@@ -55,6 +55,6 @@ target_link_libraries(${APP_NAME} PRIVATE
     Qt5::Widgets
     SQLiteCpp
     xlnt::xlnt
-    zel::zel
+    zel::myorm
     unofficial::libmariadb
 )

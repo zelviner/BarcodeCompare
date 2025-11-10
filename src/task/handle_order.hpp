@@ -1,6 +1,6 @@
 #pragma once
 
-#include "database/dao/order/order_dao.h"
+#include "database/order/order_dao.h"
 #include <memory>
 #include <qobject>
 #include <qthread>

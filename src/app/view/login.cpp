@@ -1,6 +1,6 @@
 #include "login.h"
 
-#include "database/dao/user/user_dao_factory.h"
+#include "database/user/user_dao_factory.h"
 #include "main_window.h"
 
 #include <memory>
@@ -9,7 +9,8 @@
 #include <qfile>
 #include <qmessagebox>
 #include <qsettings>
-#include <zel/utility/logger.h>
+#include <zel/core.h>
+
 using namespace zel::utility;
 
 Login::Login(QMainWindow *parent)

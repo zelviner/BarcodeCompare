@@ -1,6 +1,6 @@
 #pragma once
 
-#include "database/dao/card_data/card_data.h"
+#include "database/card_data/card_data.h"
 
 #include <qlabel.h>
 #include <qlabel>

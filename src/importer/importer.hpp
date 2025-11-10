@@ -1,9 +1,9 @@
 #pragma once
 
-#include "database/dao/box_data/box_data.h"
-#include "database/dao/card_data/card_data.h"
-#include "database/dao/carton_data/carton_data.h"
-#include "database/dao/format/format.h"
+#include "database/box_data/box_data.h"
+#include "database/card_data/card_data.h"
+#include "database/carton_data/carton_data.h"
+#include "database/format/format.h"
 
 #include <memory>
 #include <string>

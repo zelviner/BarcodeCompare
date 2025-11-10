@@ -2,7 +2,7 @@
 
 #include <memory>
 #include <qdebug>
-#include <zel/utility/logger.h>
+#include <zel/core.h>
 
 Comparison::Comparison(const std::shared_ptr<Order> &order, const std::shared_ptr<BoxDataDao> &box_data_dao,
                        const std::shared_ptr<CartonDataDao> &carton_data_dao, const std::shared_ptr<CardDataDao> &card_data_dao)

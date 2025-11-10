@@ -3,18 +3,18 @@
 #include "app/component/box_widget.h"
 #include "app/component/card_widget.h"
 #include "app/component/loading.h"
-#include "database/dao/format/format_dao.h"
-#include "database/dao/mode/mode_dao.h"
-#include "database/dao/order/order_dao.h"
-#include "database/dao/role/role_dao.h"
-#include "database/dao/user/user_dao.h"
-#include "database/myorm/database.h"
+#include "database/format/format_dao.h"
+#include "database/mode/mode_dao.h"
+#include "database/order/order_dao.h"
+#include "database/role/role_dao.h"
+#include "database/user/user_dao.h"
 #include "ui_main_window.h"
 
 #include <memory>
 #include <qmainwindow>
 #include <qtranslator>
 #include <queue>
+#include <zel/myorm.h>
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
