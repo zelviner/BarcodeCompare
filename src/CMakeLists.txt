@@ -21,7 +21,6 @@ find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
 find_package(SQLiteCpp CONFIG REQUIRED)
 find_package(xlnt CONFIG REQUIRED)
 find_package(zel COMPONENTS myorm REQUIRED)
-find_package(unofficial-libmariadb CONFIG REQUIRED)
 
 # [5] UI 搜索路径 -----------------------------------------------------
 list(APPEND CMAKE_AUTOUIC_SEARCH_PATHS ${CMAKE_SOURCE_DIR}/res/ui)
@@ -53,5 +52,4 @@ target_link_libraries(${APP_NAME} PRIVATE
     SQLiteCpp
     xlnt::xlnt
     zel::myorm
-    unofficial::libmariadb
 )
